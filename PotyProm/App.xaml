@@ -1,7 +1,7 @@
-﻿<Application x:Class="RomProgrammer.App"
+﻿<Application x:Class="PotyProm.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:RomProgrammer"
+             xmlns:local="clr-namespace:PotyProm"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
