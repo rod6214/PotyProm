@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotyProm", "..\PotyProm\PotyProm.csproj", "{23DAA5A8-0866-48BA-A02C-6757FCF230E5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotyCore", "PotyCore\PotyCore.csproj", "{59DCDDF6-B41E-470F-B14C-C4C1AEFFD0BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotyProm", "PotyProm\PotyProm.csproj", "{23DAA5A8-0866-48BA-A02C-6757FCF230E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59DCDDF6-B41E-470F-B14C-C4C1AEFFD0BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59DCDDF6-B41E-470F-B14C-C4C1AEFFD0BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59DCDDF6-B41E-470F-B14C-C4C1AEFFD0BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59DCDDF6-B41E-470F-B14C-C4C1AEFFD0BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23DAA5A8-0866-48BA-A02C-6757FCF230E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A2CBEC57-8421-42D1-84A8-4AE8266CE074}</ProjectGuid>
+    <ProjectGuid>{23DAA5A8-0866-48BA-A02C-6757FCF230E5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>PotyProm</RootNamespace>
     <AssemblyName>PotyProm</AssemblyName>
@@ -53,6 +53,7 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -92,6 +93,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PotyCore\PotyCore.csproj">
+      <Project>{59dcddf6-b41e-470f-b14c-c4c1aeffd0bd}</Project>
+      <Name>PotyCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,8 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PotyProm"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow"  Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.Close}"
+                    Executed="ExecutedCloseCommand"
+                    CanExecute="CanExecuteCloseCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Open}"
+                    Executed="ExecutedOpenCommand"
+                    CanExecute="CanOpenCloseCommand" />
+    </Window.CommandBindings>
     <Grid>
         
+        <StackPanel>
+            <Menu>
+                <MenuItem Header="_File" HorizontalAlignment="Right">
+                    <MenuItem Command="ApplicationCommands.Open"/>
+                    <MenuItem Command="ApplicationCommands.Save"/>
+                    <MenuItem Command="ApplicationCommands.Close"
+                              />
+                </MenuItem>
+                <MenuItem Header="_Device">
+                    <!--<MenuItem Header="_Bold" IsCheckable="True"/>
+                    <MenuItem Header="_Italic" IsCheckable="True"/>
+                    <Separator/>
+                    <MenuItem Header="I_ncrease Font Size">
+                        <MenuItem Header="_Decrease Font Size"/>
+                    </MenuItem>-->
+                </MenuItem>
+            </Menu>
+
+            <DockPanel Background="LemonChiffon" LastChildFill="True">
+                <TextBlock Text="Go to" Margin="5" 
+                    DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                <TextBox Height="Auto" Width="Auto" Margin="0,1,40,1"/>
+            </DockPanel >
+            <StackPanel x:Name="myStackPanel" Orientation="Vertical"></StackPanel>
+            <ScrollBar x:Name="gridScroll" Width="Auto" Scroll="ScrollBar_Scroll"/>
+            <DataGrid x:Name="myDataGrid" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False">
+                <DataGrid.RowStyle>
+                    <Style TargetType="{x:Type DataGridRow}">
+                        <Setter Property="Header" Value="{Binding [0]}" />
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
+            
+        </StackPanel>
     </Grid>
 </Window>

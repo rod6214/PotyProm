@@ -54,7 +54,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryFormatter.cs" />
+    <Compile Include="DeviceData.cs" />
+    <Compile Include="FileLoader.cs" />
     <Compile Include="GridMap.cs" />
+    <Compile Include="IntelHexFormatter.cs" />
+    <Compile Include="IFormatter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

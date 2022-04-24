@@ -8,7 +8,7 @@ namespace PotyCore
 {
     public interface IFormatter
     {
-        string Encode(byte[] bytes);
-        byte Decode(string bin);
+        string Encode(uint[] bytes);
+        uint[] Decode(string bin);
     }
 }
