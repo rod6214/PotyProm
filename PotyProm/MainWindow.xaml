@@ -32,6 +32,17 @@
                         <MenuItem Header="_Decrease Font Size"/>
                     </MenuItem>-->
                 </MenuItem>
+                <MenuItem Header="_Connection">
+                    <MenuItem Header="_Module">
+                        <MenuItem Header="_PotyPro I"/>
+                    </MenuItem>
+                    <!--<MenuItem Header="_Bold" IsCheckable="True"/>
+                    <MenuItem Header="_Italic" IsCheckable="True"/>
+                    <Separator/>
+                    <MenuItem Header="I_ncrease Font Size">
+                        <MenuItem Header="_Decrease Font Size"/>
+                    </MenuItem>-->
+                </MenuItem>
             </Menu>
 
             <DockPanel Background="LemonChiffon" LastChildFill="True">
@@ -48,7 +59,18 @@
                     </Style>
                 </DataGrid.RowStyle>
             </DataGrid>
-            
+
+            <DockPanel>
+                <StatusBar DockPanel.Dock="Bottom">
+                    <StatusBarItem Content="Ram" />
+                    <StatusBarItem Content="Rom" />
+                </StatusBar>
+
+                <!--<Grid x:Name="rootGrid">
+
+                </Grid>-->
+            </DockPanel>
         </StackPanel>
+        
     </Grid>
 </Window>

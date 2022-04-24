@@ -26,21 +26,19 @@ namespace PotyProm
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ObservableCollection<string[]> gridList = new ObservableCollection<string[]>();
+        private ObservableCollection<string[]> gridList;
         private List<string[]> lines;
         private int scrollTableIndex = 0;
         private int rowLength = 25;
         private int numColumns = 16;
-        //private int dotFactor = 0;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            for (int i = 0; i < numColumns + 1; i++)
+            for (int i = 0; i < numColumns; i++)
             {
                 var col = new DataGridTextColumn();
-
                 col.Header = string.Format(" {0:X2} ", i);
                 col.Binding = new Binding(string.Format("[{0}]", i + 1));
                 myDataGrid.Columns.Add(col);
@@ -51,6 +49,7 @@ namespace PotyProm
         {
             GridMap gridMap = new GridMap();
             lines = gridMap.GetLines(numColumns, bin);
+            gridList = new ObservableCollection<string[]>();
 
             int k = 0;
 
@@ -67,15 +66,15 @@ namespace PotyProm
 
             myDataGrid.ItemsSource = gridList;
             gridScroll.Minimum = 0;
-            //dotFactor = getFactor(maxValue);
-            gridScroll.Maximum = ((double)maxValue) - 1;
+            var factor = getFactor(maxValue);
+            gridScroll.Maximum = (((double)maxValue) / factor) - 0.1;
         }
 
-        private int getFactor(int n) 
+        private int getFactor(int n)
         {
             int count = 0;
             int factor = 1;
-            while (n > 100)
+            while (n > 10)
             {
                 n = n / 10;
                 factor *= 10;
@@ -99,6 +98,7 @@ namespace PotyProm
         {
             int res = lines.Count % rowLength;
             int coe = lines.Count / rowLength;
+
             int x = (int)(e.NewValue * 10);
             scrollTableIndex = 0;
 
