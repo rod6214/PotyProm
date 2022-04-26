@@ -64,7 +64,7 @@ namespace PotyProm
 
             int maxValue = coe == 0 ? rowLength : res > 0 ? coe + 1 : coe;
 
-            myDataGrid.ItemsSource = gridList;
+            //myDataGrid.ItemsSource = gridList;
             gridScroll.Minimum = 0;
             var factor = getFactor(maxValue);
             gridScroll.Maximum = (((double)maxValue) / factor) - 0.1;
