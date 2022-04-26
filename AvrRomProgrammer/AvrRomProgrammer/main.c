@@ -11,19 +11,28 @@
 #include "io_handle.h"
 
 #define MAX_MEMORY 3072
-char r_buffer[MAX_MEMORY];
-char x_buffer[MAX_MEMORY];
-int r_idx = 0;
-int x_idx = 0;
+char write_buffer[MAX_MEMORY];
+char read_buffer[MAX_MEMORY];
+int read_idx = 0;
+int write_idx_z = 0;
+int write_idx = 0;
 int step = 0;
-int commad = 0;
+int command = 0;
+int bytes = 0;
+//int tx_store = 0;
+int data_sent = 0;
 
-void write_mem();
-void read_mem();
+void write_mem(int address, char data);
+char read_mem(int address);
+char usart_receive();
+void usart_send(char data);
+
+#define wait_host() while(data_sent); data_sent=0
 
 ISR(USART0_TX_vect) 
 {
 	cli();
+	data_sent = 1;
 	sei();
 }
 	
@@ -39,75 +48,73 @@ ISR(USART0_RX_vect)
 	switch(step) 
 	{
 		case COMMAND_STEP:
-		{}
+		{
+			step = LOW_BYTE_STEP;
+		}
 		break;
 		case LOW_BYTE_STEP:
-		{}
+		{
+			step = HIGH_BYTE_STEP;
+		}
 		break;
 		case HIGH_BYTE_STEP:
-		{}
+		{
+			step = DATA_STEP;
+		}
 		break;
 		case DATA_STEP:
 		{
-			switch(commad) 
+			if (command == WRITE_MEMORY) 
 			{
-				case READ_MEMORY:
+				// Save to the buffer
+				write_buffer[write_idx + write_idx_z] = usart_receive();
+				write_idx_z++;
+				if (write_idx_z >= bytes || write_idx_z >= MAX_MEMORY)
 				{
-					// We must send the first frame later all reading process will follow 
-					// the remaining frames from TX interrupt.
+					write_idx_z = 0;
 				}
-				break;
-				case WRITE_MEMORY:
-				{
-					// We must attend all writing process from here.
-				}
-				break;
 			}
 		}
 		break;
 	}
-	// PORTB = UDR0;
-	//r_buffer[r_idx] = UDR0;
-	//if (r_idx >= MAX_MEMORY) 
-	//{
-		//r_idx = 0;
-	//}
-	//else 
-	//{
-		//r_idx++;
-	//}
 	sei();
 }
 
-void write_mem() 
+void write_mem(int address, char data) 
 {
-	while(r_idx != 0) 
-	{
-		char addrl = LOW_BYTE(r_idx);
-		char addrh = HIGH_BYTE(r_idx);
-		set_address_low(addrl);
-		set_address_high(addrh);
-		set_data(r_buffer[r_idx]);
-		r_idx--;
-	}
+	// TODO: Verify the time needed by the memory
+	char addrl = LOW_BYTE(address);
+	char addrh = HIGH_BYTE(address);
+	set_address_low(addrl);
+	set_address_high(addrh);
+	set_data(data);
 }
 	
-void read_mem()
+char read_mem(int address)
 {
-	while(x_idx < MAX_MEMORY)
-	{
-		char addrl = LOW_BYTE(x_idx);
-		char addrh = HIGH_BYTE(x_idx);
-		set_address_low(addrl);
-		set_address_high(addrh);
-		x_buffer[x_idx] = get_data();
-		x_idx++;
-	}
+	// TODO: Verify the time needed by the memory
+	char addrl = LOW_BYTE(address);
+	char addrh = HIGH_BYTE(address);
+	set_address_low(addrl);
+	set_address_high(addrh);
+	char data = get_data();
+	return data;
+}
+
+void usart_send(char data)
+{
+	UDR0 = data;
+}
+	
+char usart_receive()
+{
+	return UDR0;
 }
 
 void config()
 {
-	DDRE = 1 << DDE1;
+	// Port E0 & E1 are RX & TX respectively
+	DDRE = (1 << DDE1) | (1 << DDE2) | (1 << DDE3) | (1 << DDE4);
 	PORTE = 0;
 	
 	DDRB = 255;
@@ -126,24 +133,63 @@ void config()
 	
 void loop() 
 {
-	//if (PORTE == 1 << PE1)
-	//{
-		//PORTE = 0;
-	//}
-	//else
-	//{
-		//PORTE = 1 << PE1;
-	//}
-	//
-	//if (PORTB)
-	//{
-		//PORTB = 0;
-	//}
-	//else
-	//{
-		//PORTB = 1 << PB7;
-	//}
-	_delay_ms(500);
+	switch(command)
+	{
+		case READ_MEMORY:
+		{
+			// We must send the first frame later all reading process will follow
+			// the remaining frames from TX interrupt.
+			// Begin to read the memory
+			
+			for (int i = 0; i < bytes && i < MAX_MEMORY; i++)
+			{
+				// Read memory
+				char data = read_mem(read_idx + i);
+				read_buffer[read_idx + i] = data;
+			}
+			
+			int current_index = read_idx;
+			
+			for (int i = 0; i < bytes && i < MAX_MEMORY; i++, read_idx++)
+			{
+				// Send data to the host
+				char data = read_buffer[current_index + i];
+				usart_send(data);
+				wait_host();
+			}
+			
+			if (read_idx >= bytes)
+			{
+				// Finish the process
+				read_idx=0;
+				step=COMMAND_STEP;
+				break;
+			}
+		}
+		break;
+		case WRITE_MEMORY:
+		{
+			for (int i = 0; i < bytes && i < MAX_MEMORY; i++, write_idx++)
+			{
+				// Write memory
+				char data = write_buffer[write_idx + i];
+				write_mem(write_idx + i);
+			}
+			
+			if (write_idx >= bytes)
+			{
+				// Finish the process
+				write_idx=0;
+				step=COMMAND_STEP;
+				break;
+			}
+			
+			// Send a ready command to the host or ACK
+			usart_send(ACK);
+			wait_host();
+		}
+		break;
+	}
 }
 
 int main(void)
