@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PotyProm"
         mc:Ignorable="d"
-        Title="MainWindow"  Width="800">
+        Title="MainWindow"  Width="800"
+        Closing="MainWindowCloseEvent"
+        >
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static ApplicationCommands.Close}"
                     Executed="ExecutedCloseCommand"
@@ -13,6 +15,9 @@
         <CommandBinding Command="{x:Static ApplicationCommands.Open}"
                     Executed="ExecutedOpenCommand"
                     CanExecute="CanOpenCloseCommand" />
+        <CommandBinding Command="{x:Static local:MainWindow.OpenComport}"
+                    Executed="ExecutedComportCommand"
+                    CanExecute="CanExecuteComportCommand" />
     </Window.CommandBindings>
     <Grid>
         
@@ -36,6 +41,9 @@
                     <MenuItem Header="_Module">
                         <MenuItem Header="_PotyPro I"/>
                     </MenuItem>
+                    <MenuItem Header="_Configuration">
+                        <MenuItem Command="local:MainWindow.OpenComport" Header="_Serial Port"/>
+                    </MenuItem>
                     <!--<MenuItem Header="_Bold" IsCheckable="True"/>
                     <MenuItem Header="_Italic" IsCheckable="True"/>
                     <Separator/>
@@ -44,11 +52,27 @@
                     </MenuItem>-->
                 </MenuItem>
             </Menu>
+            <Grid DockPanel.Dock="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="6*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
 
-            <DockPanel Background="LemonChiffon" LastChildFill="True">
-                <TextBlock Text="Go to" Margin="5" 
+                <TextBlock Text="Go to" Margin="1,1,1,1" Grid.Column="0" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" Height="Auto" Width="Auto" Margin="1,1,1,1"/>
+                <Button Name="connectButton" IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="2" Content="Connect" Click="ConnectPortButtonEvent" />
+                <Button Name="closeButton" IsEnabled="{Binding IsCloseButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="3" Content="Close" Click="ClosePortButtonEvent" />
+                <Button Name="readButton" IsEnabled="{Binding IsReadButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="4" Content="Read" Click="ReadPortButtonEvent" />
+                <Button Name="writeButton" IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="5" Content="Write" Click="WritePortButtonEvent" />
+                <!--<TextBlock Text="COM" Margin="5" 
                     DockPanel.Dock="Left" VerticalAlignment="Center"/>
-                <TextBox Height="Auto" Width="Auto" Margin="0,1,40,1"/>
+                <ComboBox Name="comboSerial" Width="142"/>-->
+            </Grid>
+            <DockPanel Background="LemonChiffon" LastChildFill="True">
             </DockPanel >
             <StackPanel x:Name="myStackPanel" Orientation="Vertical"></StackPanel>
             <ScrollBar x:Name="gridScroll" Width="Auto" Scroll="ScrollBar_Scroll"/>
@@ -62,8 +86,9 @@
 
             <DockPanel>
                 <StatusBar DockPanel.Dock="Bottom">
-                    <StatusBarItem Content="Ram" />
-                    <StatusBarItem Content="Rom" />
+                    <StatusBarItem x:Name="statusLabel" Content="{Binding StatusMessage, Mode = TwoWay}" />
+                    <!--<StatusBarItem Content="Ram" />
+                    <StatusBarItem Content="Rom" />-->
                 </StatusBar>
 
                 <!--<Grid x:Name="rootGrid">

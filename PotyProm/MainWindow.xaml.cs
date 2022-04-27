@@ -18,22 +18,111 @@ using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.IO.Ports;
+using System.Threading;
 
 namespace PotyProm
 {
+    public enum SerialPortCommand 
+    {
+        NONE,
+        READ_MEMORY,
+        WRITE_MEMORY
+    }
+
+    public class MainWindowViewModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private bool isReadButtonEnabled;
+        private bool isWriteButtonEnabled;
+        private bool isCloseButtonEnabled;
+        private bool isOpenButtonEnabled;
+        private string statusMessage;
+        public bool IsReadButtonEnabled 
+        { 
+            get { return isReadButtonEnabled; } 
+            set 
+            {
+                if (value != isReadButtonEnabled) 
+                {
+                    isReadButtonEnabled = value;
+                    OnPropertyChanged(nameof(IsReadButtonEnabled));
+                }
+            } 
+        }
+        public bool IsWriteButtonEnabled 
+        { 
+            get { return isWriteButtonEnabled; } 
+            set 
+            {
+                if (value != isWriteButtonEnabled) 
+                {
+                    isWriteButtonEnabled = value;
+                    OnPropertyChanged(nameof(IsWriteButtonEnabled));
+                }
+            } 
+        }
+
+        public bool IsCloseButtonEnabled
+        {
+            get { return isCloseButtonEnabled; }
+            set
+            {
+                if (value != isCloseButtonEnabled)
+                {
+                    isCloseButtonEnabled = value;
+                    OnPropertyChanged(nameof(IsCloseButtonEnabled));
+                }
+            }
+        }
+        public bool IsOpenButtonEnabled
+        {
+            get { return isOpenButtonEnabled; }
+            set
+            {
+                if (value != isOpenButtonEnabled)
+                {
+                    isOpenButtonEnabled = value;
+                    OnPropertyChanged(nameof(IsOpenButtonEnabled));
+                }
+            }
+        }
+
+        public string StatusMessage
+        {
+            get { return statusMessage; }
+            set
+            {
+                if (value != statusMessage)
+                {
+                    statusMessage = value;
+                    OnPropertyChanged(nameof(StatusMessage));
+                }
+            }
+        }
+
+        public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static RoutedCommand OpenComport = new RoutedCommand();
+
         private ObservableCollection<string[]> gridList;
         private List<string[]> lines;
         private int scrollTableIndex = 0;
         private int rowLength = 25;
         private int numColumns = 16;
+        private SerialPort serialPort;
+        private Task serialPortTask;
+        public SerialPortCommand serialPortCommand;
+        private MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
 
         public MainWindow()
         {
+            DataContext = mainWindowViewModel;
             InitializeComponent();
 
             for (int i = 0; i < numColumns; i++)
@@ -43,9 +132,11 @@ namespace PotyProm
                 col.Binding = new Binding(string.Format("[{0}]", i + 1));
                 myDataGrid.Columns.Add(col);
             }
+
+            mainWindowViewModel.StatusMessage = "None.";
         }
 
-        private void loadFile(byte[] bin) 
+        private void loadFile(byte[] bin)
         {
             GridMap gridMap = new GridMap();
             lines = gridMap.GetLines(numColumns, bin);
@@ -53,7 +144,7 @@ namespace PotyProm
 
             int k = 0;
 
-            while (k < rowLength)
+            while (k < rowLength && k < lines.Count)
             {
                 gridList.Add(lines[k]);
                 k++;
@@ -64,7 +155,7 @@ namespace PotyProm
 
             int maxValue = coe == 0 ? rowLength : res > 0 ? coe + 1 : coe;
 
-            //myDataGrid.ItemsSource = gridList;
+            myDataGrid.ItemsSource = gridList;
             gridScroll.Minimum = 0;
             var factor = getFactor(maxValue);
             gridScroll.Maximum = (((double)maxValue) / factor) - 0.1;
@@ -83,7 +174,7 @@ namespace PotyProm
             return factor;
         }
 
-        private void updateGridList(int length, int index) 
+        private void updateGridList(int length, int index)
         {
             int k = 0;
 
@@ -113,6 +204,18 @@ namespace PotyProm
                 updateGridList(offset, scrollTableIndex);
         }
 
+        private void MainWindowCloseEvent(object sender, CancelEventArgs e) 
+        {
+            if (serialPortTask != null) 
+            {
+                if (!serialPortTask.IsCompleted) 
+                {
+                    serialPort.Close();
+                    serialPortTask.Wait();
+                }
+            }
+        }
+
         private void CanExecuteCloseCommand(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -135,11 +238,122 @@ namespace PotyProm
             openFileDialog.ShowDialog();
         }
 
-        private void OpenDialogEvent(object sender, CancelEventArgs e) 
+        private void OpenDialogEvent(object sender, CancelEventArgs e)
         {
             var openDialog = (OpenFileDialog)sender;
             var bin = File.ReadAllBytes(openDialog.FileName);
             loadFile(bin);
+        }
+
+        private void CanExecuteComportCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ExecutedComportCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            ComportWindow comport = new ComportWindow();
+            comport.Show();
+            comport.SaveEvent += ComportWindow_SaveEvent;
+        }
+
+        private void ComportWindow_SaveEvent(object sender, ComportEventArgs e)
+        {
+            serialPort = e.SerialPort;
+            mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(serialPort.PortName) && serialPort.BaudRate > 0;
+        }
+
+        private void ConnectPortButtonEvent(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                serialPort.Open();
+                ComportTask();
+                statusLabel.Content = "Serial port connected.";
+                mainWindowViewModel.IsReadButtonEnabled = true;
+                mainWindowViewModel.IsWriteButtonEnabled = true;
+                mainWindowViewModel.IsOpenButtonEnabled = false;
+                mainWindowViewModel.IsCloseButtonEnabled = true;
+            }
+            catch
+            {
+                statusLabel.Content = "Error in serial port connection.";
+            }
+        }
+
+        private void ReadPortButtonEvent(object sender, RoutedEventArgs e)
+        {
+            serialPortCommand = SerialPortCommand.READ_MEMORY;
+            mainWindowViewModel.IsReadButtonEnabled = false;
+            mainWindowViewModel.IsWriteButtonEnabled = false;
+            mainWindowViewModel.IsCloseButtonEnabled = false;
+        }
+
+        private void WritePortButtonEvent(object sender, RoutedEventArgs e)
+        {
+            serialPortCommand = SerialPortCommand.WRITE_MEMORY;
+            mainWindowViewModel.IsReadButtonEnabled = false;
+            mainWindowViewModel.IsWriteButtonEnabled = false;
+            mainWindowViewModel.IsCloseButtonEnabled = false;
+        }
+
+        private void ClosePortButtonEvent(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                serialPort.Close();
+                statusLabel.Content = "Serial port closed.";
+                mainWindowViewModel.IsReadButtonEnabled = false;
+                mainWindowViewModel.IsWriteButtonEnabled = false;
+                mainWindowViewModel.IsOpenButtonEnabled = true;
+                mainWindowViewModel.IsCloseButtonEnabled = false;
+            }
+            catch
+            {
+                statusLabel.Content = "Error when try to close the comport.";
+            }
+        }
+
+        private void ComportTask() 
+        {
+            serialPortTask = Task.Run(() => {
+                try
+                {
+                    while (serialPort.IsOpen)
+                    {
+                        //var data = serialPort.ReadByte();
+                        switch(serialPortCommand) 
+                        {
+                            case SerialPortCommand.READ_MEMORY:
+                                {
+                                    Trace.WriteLine("Reading memory.");
+                                    mainWindowViewModel.StatusMessage = "Reading memory.";
+                                    serialPortCommand = SerialPortCommand.NONE;
+                                    var data = serialPort.ReadByte();
+                                    Thread.Sleep(500);
+                                    mainWindowViewModel.IsReadButtonEnabled = true;
+                                    mainWindowViewModel.IsWriteButtonEnabled = true;
+                                    mainWindowViewModel.IsCloseButtonEnabled = true;
+                                    mainWindowViewModel.StatusMessage = "Memory read.";
+                                }
+                                break;
+                            case SerialPortCommand.WRITE_MEMORY:
+                                {
+                                    Trace.WriteLine("Writing memory.");
+                                    mainWindowViewModel.StatusMessage = "Writing memory.";
+                                    serialPortCommand = SerialPortCommand.NONE;
+                                    Thread.Sleep(500);
+                                    mainWindowViewModel.IsReadButtonEnabled = true;
+                                    mainWindowViewModel.IsWriteButtonEnabled = true;
+                                    mainWindowViewModel.IsCloseButtonEnabled = true;
+                                    mainWindowViewModel.StatusMessage = "Memory written.";
+                                }
+                                break;
+                        }
+                    }
+                }
+                catch { }
+            });
         }
     }
 }

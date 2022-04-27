@@ -1,0 +1,41 @@
+﻿<Window x:Class="PotyProm.ComportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PotyProm"
+        mc:Ignorable="d"
+        Title="ComportWindow" Height="450" Width="300">
+    <Grid>
+        <StackPanel>
+            <DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="COM" Margin="50,5,5,5" VerticalAlignment="Center" />
+                        <ComboBox Name="comportCombo" Text="Port" Margin="5,5,100,5" SelectionChanged="ComportSelectionChanged"/>
+                    </DockPanel>
+                    <DockPanel DockPanel.Dock="Top">
+                        <TextBlock Text="BAUD" Margin="50,5,5,5" VerticalAlignment="Center" />
+                        <ComboBox Name="baudRateCombo" Text="Port" Margin="5,5,100,5" SelectionChanged="BaudRateSelectionChanged"/>
+                    </DockPanel>
+                <Grid DockPanel.Dock="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Margin="5,5,5,5" Grid.Column="0" Content="Cancel" Click="CancelClickEvent" />
+                    <Button Margin="5,5,5,5" Grid.Column="1" Content="Save" Click="SaveClickEvent" />
+                </Grid>
+            </DockPanel>
+            
+            <!--<DockPanel>
+                <TextBlock Text="PARITY" Margin="50,5,5,5" VerticalAlignment="Center" />
+                <ComboBox Text="Port" Margin="5,5,100,5"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="COM" Margin="50,5,5,5" VerticalAlignment="Center" />
+                <ComboBox Text="Port" Margin="5,5,100,5"/>
+            </DockPanel>-->
+        </StackPanel>
+    </Grid>
+</Window>

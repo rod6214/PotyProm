@@ -4,9 +4,9 @@
  * Created: 4/25/2022 1:46:44 AM
  * Author : Nelson
  */ 
-#define F_CPU 12E6
+
 #include <avr/io.h>
-#include <util/delay.h>
+
 #include <avr/interrupt.h>
 #include "io_handle.h"
 
@@ -19,7 +19,6 @@ int write_idx = 0;
 int step = 0;
 int command = 0;
 int bytes = 0;
-//int tx_store = 0;
 int data_sent = 0;
 
 void write_mem(int address, char data);
@@ -49,16 +48,21 @@ ISR(USART0_RX_vect)
 	{
 		case COMMAND_STEP:
 		{
+			command = usart_receive();
 			step = LOW_BYTE_STEP;
 		}
 		break;
 		case LOW_BYTE_STEP:
 		{
+			char bytel = usart_receive();
+			SET_WORD_LOW(bytes, bytel);
 			step = HIGH_BYTE_STEP;
 		}
 		break;
 		case HIGH_BYTE_STEP:
 		{
+			char byteh = usart_receive();
+			SET_WORD_HIGH(bytes, byteh);
 			step = DATA_STEP;
 		}
 		break;
@@ -88,6 +92,7 @@ void write_mem(int address, char data)
 	set_address_low(addrl);
 	set_address_high(addrh);
 	set_data(data);
+	
 }
 	
 char read_mem(int address)
@@ -97,7 +102,17 @@ char read_mem(int address)
 	char addrh = HIGH_BYTE(address);
 	set_address_low(addrl);
 	set_address_high(addrh);
+	ctrl_chip_enable(TRUE);
+	ctrl_output_enable(TRUE);
+	_delay_loop_1(2);
 	char data = get_data();
+	_delay_loop_1(2);
+	ctrl_chip_enable(FALSE);
+	_delay_loop_1(1);
+	ctrl_output_enable(FALSE);
+	set_address_low_as_highZ();
+	set_address_high_as_highZ();
+	set_port_data_as_highZ();
 	return data;
 }
 
@@ -114,13 +129,12 @@ char usart_receive()
 void config()
 {
 	// Port E0 & E1 are RX & TX respectively
-	DDRE = (1 << DDE1) | (1 << DDE2) | (1 << DDE3) | (1 << DDE4);
 	PORTE = 0;
-	
-	DDRB = 255;
+	DDRE = (1 << DDE1);
+	DDRB = 0;
 	PORTB = 0;
+	ctrl_init();
 	// Deactivate pull down
-	//MCU = 0;
 	UCSR0A = (1 << U2X0);
 	UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0) | (1 << TXCIE0);
 	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
@@ -167,28 +181,28 @@ void loop()
 			}
 		}
 		break;
-		case WRITE_MEMORY:
-		{
-			for (int i = 0; i < bytes && i < MAX_MEMORY; i++, write_idx++)
-			{
-				// Write memory
-				char data = write_buffer[write_idx + i];
-				write_mem(write_idx + i);
-			}
-			
-			if (write_idx >= bytes)
-			{
-				// Finish the process
-				write_idx=0;
-				step=COMMAND_STEP;
-				break;
-			}
-			
-			// Send a ready command to the host or ACK
-			usart_send(ACK);
-			wait_host();
-		}
-		break;
+		//case WRITE_MEMORY:
+		//{
+			//for (int i = 0; i < bytes && i < MAX_MEMORY; i++, write_idx++)
+			//{
+				//// Write memory
+				//char data = write_buffer[write_idx + i];
+				//write_mem(write_idx + i, data);
+			//}
+			//
+			//if (write_idx >= bytes)
+			//{
+				//// Finish the process
+				//write_idx=0;
+				//step=COMMAND_STEP;
+				//break;
+			//}
+			//
+			//// Send a ready command to the host or ACK
+			//usart_send(ACK);
+			//wait_host();
+		//}
+		//break;
 	}
 }
 
