@@ -16,13 +16,14 @@
 #define HIGH_BYTE(x) ((0xFF00 & x) >> 8)
 #define SET_WORD_LOW(x, y) (x = 0x00FF & y)
 #define SET_WORD_HIGH(x, y) (x = 0x0FF00 | (y << 8))
-#define READ_MEMORY 0
-#define WRITE_MEMORY 1
-#define ACK 0x0A
-#define COMMAND_STEP 0
-#define LOW_BYTE_STEP 1
-#define HIGH_BYTE_STEP 2
-#define DATA_STEP 3
+#define READ_MEMORY 0x0A
+#define WRITE_MEMORY 0x0B
+#define ACK 0x0C
+#define NULL 0
+#define COMMAND_STEP 1
+#define LOW_BYTE_STEP 2
+#define HIGH_BYTE_STEP 3
+#define DATA_STEP 4
 #ifndef TRUE
 #define TRUE 1
 #endif

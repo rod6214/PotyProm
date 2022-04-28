@@ -119,6 +119,9 @@ namespace PotyProm
         private Task serialPortTask;
         public SerialPortCommand serialPortCommand;
         private MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
+        public const byte READ_MEMORY = 0x0A;
+        public const byte WRITE_MEMORY = 0x0B;
+        public const byte ACK = 0x0C;
 
         public MainWindow()
         {
@@ -261,6 +264,10 @@ namespace PotyProm
         {
             serialPort = e.SerialPort;
             mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(serialPort.PortName) && serialPort.BaudRate > 0;
+            //if (mainWindowViewModel.IsOpenButtonEnabled)
+            //{
+            //    serialPort.DataReceived += DataReceivedSerialPortEvent;
+            //}
         }
 
         private void ConnectPortButtonEvent(object sender, RoutedEventArgs e)
@@ -314,6 +321,12 @@ namespace PotyProm
             }
         }
 
+        //private void DataReceivedSerialPortEvent(object sender, SerialDataReceivedEventArgs e) 
+        //{
+        //    SerialPort serialPort = (SerialPort)sender;
+        //    serialPort.
+        //}
+
         private void ComportTask() 
         {
             serialPortTask = Task.Run(() => {
@@ -327,9 +340,27 @@ namespace PotyProm
                             case SerialPortCommand.READ_MEMORY:
                                 {
                                     Trace.WriteLine("Reading memory.");
+                                    //serialPort.DataReceived += (object sender, SerialDataReceivedEventArgs e) =>
+                                    //{
+                                    //};
+
+                                    byte[] commandBuffer = new byte[4] { READ_MEMORY, 10, 0, 0 };
+                                    int[] output = new int[64];
+
                                     mainWindowViewModel.StatusMessage = "Reading memory.";
                                     serialPortCommand = SerialPortCommand.NONE;
-                                    var data = serialPort.ReadByte();
+
+                                    for (int i = 0; i < commandBuffer.Length; i++)
+                                    {
+                                        serialPort.Write(commandBuffer, i, 1);
+                                        //Thread.Sleep(500);
+                                    }
+
+                                    for (int i = 0; i < 10; i++)
+                                    {
+                                        output[i] = serialPort.ReadByte();
+                                    }
+
                                     Thread.Sleep(500);
                                     mainWindowViewModel.IsReadButtonEnabled = true;
                                     mainWindowViewModel.IsWriteButtonEnabled = true;
