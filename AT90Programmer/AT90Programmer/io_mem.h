@@ -29,7 +29,9 @@
 #define COMMAND_STEP 1
 #define LOW_BYTE_STEP 2
 #define HIGH_BYTE_STEP 3
-#define DATA_STEP 4
+#define HIGH_OFFSET_STEP 4
+#define LOW_OFFSET_STEP 5
+#define DATA_STEP 6
 
 extern void set_address_low(char addressl);
 extern void set_address_high(char addressh);

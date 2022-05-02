@@ -10,15 +10,16 @@
 #include <avr/interrupt.h>
 #include "io_mem.h"
 
-#define MAX_MEMORY 128
+#define MAX_MEMORY 320
 char write_buffer[MAX_MEMORY];
 char read_buffer[MAX_MEMORY];
-int read_idx = 0;
+long read_idx = 0;
 int write_idx_z = 0;
 int write_idx = 0;
 int step = NULL;
 int command = 0;
-int bytes = 0;
+long bytes = 0;
+long offset = 0;
 int data_sent = FALSE;
 int isBusy = 0;
 
@@ -49,14 +50,7 @@ ISR(USART_RX_vect)
 	
 	cli();
 	char received_data = usart_receive();
-	//PORTC = usart_receive();
-	
-	//if (received_data != 0) {
-		//PORTC = (char)received_data;
-	//}
-	//PORTC = received_data;
-	//received_data == READ_MEMORY;
-	//PORTC++;
+
 	if (((received_data == READ_MEMORY) || (received_data == WRITE_MEMORY))) 
 	{
 		step = COMMAND_STEP;
@@ -68,22 +62,30 @@ ISR(USART_RX_vect)
 		{
 			command = received_data;
 			step = LOW_BYTE_STEP;
-			//PORTC = received_data;
 		}
 		break;
 		case LOW_BYTE_STEP:
 		{
 			bytes = received_data;
 			step = HIGH_BYTE_STEP;
-			//PORTC = received_data;
-			
 		}
 		break;
 		case HIGH_BYTE_STEP:
 		{
 			bytes |= (received_data << 8);
+			step = LOW_OFFSET_STEP;
+		}
+		break;
+		case LOW_OFFSET_STEP:
+		{
+			offset = received_data;
+			step = HIGH_OFFSET_STEP;
+		}
+		break;
+		case HIGH_OFFSET_STEP:
+		{
+			offset |= (received_data << 8);
 			step = DATA_STEP;
-			//PORTC = received_data;
 		}
 		break;
 		case DATA_STEP:
@@ -117,12 +119,17 @@ char read_mem(int address)
 	char addressh = (char)(((0xff00) & address) >> 8);
 	set_address_low(addressl);
 	set_address_high(addressh);
+	_delay_loop_1(2);
 	set_chip_enable(TRUE);
+	_delay_loop_1(2);
 	set_output_enable(TRUE);
+	_delay_loop_1(2);
 	char data = get_data();
-	_delay_loop_1(10);
+	_delay_loop_1(2);
 	set_chip_enable(FALSE);
+	_delay_loop_1(2);
 	set_output_enable(FALSE);
+	_delay_loop_1(2);
 	set_address_low_Z();
 	set_address_high_Z();
 	return data;
@@ -157,9 +164,6 @@ char usart_receive()
 void config()
 {
 	usart_start();
-	//DDRC = 255;
-	//_delay_loop_1(1);
-	//PORTC = 0;
 	init_ctrl_mem();
 	_delay_loop_1(100);
 	step = NULL;
@@ -170,17 +174,15 @@ void config()
 
 void loop() 
 {
-	// Only for testing//////
-	//if (bytes == 0)
-	//bytes = 32767;
-	//step = DATA_STEP;
-	//command = READ_MEMORY;
-	////////////////////////
 	if (step == DATA_STEP)
 	{
 		if (command == READ_MEMORY)
-		{			
-			for (long i = 0; read_idx < bytes && i < MAX_MEMORY; i++, read_idx++)
+		{
+			/************************************************************************/
+			/* NOTE: Only we can iterate until 28671, to extend this consider use   */
+			/* another data type other than int in the for.                         */
+			/************************************************************************/			
+			for (long i = offset; read_idx < bytes && i < MAX_MEMORY; i++, read_idx++)
 			{
 				// Send data to the host
 				char data = read_mem(read_idx);
@@ -193,7 +195,7 @@ void loop()
 			{
 				// Finish the process
 				read_idx=0;
-				step=COMMAND_STEP;
+				step=NULL;
 				command=NULL;
 			}
 		}

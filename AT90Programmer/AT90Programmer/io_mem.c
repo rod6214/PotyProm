@@ -44,18 +44,26 @@ void set_data_high_z()
 {
 	DDRD = DDRD & (~252);
 	_delay_loop_1(1);
-	DDRB = DDRB & (~3);
+	DDRB = DDRB & (~24);
 	_delay_loop_1(1);
 	PORTD = PORTD & (~252);
 	_delay_loop_1(1);
-	PORTB = PORTB & (~3);
+	PORTB = PORTB & (~24);
 	_delay_loop_1(1);
 }
 
 char get_data() 
 {
-	char datah = PIND & 252;
-	char datal = PINB & 3;
+	char datah = 0;
+	char datal = 0;
+	int i = 0;
+	while (i < 100) 
+	{
+		datah = PIND & 252;
+		datal = (PINB & 24) >> 3;
+		i++;
+		_delay_us(1);
+	}
 	return datah | datal;
 }
 
@@ -63,10 +71,10 @@ void set_data(char data)
 {
 	DDRD = DDRD | 252;
 	_delay_loop_1(1);
-	DDRB = DDRB | 3;
+	DDRB = DDRB | 24;
 	_delay_loop_1(1);
 	PORTD = PORTD | (data & 252);
-	PORTB = PORTB | (data & 3);
+	PORTB = PORTB | ((data & 3) << 3);
 	_delay_loop_1(1);
 }
 	
