@@ -344,8 +344,8 @@ namespace PotyProm
                                     //{
                                     //};
 
-                                    byte[] commandBuffer = new byte[4] { READ_MEMORY, 10, 0, 0 };
-                                    int[] output = new int[64];
+                                    byte[] commandBuffer = new byte[4] { READ_MEMORY, 0x7f, 0x00, 0 };
+                                    int[] output = new int[65536];
 
                                     mainWindowViewModel.StatusMessage = "Reading memory.";
                                     serialPortCommand = SerialPortCommand.NONE;
@@ -353,15 +353,17 @@ namespace PotyProm
                                     for (int i = 0; i < commandBuffer.Length; i++)
                                     {
                                         serialPort.Write(commandBuffer, i, 1);
-                                        //Thread.Sleep(500);
                                     }
+                                    int k = 0;
 
-                                    for (int i = 0; i < 10; i++)
+                                    for (int i = 0; i < 127; i++)
                                     {
                                         output[i] = serialPort.ReadByte();
+                                        k++;
                                     }
-
+                                    
                                     Thread.Sleep(500);
+                                    var dd = output.Where(x => x != 0).ToList();
                                     mainWindowViewModel.IsReadButtonEnabled = true;
                                     mainWindowViewModel.IsWriteButtonEnabled = true;
                                     mainWindowViewModel.IsCloseButtonEnabled = true;
