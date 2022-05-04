@@ -38,6 +38,7 @@ namespace PotyProm
         private bool isCloseButtonEnabled;
         private bool isOpenButtonEnabled;
         private string statusMessage;
+
         public bool IsReadButtonEnabled 
         { 
             get { return isReadButtonEnabled; } 
@@ -122,6 +123,8 @@ namespace PotyProm
         public const byte READ_MEMORY = 0x0A;
         public const byte WRITE_MEMORY = 0x0B;
         public const byte ACK = 0x0C;
+        public const int MAX_BUFFER_WRITE_LENGTH = 200;
+        public const byte GET_MORE = 0x0D;
 
         public MainWindow()
         {
@@ -339,14 +342,14 @@ namespace PotyProm
                         {
                             case SerialPortCommand.READ_MEMORY:
                                 {
-                                    Trace.WriteLine("Reading memory.");
-                                    //serialPort.DataReceived += (object sender, SerialDataReceivedEventArgs e) =>
-                                    //{
-                                    //};
+                                    int bytes = 10;
+                                    byte addressl = (byte)(0xff & bytes);
+                                    byte addressh = (byte)((0xff00 & bytes) >> 8);
 
-                                    byte[] commandBuffer = new byte[6] { READ_MEMORY, 0xff, 0x7f, 0, 0, 0 };
+                                    byte[] commandBuffer = new byte[6] { READ_MEMORY, addressl, addressh, 0, 0, 0 };
                                     int[] output = new int[65536];
 
+                                    Trace.WriteLine("Reading memory.");
                                     mainWindowViewModel.StatusMessage = "Reading memory.";
                                     serialPortCommand = SerialPortCommand.NONE;
 
@@ -356,13 +359,13 @@ namespace PotyProm
                                     }
                                     int k = 0;
 
-                                    for (int i = 0; i < 32767; i++)
+                                    for (int i = 0; i < bytes; i++)
                                     {
                                         output[i] = serialPort.ReadByte();
                                         k++;
                                     }
                                     
-                                    Thread.Sleep(500);
+                                    Thread.Sleep(100);
                                     var dd = output.Where(x => x != 0).ToList();
                                     mainWindowViewModel.IsReadButtonEnabled = true;
                                     mainWindowViewModel.IsWriteButtonEnabled = true;
@@ -372,10 +375,59 @@ namespace PotyProm
                                 break;
                             case SerialPortCommand.WRITE_MEMORY:
                                 {
+                                    byte[] dataBuffer = new byte[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 255 };
+                                    int command;
+                                    byte addressl = (byte)(0xff & dataBuffer.Length);
+                                    byte addressh = (byte)((0xff00 & dataBuffer.Length) >> 8);
+                                    byte[] commandBuffer = new byte[5] { WRITE_MEMORY, addressl, addressh, 0, 0 };
+
                                     Trace.WriteLine("Writing memory.");
                                     mainWindowViewModel.StatusMessage = "Writing memory.";
                                     serialPortCommand = SerialPortCommand.NONE;
-                                    Thread.Sleep(500);
+
+                                    for (int i = 0; i < commandBuffer.Length; i++)
+                                    {
+                                        serialPort.Write(commandBuffer, i, 1);
+                                    }
+
+                                    int dataLen = dataBuffer.Length;
+                                    int index = 0;
+
+                                    while (index < dataLen)
+                                    {
+                                        for (int i = 0; index < dataLen && i < MAX_BUFFER_WRITE_LENGTH; i++, index++)
+                                        {
+                                            serialPort.Write(dataBuffer, i, 1);
+                                            // Wait for ACK
+                                            command = serialPort.ReadByte();
+
+                                            if (command != ACK)
+                                            {
+                                                throw new Exception("A wrong command received fromm device.");
+                                            }
+                                            //Thread.Sleep(100);
+                                            //if (dataLen - 1 != i) 
+                                            //{
+                                            //    // Wait for ACK
+                                            //    command = serialPort.ReadByte();
+
+                                            //    if (command != GET_MORE)
+                                            //    {
+                                            //        throw new Exception("A wrong command received fromm device.");
+                                            //    }
+                                            //}
+                                        }
+                                        // Wait for ACK
+                                        //serialPort.Write(dataBuffer, 0, 1);
+                                        //command = serialPort.ReadByte();
+
+                                        //if (command != ACK)
+                                        //{
+                                        //    throw new Exception("A wrong command received fromm device.");
+                                        //}
+                                    }
+
+                                    Thread.Sleep(100);
                                     mainWindowViewModel.IsReadButtonEnabled = true;
                                     mainWindowViewModel.IsWriteButtonEnabled = true;
                                     mainWindowViewModel.IsCloseButtonEnabled = true;

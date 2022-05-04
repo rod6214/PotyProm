@@ -72,7 +72,7 @@ void set_data(char data)
 	DDRD = DDRD | 252;
 	_delay_loop_1(1);
 	DDRB = DDRB | 24;
-	_delay_loop_1(1);
+	_delay_loop_1(10);
 	PORTD = PORTD | (data & 252);
 	PORTB = PORTB | ((data & 3) << 3);
 	_delay_loop_1(1);
