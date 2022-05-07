@@ -120,10 +120,22 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ext_eeprom_mem.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ext_eeprom_mem.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="io_mem.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="io_mem.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="io_uart.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="io_uart.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">

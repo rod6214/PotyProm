@@ -36,6 +36,8 @@
 #define LOW_OFFSET_STEP 5
 #define DATA_STEP 6
 #define WRITE_MEMORY_EXEC 7
+#define USART_TX_vect _VECTOR(13)
+#define USART_RX_vect _VECTOR(11)
 
 extern void set_address_low(char addressl);
 extern void set_address_high(char addressh);

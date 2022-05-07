@@ -350,15 +350,17 @@ namespace PotyProm
                                     int[] output = new int[10];
 
                                     int bytes = output.Length;
+                                    int offset = 0;
                                     byte addressl = (byte)(0xff & bytes);
                                     byte addressh = (byte)((0xff00 & bytes) >> 8);
+                                    byte offsetl = (byte)(0xff & offset);
+                                    byte offseth = (byte)((0xff00 & offset) >> 8);
 
                                     commandBuffer[0] = READ_MEMORY;
                                     commandBuffer[1] = addressl;
                                     commandBuffer[2] = addressh;
-                                    //commandBuffer[3] = 2;
-                                    //commandBuffer[4] = 3;
-                                    //commandBuffer[5] = 4;
+                                    commandBuffer[3] = offsetl;
+                                    commandBuffer[4] = offseth;
 
                                     Trace.WriteLine("Reading memory.");
                                     mainWindowViewModel.StatusMessage = "Reading memory.";
@@ -390,12 +392,18 @@ namespace PotyProm
                             case SerialPortCommand.WRITE_MEMORY:
                                 {
                                     byte[] commandBuffer = new byte[65];
+                                    int offset = 0;
+                                    int bytes = 64;
+                                    byte addressl = (byte)(0xff & bytes);
+                                    byte addressh = (byte)((0xff00 & bytes) >> 8);
+                                    byte offsetl = (byte)(0xff & offset);
+                                    byte offseth = (byte)((0xff00 & offset) >> 8);
 
                                     commandBuffer[0] = WRITE_MEMORY;
-                                    commandBuffer[1] = 64;
-                                    commandBuffer[2] = 0;
-                                    commandBuffer[3] = 5;
-                                    commandBuffer[4] = 3;
+                                    commandBuffer[1] = addressl;
+                                    commandBuffer[2] = addressh;
+                                    commandBuffer[3] = offsetl;
+                                    commandBuffer[4] = offseth;
                                     commandBuffer[5] = 3;
                                     commandBuffer[6] = 6;
                                     commandBuffer[7] = 45;
