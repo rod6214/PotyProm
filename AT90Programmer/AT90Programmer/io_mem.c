@@ -7,75 +7,110 @@
 # define F_CPU 4000000UL
 #include <avr/io.h>
 #include <util/delay.h>
+#include "io_mem.h"
 
-void set_address_low_Z() 
+void set_address_low_as_input() 
 {
-	DDRC = 0;
-	_delay_loop_1(2);
 	PORTC = 0;
 	_delay_loop_1(2);
+	DDRC = 0;
+	_delay_loop_1(2);
 }
 
-void set_address_high_Z()
+void set_address_high_as_input()
 {
-	DDRA = 0;
-	_delay_loop_1(2);
 	PORTA = 0;
 	_delay_loop_1(2);
-}
-
-void set_address_low(char addressl) 
-{
-	DDRC = 255;
-	_delay_loop_1(2);
-	PORTC = addressl;
+	DDRA = 0;
 	_delay_loop_1(2);
 }
 
-void set_address_high(char addressh)
+void set_data_as_input()
 {
-	DDRA = 255;
-	_delay_loop_1(2);
-	PORTA = addressh;
-	_delay_loop_1(2);
-}
-	
-void set_data_high_z() 
-{
-	DDRD = DDRD & (~252);
-	_delay_loop_1(1);
-	DDRB = DDRB & (~24);
-	_delay_loop_1(1);
 	PORTD = PORTD & (~252);
 	_delay_loop_1(1);
 	PORTB = PORTB & (~24);
 	_delay_loop_1(1);
+	DDRD = DDRD & (~252);
+	_delay_loop_1(1);
+	DDRB = DDRB & (~24);
+	_delay_loop_1(1);
 }
+
+void set_address_low_as_output()
+{
+	PORTC = 0;
+	_delay_loop_1(2);
+	DDRC = 255;
+	_delay_loop_1(2);
+}
+
+void set_address_high_as_output()
+{
+	PORTA = 0;
+	_delay_loop_1(2);
+	DDRA = 255;
+	_delay_loop_1(2);
+}
+
+void set_data_as_output()
+{
+	PORTD = PORTD & (~252);
+	_delay_loop_1(1);
+	PORTB = PORTB & (~24);
+	_delay_loop_1(1);
+	DDRD = DDRD | (252);
+	_delay_loop_1(3);
+	DDRB = DDRB | (24);
+	_delay_loop_1(3);
+}
+
+void set_address_low(char addressl) 
+{
+	__asm__ volatile (
+	"out %1, %0" "\n\t"
+	"nop " "\n\t"
+	"nop" "\n\t"
+	"nop"
+	: 
+	: "r" (addressl), "I" (0x15)
+	);
+}
+
+void set_address_high(char addressh)
+{
+	__asm__ volatile (
+	"out %1, %0" "\n\t"
+	"nop " "\n\t"
+	"nop" "\n\t"
+	"nop"
+	:
+	: "r" (addressh), "I" (0x1B)
+	);
+}
+
+void reset_ctrl() 
+{
+	PORTB |= ((1 << PB0) | (1 << PB1) | (1 << PB2));
+}
+
 
 char get_data() 
 {
 	char datah = 0;
 	char datal = 0;
-	int i = 0;
-	while (i < 100) 
-	{
-		datah = PIND & 252;
-		datal = (PINB & 24) >> 3;
-		i++;
-		_delay_us(1);
-	}
+	datah = PIND & 252;
+	datal = (PINB & 24) >> 3;
 	return datah | datal;
 }
 
 void set_data(char data) 
 {
-	DDRD = DDRD | 252;
-	_delay_loop_1(1);
-	DDRB = DDRB | 24;
-	_delay_loop_1(10);
-	PORTD = PORTD | (data & 252);
-	PORTB = PORTB | ((data & 3) << 3);
-	_delay_loop_1(1);
+	char resetOldDataD = PORTD & (~252);
+	char resetOldDataB = PORTB & (~24); 
+	PORTD = resetOldDataD | (data & 252);
+	PORTB = resetOldDataB | ((data & 3) << 3);
+	_delay_loop_1(20);
 }
 	
 void set_chip_enable(int value)
@@ -88,7 +123,6 @@ void set_chip_enable(int value)
 	{
 		PORTB = PORTB & (~(1 << PB0));
 	}
-	_delay_loop_1(20);
 }
 
 void set_output_enable(int value) 
@@ -101,7 +135,6 @@ void set_output_enable(int value)
 	{
 		PORTB = PORTB & (~(1 << PB1));
 	}
-	_delay_loop_1(20);
 }
 
 void set_write_enable(int value)
@@ -114,16 +147,24 @@ void set_write_enable(int value)
 	{
 		PORTB = PORTB & (~(1 << PB2));
 	}
-	_delay_loop_1(20);
 }
 
 void init_ctrl_mem()
 {
-	PORTB = PORTB | ((1 << PB0) | (1 << PB1) | (1 << PB2));
+	deactivate_ports();
+	reset_ctrl();
+	_delay_loop_1(20);
 	DDRB = DDRB | ((1 << DDB0) | (1 << DDB1) | (1 << DDB2));
-	_delay_loop_1(1);
-	set_address_low_Z();
-	set_address_high_Z();
-	set_data_high_z();
+	_delay_loop_1(20);
+}
+
+void deactivate_ports()
+{
+	_delay_loop_1(20);
+	set_address_high_as_input();
+	set_address_low_as_input();
+	_delay_loop_1(20);
+	set_data_as_input();
+	_delay_loop_1(20);
 }
 

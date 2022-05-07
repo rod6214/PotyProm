@@ -125,6 +125,7 @@ namespace PotyProm
         public const byte ACK = 0x0C;
         public const int MAX_BUFFER_WRITE_LENGTH = 200;
         public const byte GET_MORE = 0x0D;
+        public const byte STORE_DATA = 0x0E;
 
         public MainWindow()
         {
@@ -342,12 +343,22 @@ namespace PotyProm
                         {
                             case SerialPortCommand.READ_MEMORY:
                                 {
-                                    int bytes = 10;
+                                    //int bytes = 64;
+                                    
+
+                                    byte[] commandBuffer = new byte[65];
+                                    int[] output = new int[10];
+
+                                    int bytes = output.Length;
                                     byte addressl = (byte)(0xff & bytes);
                                     byte addressh = (byte)((0xff00 & bytes) >> 8);
 
-                                    byte[] commandBuffer = new byte[6] { READ_MEMORY, addressl, addressh, 0, 0, 0 };
-                                    int[] output = new int[65536];
+                                    commandBuffer[0] = READ_MEMORY;
+                                    commandBuffer[1] = addressl;
+                                    commandBuffer[2] = addressh;
+                                    //commandBuffer[3] = 2;
+                                    //commandBuffer[4] = 3;
+                                    //commandBuffer[5] = 4;
 
                                     Trace.WriteLine("Reading memory.");
                                     mainWindowViewModel.StatusMessage = "Reading memory.";
@@ -356,17 +367,20 @@ namespace PotyProm
                                     for (int i = 0; i < commandBuffer.Length; i++)
                                     {
                                         serialPort.Write(commandBuffer, i, 1);
+                                        Thread.Sleep(1);
                                     }
-                                    int k = 0;
 
-                                    for (int i = 0; i < bytes; i++)
+                                    var command = serialPort.ReadByte();
+
+                                    for (int i = 0; i < output.Length; i++)
                                     {
                                         output[i] = serialPort.ReadByte();
-                                        k++;
+                                        Thread.Sleep(1);
                                     }
-                                    
+
+                                    //command = serialPort.ReadByte();
+
                                     Thread.Sleep(100);
-                                    var dd = output.Where(x => x != 0).ToList();
                                     mainWindowViewModel.IsReadButtonEnabled = true;
                                     mainWindowViewModel.IsWriteButtonEnabled = true;
                                     mainWindowViewModel.IsCloseButtonEnabled = true;
@@ -375,11 +389,16 @@ namespace PotyProm
                                 break;
                             case SerialPortCommand.WRITE_MEMORY:
                                 {
-                                    byte[] dataBuffer = new byte[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 255 };
-                                    int command;
-                                    byte addressl = (byte)(0xff & dataBuffer.Length);
-                                    byte addressh = (byte)((0xff00 & dataBuffer.Length) >> 8);
-                                    byte[] commandBuffer = new byte[5] { WRITE_MEMORY, addressl, addressh, 0, 0 };
+                                    byte[] commandBuffer = new byte[65];
+
+                                    commandBuffer[0] = WRITE_MEMORY;
+                                    commandBuffer[1] = 64;
+                                    commandBuffer[2] = 0;
+                                    commandBuffer[3] = 5;
+                                    commandBuffer[4] = 3;
+                                    commandBuffer[5] = 3;
+                                    commandBuffer[6] = 6;
+                                    commandBuffer[7] = 45;
 
                                     Trace.WriteLine("Writing memory.");
                                     mainWindowViewModel.StatusMessage = "Writing memory.";
@@ -388,43 +407,21 @@ namespace PotyProm
                                     for (int i = 0; i < commandBuffer.Length; i++)
                                     {
                                         serialPort.Write(commandBuffer, i, 1);
+                                        Thread.Sleep(1);
                                     }
 
-                                    int dataLen = dataBuffer.Length;
-                                    int index = 0;
+                                    var command = serialPort.ReadByte();
 
-                                    while (index < dataLen)
+                                    if (command != ACK)
                                     {
-                                        for (int i = 0; index < dataLen && i < MAX_BUFFER_WRITE_LENGTH; i++, index++)
-                                        {
-                                            serialPort.Write(dataBuffer, i, 1);
-                                            // Wait for ACK
-                                            command = serialPort.ReadByte();
+                                        throw new Exception("A wrong command received fromm device.");
+                                    }
 
-                                            if (command != ACK)
-                                            {
-                                                throw new Exception("A wrong command received fromm device.");
-                                            }
-                                            //Thread.Sleep(100);
-                                            //if (dataLen - 1 != i) 
-                                            //{
-                                            //    // Wait for ACK
-                                            //    command = serialPort.ReadByte();
+                                    command = serialPort.ReadByte();
 
-                                            //    if (command != GET_MORE)
-                                            //    {
-                                            //        throw new Exception("A wrong command received fromm device.");
-                                            //    }
-                                            //}
-                                        }
-                                        // Wait for ACK
-                                        //serialPort.Write(dataBuffer, 0, 1);
-                                        //command = serialPort.ReadByte();
-
-                                        //if (command != ACK)
-                                        //{
-                                        //    throw new Exception("A wrong command received fromm device.");
-                                        //}
+                                    if (command != ACK)
+                                    {
+                                        throw new Exception("A wrong command received fromm device.");
                                     }
 
                                     Thread.Sleep(100);
