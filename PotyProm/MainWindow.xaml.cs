@@ -117,8 +117,7 @@ namespace PotyProm
         private int rowLength = 25;
         private int numColumns = 16;
         private IMemory memory;
-        //private SerialPort serialPort;
-        private Task serialPortTask;
+
         public SerialPortCommand serialPortCommand;
         private MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
         public const byte READ_MEMORY = 0x0A;
@@ -214,14 +213,8 @@ namespace PotyProm
 
         private void MainWindowCloseEvent(object sender, CancelEventArgs e) 
         {
-            if (serialPortTask != null) 
-            {
-                if (!serialPortTask.IsCompleted) 
-                {
-                    memory.SerialPort.Close();
-                    serialPortTask.Wait();
-                }
-            }
+            if (memory.SerialPort.IsOpen)
+                memory.SerialPort.Close();
         }
 
         private void CanExecuteCloseCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -268,13 +261,13 @@ namespace PotyProm
         private void ComportWindow_SaveEvent(object sender, ComportEventArgs e)
         {
             memory = new EEPROM_Mem(e.SerialPort);
-            //serialPort = e.SerialPort;
             mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(memory.SerialPort.PortName) 
                 && memory.SerialPort.BaudRate > 0;
-            //if (mainWindowViewModel.IsOpenButtonEnabled)
-            //{
-            //    serialPort.DataReceived += DataReceivedSerialPortEvent;
-            //}
+        }
+
+        private void Received_DataEvent(object sender, DataReceivedEventArgs args) 
+        {
+            loadFile(args.Buffer);
         }
 
         private void ConnectPortButtonEvent(object sender, RoutedEventArgs e)
@@ -282,7 +275,6 @@ namespace PotyProm
             try
             {
                 memory.SerialPort.Open();
-                ComportTask();
                 statusLabel.Content = "Serial port connected.";
                 mainWindowViewModel.IsReadButtonEnabled = true;
                 mainWindowViewModel.IsWriteButtonEnabled = true;
@@ -295,20 +287,35 @@ namespace PotyProm
             }
         }
 
-        private void ReadPortButtonEvent(object sender, RoutedEventArgs e)
+        private async void ReadPortButtonEvent(object sender, RoutedEventArgs e)
         {
             serialPortCommand = SerialPortCommand.READ_MEMORY;
             mainWindowViewModel.IsReadButtonEnabled = false;
             mainWindowViewModel.IsWriteButtonEnabled = false;
             mainWindowViewModel.IsCloseButtonEnabled = false;
+
+            byte[] bytes = await readMemoryAsync();
+            loadFile(bytes);
+
+            mainWindowViewModel.IsReadButtonEnabled = true;
+            mainWindowViewModel.IsWriteButtonEnabled = true;
+            mainWindowViewModel.IsCloseButtonEnabled = true;
+            mainWindowViewModel.StatusMessage = "Memory read.";
         }
 
-        private void WritePortButtonEvent(object sender, RoutedEventArgs e)
+        private async void WritePortButtonEvent(object sender, RoutedEventArgs e)
         {
             serialPortCommand = SerialPortCommand.WRITE_MEMORY;
             mainWindowViewModel.IsReadButtonEnabled = false;
             mainWindowViewModel.IsWriteButtonEnabled = false;
             mainWindowViewModel.IsCloseButtonEnabled = false;
+
+            await writeMemoryAsync();
+
+            mainWindowViewModel.IsReadButtonEnabled = true;
+            mainWindowViewModel.IsWriteButtonEnabled = true;
+            mainWindowViewModel.IsCloseButtonEnabled = true;
+            mainWindowViewModel.StatusMessage = "Memory written.";
         }
 
         private void ClosePortButtonEvent(object sender, RoutedEventArgs e)
@@ -328,54 +335,33 @@ namespace PotyProm
             }
         }
 
-        //private void DataReceivedSerialPortEvent(object sender, SerialDataReceivedEventArgs e) 
-        //{
-        //    SerialPort serialPort = (SerialPort)sender;
-        //    serialPort.
-        //}
-
-        private void ComportTask() 
+        private async Task<byte[]> readMemoryAsync() 
         {
-            serialPortTask = Task.Run(() => {
-                try
-                {
-                    while (memory.SerialPort.IsOpen)
-                    {
-                        switch(serialPortCommand) 
-                        {
-                            case SerialPortCommand.READ_MEMORY:
-                                {
-                                    var mem = memory.Read(0, 10);
-                                    Trace.WriteLine("Reading memory.");
-                                    mainWindowViewModel.StatusMessage = "Reading memory.";
-                                    serialPortCommand = SerialPortCommand.NONE;
+            if (!memory.SerialPort.IsOpen)
+                throw new Exception("Serial port is not opened");
 
-                                    Thread.Sleep(100);
-                                    mainWindowViewModel.IsReadButtonEnabled = true;
-                                    mainWindowViewModel.IsWriteButtonEnabled = true;
-                                    mainWindowViewModel.IsCloseButtonEnabled = true;
-                                    mainWindowViewModel.StatusMessage = "Memory read.";
-                                }
-                                break;
-                            case SerialPortCommand.WRITE_MEMORY:
-                                {
-                                    byte[] buffer = new byte[10] { 1,2,3,4,5,6,7,8,9,10 };
-                                    memory.Write(buffer, 0, buffer.Length);
-                                    Trace.WriteLine("Writing memory.");
-                                    mainWindowViewModel.StatusMessage = "Writing memory.";
-                                    serialPortCommand = SerialPortCommand.NONE;
+            var bytes = await Task.Run(() => {
+                var result = memory.Read(0, 1024);
 
-                                    Thread.Sleep(100);
-                                    mainWindowViewModel.IsReadButtonEnabled = true;
-                                    mainWindowViewModel.IsWriteButtonEnabled = true;
-                                    mainWindowViewModel.IsCloseButtonEnabled = true;
-                                    mainWindowViewModel.StatusMessage = "Memory written.";
-                                }
-                                break;
-                        }
-                    }
-                }
-                catch { }
+                Trace.WriteLine("Reading memory.");
+                mainWindowViewModel.StatusMessage = "Reading memory.";
+                serialPortCommand = SerialPortCommand.NONE;
+                return result;
+            });
+
+            return bytes;
+        }
+
+        private async Task writeMemoryAsync() 
+        {
+            await Task.Run(() => {
+                byte[] buffer = new byte[10] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+                
+                memory.Write(buffer, 0, buffer.Length);
+
+                Trace.WriteLine("Writing memory.");
+                mainWindowViewModel.StatusMessage = "Writing memory.";
+                serialPortCommand = SerialPortCommand.NONE;
             });
         }
     }

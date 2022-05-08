@@ -71,6 +71,7 @@
     <Compile Include="ComportWindow.xaml.cs">
       <DependentUpon>ComportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataReceivedEventArgs.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
