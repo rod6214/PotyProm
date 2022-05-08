@@ -345,7 +345,7 @@ namespace PotyProm
                         {
                             case SerialPortCommand.READ_MEMORY:
                                 {
-                                    var mem = memory.Read(0, 4);
+                                    var mem = memory.Read(0, 10);
                                     Trace.WriteLine("Reading memory.");
                                     mainWindowViewModel.StatusMessage = "Reading memory.";
                                     serialPortCommand = SerialPortCommand.NONE;
@@ -359,8 +359,8 @@ namespace PotyProm
                                 break;
                             case SerialPortCommand.WRITE_MEMORY:
                                 {
-                                    byte[] buffer = new byte[10];
-                                    memory.Write(buffer, 0, 10);
+                                    byte[] buffer = new byte[10] { 1,2,3,4,5,6,7,8,9,10 };
+                                    memory.Write(buffer, 0, buffer.Length);
                                     Trace.WriteLine("Writing memory.");
                                     mainWindowViewModel.StatusMessage = "Writing memory.";
                                     serialPortCommand = SerialPortCommand.NONE;

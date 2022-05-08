@@ -26,9 +26,8 @@ namespace PotyCore
 
         public byte[] Read(int offset, int count)
         {
-            int bytes = commandBuffer.Length;
-            byte addressl = (byte)(0xff & bytes);
-            byte addressh = (byte)((0xff00 & bytes) >> 8);
+            byte addressl = (byte)(0xff & count);
+            byte addressh = (byte)((0xff00 & count) >> 8);
             byte offsetl = (byte)(0xff & offset);
             byte offseth = (byte)((0xff00 & offset) >> 8);
             byte[] output = new byte[count];
@@ -84,6 +83,8 @@ namespace PotyCore
                 SerialPort.Write(commandBuffer, i, 1);
                 Thread.Sleep(1);
             }
+
+            Thread.Sleep(10);
 
             for (int i = 0; i < 2; i++) 
             {
