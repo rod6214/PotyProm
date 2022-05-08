@@ -43,5 +43,25 @@ namespace PotyCore
             return lines;
         }
 
+        public byte[] GetBytes(int gridWidth, List<string[]> lines) 
+        {
+            int n = gridWidth;
+            byte[] bytes = new byte[lines.Count * n];
+            int x = 0;
+            foreach(var line in lines) 
+            {
+                for (int i = 1, j = 0; i < line.Length; i++) 
+                {
+                    if (i % n == 0)
+                        continue;
+
+                    bytes[x * n + j++] = byte.Parse(line[i], System.Globalization.NumberStyles.HexNumber);
+                }
+
+                x++;
+            }
+            
+            return bytes;
+        }
     }
 }

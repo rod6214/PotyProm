@@ -148,7 +148,7 @@ namespace PotyProm
             GridMap gridMap = new GridMap();
             lines = gridMap.GetLines(numColumns, bin);
             gridList = new ObservableCollection<string[]>();
-
+            
             int k = 0;
 
             while (k < rowLength && k < lines.Count)
