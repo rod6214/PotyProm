@@ -31,8 +31,6 @@ namespace PotyCore
                 }
 
                 line[i % n + 1] = string.Format("{0:X2}", bytes[i]);
-
-                
             }
 
             if (line.Contains(null))

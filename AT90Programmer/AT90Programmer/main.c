@@ -13,7 +13,7 @@
 #include "ext_eeprom_mem.h"
 
 #define MAX_MEMORY 64
-char _buffer[MAX_MEMORY];
+char _buffer[MAX_MEMORY + 5];
 int _idx = 0;
 int command = 0;
 int data_sent = FALSE;
