@@ -26,6 +26,67 @@ namespace PotyCore
 
         public byte[] Read(int offset, int count)
         {
+            int number_of_packets = count / MAX_PACKAGE_SIZE;
+            int rest_of_packets = count % MAX_PACKAGE_SIZE;
+            int n = count < MAX_PACKAGE_SIZE ? 1 : rest_of_packets > 0 ? number_of_packets + 1 : number_of_packets;
+            int j = 0;
+
+            List<byte> items = new List<byte>();
+            
+            while (j < n) 
+            {
+                int length;
+                byte[] bytes;
+
+                if (rest_of_packets > 0 && (j + 1) == n)
+                {
+                    length = rest_of_packets;
+                }
+                else
+                {
+                    length = MAX_PACKAGE_SIZE;
+                }
+
+                if (count < MAX_PACKAGE_SIZE)
+                    bytes = read(j + offset, count);
+                else
+                    bytes = read(j * MAX_PACKAGE_SIZE + offset, length);
+                items.AddRange(bytes);
+                j++;
+            }
+            return items.ToArray();
+        }
+
+        public void Write(byte[] buffer, int offset, int count)
+        {
+            int number_of_packets = count / MAX_PACKAGE_SIZE;
+            int rest_of_packets = count % MAX_PACKAGE_SIZE;
+            int j = offset;
+            int k = 0;
+
+            while (j < count) 
+            {
+                byte[] packet;
+                if (k < number_of_packets && count >= MAX_PACKAGE_SIZE)
+                {
+                    packet = new byte[MAX_PACKAGE_SIZE];
+                }
+                else
+                {
+                    packet = new byte[rest_of_packets];
+                }
+
+                for (int i = offset; j < count && i < MAX_PACKAGE_SIZE; i++, j++) 
+                {
+                    packet[i] = buffer[j];
+                }
+                write(packet, j - packet.Length, packet.Length);
+                k++;
+            }
+        }
+
+        private byte[] read(int offset, int count)
+        {
             byte addressl = (byte)(0xff & count);
             byte addressh = (byte)((0xff00 & count) >> 8);
             byte offsetl = (byte)(0xff & offset);
@@ -60,7 +121,7 @@ namespace PotyCore
             return output;
         }
 
-        public void Write(byte[] buffer, int offset, int count)
+        private void write(byte[] buffer, int offset, int count) 
         {
             byte addressl = (byte)(0xff & count);
             byte addressh = (byte)((0xff00 & count) >> 8);
@@ -73,7 +134,7 @@ namespace PotyCore
             commandBuffer[3] = offsetl;
             commandBuffer[4] = offseth;
 
-            for (int i = 0; i < buffer.Length; i++) 
+            for (int i = 0; i < buffer.Length; i++)
             {
                 commandBuffer[i + 5] = buffer[i];
             }
@@ -86,7 +147,7 @@ namespace PotyCore
 
             Thread.Sleep(10);
 
-            for (int i = 0; i < 2; i++) 
+            for (int i = 0; i < 2; i++)
             {
                 var response = SerialPort.ReadByte();
 

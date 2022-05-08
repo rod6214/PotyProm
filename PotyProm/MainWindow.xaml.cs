@@ -110,7 +110,7 @@ namespace PotyProm
     public partial class MainWindow : Window
     {
         public static RoutedCommand OpenComport = new RoutedCommand();
-
+        private GridMap gridMap;
         private ObservableCollection<string[]> gridList;
         private List<string[]> lines;
         private int scrollTableIndex = 0;
@@ -129,6 +129,7 @@ namespace PotyProm
 
         public MainWindow()
         {
+            gridMap = new GridMap();
             DataContext = mainWindowViewModel;
             InitializeComponent();
 
@@ -145,7 +146,7 @@ namespace PotyProm
 
         private void loadFile(byte[] bin)
         {
-            GridMap gridMap = new GridMap();
+            
             lines = gridMap.GetLines(numColumns, bin);
             gridList = new ObservableCollection<string[]>();
             
@@ -213,6 +214,10 @@ namespace PotyProm
 
         private void MainWindowCloseEvent(object sender, CancelEventArgs e) 
         {
+            if (memory == null)
+                return;
+            if (memory.SerialPort == null)
+                return;
             if (memory.SerialPort.IsOpen)
                 memory.SerialPort.Close();
         }
@@ -310,7 +315,8 @@ namespace PotyProm
             mainWindowViewModel.IsWriteButtonEnabled = false;
             mainWindowViewModel.IsCloseButtonEnabled = false;
 
-            await writeMemoryAsync();
+            byte[] bytes = gridMap.GetBytes(numColumns, lines);
+            await writeMemoryAsync(bytes);
 
             mainWindowViewModel.IsReadButtonEnabled = true;
             mainWindowViewModel.IsWriteButtonEnabled = true;
@@ -339,9 +345,8 @@ namespace PotyProm
         {
             if (!memory.SerialPort.IsOpen)
                 throw new Exception("Serial port is not opened");
-
             var bytes = await Task.Run(() => {
-                var result = memory.Read(0, 1024);
+                var result = memory.Read(0, 32768);
 
                 Trace.WriteLine("Reading memory.");
                 mainWindowViewModel.StatusMessage = "Reading memory.";
@@ -352,11 +357,10 @@ namespace PotyProm
             return bytes;
         }
 
-        private async Task writeMemoryAsync() 
+        private async Task writeMemoryAsync(byte[] buffer) 
         {
             await Task.Run(() => {
-                byte[] buffer = new byte[10] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
-                
+
                 memory.Write(buffer, 0, buffer.Length);
 
                 Trace.WriteLine("Writing memory.");
