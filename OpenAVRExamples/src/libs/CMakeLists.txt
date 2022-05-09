@@ -4,3 +4,5 @@ add_avr_library(
    libs
    test.c
 )
+
+# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs)
