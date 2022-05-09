@@ -9,7 +9,8 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "__AVR_AT90S8535__"
             ],
             "windowsSdkVersion": "10.0.19041.0",
             "compilerPath": "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/bin/avr-gcc",
