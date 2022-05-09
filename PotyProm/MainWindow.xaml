@@ -72,10 +72,21 @@
                     DockPanel.Dock="Left" VerticalAlignment="Center"/>
                 <ComboBox Name="comboSerial" Width="142"/>-->
             </Grid>
-            <DockPanel Background="LemonChiffon" LastChildFill="True">
-            </DockPanel >
-            <StackPanel x:Name="myStackPanel" Orientation="Vertical"></StackPanel>
-            <ScrollBar x:Name="gridScroll" Width="Auto" Scroll="ScrollBar_Scroll"/>
+            <!--<DockPanel Background="LemonChiffon" LastChildFill="True">
+            </DockPanel >-->
+            <!--<StackPanel x:Name="myStackPanel" Orientation="Vertical"></StackPanel>-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="6*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" />
+                <ComboBox Grid.Column="1" />
+                <!--<ComboBox Grid.Column="1" Text="Port"/>-->
+                <ScrollBar Grid.Column="2" x:Name="gridScroll" Width="Auto" Scroll="ScrollBar_Scroll"/>
+            </Grid>
+            
             <DataGrid x:Name="myDataGrid" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False">
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}">

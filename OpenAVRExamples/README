@@ -1,0 +1,3 @@
+https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
+
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\OpenAVRTest\avr-toolchain.cmake -B C:\Develop\OpenAVRTest\build -S C:\Develop\OpenAVRTest
