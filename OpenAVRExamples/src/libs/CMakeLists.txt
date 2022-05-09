@@ -1,5 +1,6 @@
+# enable_language(C ASM)
+# set_property(SOURCE test.s APPEND PROPERTY COMPILE_OPTIONS "-x" "assembler-with-cpp")
 add_avr_library(
-   mylib
-   mylib.c 
-   mylib.h
+   libs
+   test.c
 )

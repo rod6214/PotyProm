@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+extern void testing();
 
 void config()
 {
@@ -20,6 +21,7 @@ void loop()
     {
         PORTB = 1;
     }
+    testing();
     _delay_ms(200);
 }
 
