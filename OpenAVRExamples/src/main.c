@@ -2,8 +2,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-
-extern void testing();
+#include "test.h"
 
 void config()
 {
