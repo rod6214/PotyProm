@@ -1,9 +1,6 @@
-# enable_language(C ASM)
-# set_property(SOURCE test.s APPEND PROPERTY COMPILE_OPTIONS "-x" "assembler-with-cpp")
-add_library(
-   libs
-   test.c
-   test.h
-)
+enable_language(C ASM)
 
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs)
+add_avr_library(
+   libs
+   test.s
+)
