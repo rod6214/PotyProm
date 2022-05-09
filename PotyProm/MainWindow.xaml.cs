@@ -180,6 +180,7 @@ namespace PotyProm
             gridMap = new GridMap();
             DataContext = mainWindowViewModel;
             InitializeComponent();
+            CenterWindowOnScreen();
 
             for (int i = 0; i < numColumns; i++)
             {
@@ -297,11 +298,35 @@ namespace PotyProm
             openFileDialog.ShowDialog();
         }
 
+        private void CanSaveCloseCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ExecutedSaveCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileOk += SaveDialogEvent;
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = ".bin";
+            saveFileDialog.Filter = "Bin File (*.bin)|*.bin| HEX Files (*.HEX;*.hex)|*.hex";
+            saveFileDialog.ShowDialog();
+        }
+
+        private void SaveDialogEvent(object sender, CancelEventArgs e) 
+        {
+            var bin = gridMap.GetBytes(numColumns, lines);
+            var saveDialog = (SaveFileDialog)sender;
+            File.WriteAllBytes(saveDialog.FileName, bin);
+            mainWindowViewModel.StatusMessage = "Binary saved.";
+        }
+
         private void OpenDialogEvent(object sender, CancelEventArgs e)
         {
             var openDialog = (OpenFileDialog)sender;
             var bin = File.ReadAllBytes(openDialog.FileName);
             loadFile(bin);
+            mainWindowViewModel.StatusMessage = "Binary opened.";
         }
 
         private void CanExecuteComportCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -312,8 +337,8 @@ namespace PotyProm
         private void ExecutedComportCommand(object sender, ExecutedRoutedEventArgs e)
         {
             ComportWindow comport = new ComportWindow();
-            comport.Show();
             comport.SaveEvent += ComportWindow_SaveEvent;
+            comport.ShowDialog();
         }
 
         private void ComportWindow_SaveEvent(object sender, ComportEventArgs e)
@@ -352,16 +377,34 @@ namespace PotyProm
             }
         }
 
+        private void CenterWindowOnScreen()
+        {
+            double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+            double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+            double windowWidth = this.Width;
+            double windowHeight = this.Height;
+            this.Left = (screenWidth / 2) - (windowWidth / 2);
+            this.Top = (screenHeight / 2) - (windowWidth / 2);
+        }
+
         private async void ReadPortButtonEvent(object sender, RoutedEventArgs e)
         {
+            loadFile(new byte[0]);
+            var offset = mainWindowViewModel.Offset;
+            var size = mainWindowViewModel.SelectedSize;
+
+            if (string.IsNullOrEmpty(size)) 
+            {
+                MessageBox.Show("Bad memory size");
+                mainWindowViewModel.StatusMessage = "Size error.";
+                return;
+            }
+
             serialPortCommand = SerialPortCommand.READ_MEMORY;
             mainWindowViewModel.IsReadButtonEnabled = false;
             mainWindowViewModel.IsWriteButtonEnabled = false;
             mainWindowViewModel.IsCloseButtonEnabled = false;
 
-            loadFile(new byte[0]);
-            var offset = mainWindowViewModel.Offset;
-            var size = mainWindowViewModel.SelectedSize;
             Trace.WriteLine("Reading memory.");
             mainWindowViewModel.StatusMessage = "Reading memory.";
             byte[] bytes = await readMemoryAsync(offset, int.Parse(size));
@@ -376,6 +419,20 @@ namespace PotyProm
 
         private async void WritePortButtonEvent(object sender, RoutedEventArgs e)
         {
+            if (lines == null) 
+            {
+                MessageBox.Show("There's not a binary loaded yet.");
+                mainWindowViewModel.StatusMessage = "Write error.";
+                return;
+            }
+
+            if (lines.Count == 0) 
+            {
+                MessageBox.Show("There's not a binary loaded yet.");
+                mainWindowViewModel.StatusMessage = "Write error.";
+                return;
+            }
+
             serialPortCommand = SerialPortCommand.WRITE_MEMORY;
             mainWindowViewModel.IsReadButtonEnabled = false;
             mainWindowViewModel.IsWriteButtonEnabled = false;

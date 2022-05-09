@@ -15,6 +15,9 @@
         <CommandBinding Command="{x:Static ApplicationCommands.Open}"
                     Executed="ExecutedOpenCommand"
                     CanExecute="CanOpenCloseCommand" />
+        <CommandBinding Command="{x:Static ApplicationCommands.Save}"
+                    Executed="ExecutedSaveCommand"
+                    CanExecute="CanSaveCloseCommand" />
         <CommandBinding Command="{x:Static local:MainWindow.OpenComport}"
                     Executed="ExecutedComportCommand"
                     CanExecute="CanExecuteComportCommand" />
@@ -26,8 +29,7 @@
                 <MenuItem Header="_File" HorizontalAlignment="Right">
                     <MenuItem Command="ApplicationCommands.Open"/>
                     <MenuItem Command="ApplicationCommands.Save"/>
-                    <MenuItem Command="ApplicationCommands.Close"
-                              />
+                    <MenuItem Command="ApplicationCommands.Close"/>
                 </MenuItem>
                 <MenuItem Header="_Device">
                     <!--<MenuItem Header="_Bold" IsCheckable="True"/>
