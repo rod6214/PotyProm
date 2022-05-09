@@ -22,10 +22,6 @@ add_definitions("-MP")
 add_definitions("-MF")
 add_definitions("-std=gnu99")
 
-set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/OpenAVRExamples")
-
-include_directories(${AVR-EXAMPLE_SOURCE_DIR}/libs)
-
-add_subdirectory(libs)
+set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/AT90ProgrammerCmake/AT90Programmer/src")
 
 add_subdirectory(src)
