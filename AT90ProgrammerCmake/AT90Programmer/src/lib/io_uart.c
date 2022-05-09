@@ -23,7 +23,8 @@ void usart_start()
 	UCR = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE) | (1 << TXCIE) | (1 << CHR9);
 	_delay_loop_1(1);
 	// UBRRL = 25;
-	UBRR = 25;
+	// UBRR = 25;
+	UBRR = 12;
 	_delay_loop_1(1);
 }
 

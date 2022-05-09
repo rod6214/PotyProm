@@ -19,23 +19,29 @@ char read_mem(int address)
 	char addressh = HIGH_BYTE(address);
 	set_address_low(addressl);
 	set_address_high(addressh);
-	_delay_us(5);
+	// _delay_us(5);
+	_delay_loop_1(5);
 	set_chip_enable(TRUE);
-	_delay_us(5);
+	// _delay_us(5);
+	_delay_loop_1(5);
 	set_output_enable(TRUE);
-	_delay_us(5);
+	// _delay_us(5);
+	_delay_loop_1(5);
 	char data = 0;
 	int i = 0;
-	while(i < 255)
+	while(i < 5)
 	{
 		data = get_data();
 		i++;
-		_delay_us(1);
+		// _delay_us(1);
+		_delay_loop_1(5);
 	}
 	set_chip_enable(FALSE);
-	_delay_us(5);
+	// _delay_us(5);
+	_delay_loop_1(5);
 	set_output_enable(FALSE);
-	_delay_us(5);
+	// _delay_us(5);
+	_delay_loop_1(5);
 	return data;
 }
 

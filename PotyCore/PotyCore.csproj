@@ -60,6 +60,7 @@
     <Compile Include="IMemory.cs" />
     <Compile Include="IntelHexFormatter.cs" />
     <Compile Include="IFormatter.cs" />
+    <Compile Include="PackageSentEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

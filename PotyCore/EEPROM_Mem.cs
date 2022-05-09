@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace PotyCore
 {
+    public delegate void PackageSentEventHandler(object sender, PackageSentEventArgs args); 
     public class EEPROM_Mem : IMemory
     {
         private byte[] commandBuffer;
@@ -15,6 +16,8 @@ namespace PotyCore
         public const byte READ_MEMORY = 0x0A;
         public const byte WRITE_MEMORY = 0x0B;
         public const byte ACK = 0x0C;
+
+        public PackageSentEventHandler PackageSentEvent;
 
         public SerialPort SerialPort { get; set; }
 
@@ -52,6 +55,7 @@ namespace PotyCore
                 else
                     bytes = read(j * MAX_PACKAGE_SIZE + offset, length);
                 items.AddRange(bytes);
+                PackageSentEvent?.Invoke(this, new PackageSentEventArgs(length, items.Count, count));
                 j++;
             }
             return items.ToArray();

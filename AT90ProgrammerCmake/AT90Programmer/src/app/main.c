@@ -82,7 +82,7 @@ void loop()
 		{
 			reset_ctrl();
 			prepare_for_read();
-			_delay_loop_1(100);
+			_delay_loop_1(5);
 			
 			EEPROM_t* pEeprom = get_eeprom(_buffer);
 			

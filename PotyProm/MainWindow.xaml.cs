@@ -38,6 +38,54 @@ namespace PotyProm
         private bool isCloseButtonEnabled;
         private bool isOpenButtonEnabled;
         private string statusMessage;
+        private readonly string[] memSizes = new string[] { "256", "512", "1024", "2048", "4096", "8192", "16384", "32768", "65536" };
+        private int offset;
+        private string selectedSize;
+        private double progess;
+
+        public string[] MemSizes 
+        {
+            get { return memSizes; }
+        }
+
+        public double Progess
+        {
+            get { return progess; }
+            set
+            {
+                if (value != progess)
+                {
+                    progess = value;
+                    OnPropertyChanged(nameof(Progess));
+                }
+            }
+        }
+
+        public string SelectedSize
+        {
+            get { return selectedSize; }
+            set
+            {
+                if (value != selectedSize)
+                {
+                    selectedSize = value;
+                    OnPropertyChanged(nameof(SelectedSize));
+                }
+            }
+        }
+
+        public int Offset 
+        {
+            get { return offset; }
+            set
+            {
+                if (value != offset)
+                {
+                    offset = value;
+                    OnPropertyChanged(nameof(Offset));
+                }
+            }
+        }
 
         public bool IsReadButtonEnabled 
         { 
@@ -146,7 +194,12 @@ namespace PotyProm
 
         private void loadFile(byte[] bin)
         {
-            
+            if (bin.Length == 0)
+            {
+                myDataGrid.ItemsSource = null;
+                return;
+            }
+
             lines = gridMap.GetLines(numColumns, bin);
             gridList = new ObservableCollection<string[]>();
             
@@ -266,8 +319,15 @@ namespace PotyProm
         private void ComportWindow_SaveEvent(object sender, ComportEventArgs e)
         {
             memory = new EEPROM_Mem(e.SerialPort);
+            ((EEPROM_Mem)memory).PackageSentEvent += DataMemory_SerialSent;
             mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(memory.SerialPort.PortName) 
                 && memory.SerialPort.BaudRate > 0;
+        }
+
+        private void DataMemory_SerialSent(object sender, PackageSentEventArgs args) 
+        {
+            var progress = (double)args.AccumulatedBytes / args.ExpectedBytes * 100;
+            mainWindowViewModel.Progess = progress;
         }
 
         private void Received_DataEvent(object sender, DataReceivedEventArgs args) 
@@ -299,7 +359,13 @@ namespace PotyProm
             mainWindowViewModel.IsWriteButtonEnabled = false;
             mainWindowViewModel.IsCloseButtonEnabled = false;
 
-            byte[] bytes = await readMemoryAsync();
+            loadFile(new byte[0]);
+            var offset = mainWindowViewModel.Offset;
+            var size = mainWindowViewModel.SelectedSize;
+            Trace.WriteLine("Reading memory.");
+            mainWindowViewModel.StatusMessage = "Reading memory.";
+            byte[] bytes = await readMemoryAsync(offset, int.Parse(size));
+            serialPortCommand = SerialPortCommand.NONE;
             loadFile(bytes);
 
             mainWindowViewModel.IsReadButtonEnabled = true;
@@ -341,16 +407,12 @@ namespace PotyProm
             }
         }
 
-        private async Task<byte[]> readMemoryAsync() 
+        private async Task<byte[]> readMemoryAsync(int offset, int size) 
         {
             if (!memory.SerialPort.IsOpen)
                 throw new Exception("Serial port is not opened");
             var bytes = await Task.Run(() => {
-                var result = memory.Read(0, 32768);
-
-                Trace.WriteLine("Reading memory.");
-                mainWindowViewModel.StatusMessage = "Reading memory.";
-                serialPortCommand = SerialPortCommand.NONE;
+                var result = memory.Read(offset, size);
                 return result;
             });
 

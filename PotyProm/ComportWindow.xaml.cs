@@ -22,7 +22,7 @@ namespace PotyProm
     public partial class ComportWindow : Window
     {
         private string[] portNames;
-        private readonly string[] baudRate = new string[] { /*"110",  "300", "600", "1200", "2400", "4800",*/ "9600"/*, "14400"*/ };
+        private readonly string[] baudRate = new string[] { /*"110", "300", "600", "1200", "2400", "4800", "9600", "14400", */ "19200" };
         public SerialPort SerialPort { get; }
         public event SaveComportEventHandler SaveEvent = null;
 
