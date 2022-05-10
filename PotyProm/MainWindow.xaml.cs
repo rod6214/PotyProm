@@ -419,6 +419,8 @@ namespace PotyProm
 
         private async void WritePortButtonEvent(object sender, RoutedEventArgs e)
         {
+            var offset = mainWindowViewModel.Offset;
+
             if (lines == null) 
             {
                 MessageBox.Show("There's not a binary loaded yet.");
@@ -439,7 +441,7 @@ namespace PotyProm
             mainWindowViewModel.IsCloseButtonEnabled = false;
 
             byte[] bytes = gridMap.GetBytes(numColumns, lines);
-            await writeMemoryAsync(bytes);
+            await writeMemoryAsync(bytes, offset);
 
             mainWindowViewModel.IsReadButtonEnabled = true;
             mainWindowViewModel.IsWriteButtonEnabled = true;
@@ -476,11 +478,11 @@ namespace PotyProm
             return bytes;
         }
 
-        private async Task writeMemoryAsync(byte[] buffer) 
+        private async Task writeMemoryAsync(byte[] buffer, int offset) 
         {
             await Task.Run(() => {
 
-                memory.Write(buffer, 0, buffer.Length);
+                memory.Write(buffer, offset, buffer.Length);
 
                 Trace.WriteLine("Writing memory.");
                 mainWindowViewModel.StatusMessage = "Writing memory.";

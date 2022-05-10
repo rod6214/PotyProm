@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace PotyCore
 {
-    public delegate void PackageSentEventHandler(object sender, PackageSentEventArgs args); 
+    public delegate void PackageSentEventHandler(object sender, PackageSentEventArgs args);
+
     public class EEPROM_Mem : IMemory
     {
         private byte[] commandBuffer;
@@ -85,6 +86,7 @@ namespace PotyCore
                     packet[i] = buffer[j];
                 }
                 write(packet, j - packet.Length, packet.Length);
+                PackageSentEvent?.Invoke(this, new PackageSentEventArgs(packet.Length, j, count));
                 k++;
             }
         }
