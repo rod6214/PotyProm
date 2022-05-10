@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
 set(AVR_MCU atmega2560)
-set(F_CPU 16E6)
+add_compile_definitions(F_CPU=16E6)
+add_compile_definitions(__AVR_ATmega2560__)
 
 project(LogicAnalyzer)
 

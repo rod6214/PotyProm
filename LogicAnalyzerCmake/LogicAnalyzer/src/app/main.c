@@ -8,13 +8,13 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-ISR(USART_TX_vect)
+ISR(USART0_TX_vect)
 {
 	cli();
 	sei();
 }
 
-ISR(USART_RX_vect)
+ISR(USART0_RX_vect)
 {
 	cli();
 	sei();
@@ -22,19 +22,12 @@ ISR(USART_RX_vect)
 
 void config()
 {
+	PORTB = 0;
+	DDRB = (1 << DD0);
 }
 
 void loop() 
 {
-}
 
-int main(void)
-{
-	config();
-    /* Replace with your application code */
-    while (1) 
-    {
-		loop();
-    }
 }
 

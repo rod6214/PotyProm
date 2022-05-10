@@ -2,6 +2,8 @@
     "files.associations": {
         "io.h": "c",
         "test.h": "c",
-        "delay.h": "c"
+        "delay.h": "c",
+        "interrupt.h": "c",
+        "startup.h": "c"
     }
 }
