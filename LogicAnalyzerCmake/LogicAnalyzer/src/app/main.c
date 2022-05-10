@@ -28,6 +28,14 @@ void config()
 
 void loop() 
 {
-
+	if (PORTB & (1 << PB0)) 
+	{
+		PORTB &= ~(1 << PB0);
+	}
+	else 
+	{
+		PORTB |= (1 << PB0);
+	}
+	_delay_ms(200);
 }
 

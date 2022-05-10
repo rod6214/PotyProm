@@ -1,5 +1,10 @@
 https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
 https://github.com/mkleemann/cmake-avr
 cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\LogicAnalyzerCmake\LogicAnalyzer\avr-toolchain.cmake -B C:\Develop\RomProgrammer\LogicAnalyzerCmake\LogicAnalyzer\build -S C:\Develop\RomProgrammer\LogicAnalyzerCmake\LogicAnalyzer
-avrdude -c USBasp -p 8535 -u -U flash:w:LogicAnalyzer.hex:i
+avrdude -c USBasp -p m2560 -u -U flash:w:LogicAnalyzer.hex:i
 https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
+
+To check communication:
+
+avrdude -c USBasp -p m2560 -u -U lfuse:r:result.txt:i
+avrdude -c USBasp -p m2560 -u -U flash:r:result.txt:i
