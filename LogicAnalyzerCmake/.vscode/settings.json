@@ -4,6 +4,7 @@
         "test.h": "c",
         "delay.h": "c",
         "interrupt.h": "c",
-        "startup.h": "c"
+        "startup.h": "c",
+        "io_uart.h": "c"
     }
 }

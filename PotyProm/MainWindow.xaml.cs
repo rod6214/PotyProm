@@ -20,6 +20,7 @@ using Microsoft.Win32;
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Threading;
+using System.Reflection;
 
 namespace PotyProm
 {
@@ -158,6 +159,7 @@ namespace PotyProm
     public partial class MainWindow : Window
     {
         public static RoutedCommand OpenComport = new RoutedCommand();
+        public static RoutedCommand OpenSerialConsole = new RoutedCommand();
         private GridMap gridMap;
         private ObservableCollection<string[]> gridList;
         private List<string[]> lines;
@@ -181,6 +183,15 @@ namespace PotyProm
             DataContext = mainWindowViewModel;
             InitializeComponent();
             CenterWindowOnScreen();
+
+
+            var menuDropAlignmentField = typeof(SystemParameters).GetField("_menuDropAlignment", BindingFlags.NonPublic | BindingFlags.Static);
+
+            Action setAlignmentValue = () => {
+                if (SystemParameters.MenuDropAlignment && menuDropAlignmentField != null) menuDropAlignmentField.SetValue(null, false);
+            };
+            setAlignmentValue();
+            SystemParameters.StaticPropertyChanged += (sender, e) => { setAlignmentValue(); };
 
             for (int i = 0; i < numColumns; i++)
             {
@@ -327,6 +338,15 @@ namespace PotyProm
             var bin = File.ReadAllBytes(openDialog.FileName);
             loadFile(bin);
             mainWindowViewModel.StatusMessage = "Binary opened.";
+        }
+        
+        private void CanExecuteSerialConsoleCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void ExecutedSerialConsoleCommand(object sender, ExecutedRoutedEventArgs e)
+        {
         }
 
         private void CanExecuteComportCommand(object sender, CanExecuteRoutedEventArgs e)

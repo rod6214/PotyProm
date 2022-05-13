@@ -5,3 +5,9 @@ add_avr_library(
    startup.c
    startup.h
 )
+
+add_avr_library(
+   io_uart
+   io_uart.c
+   io_uart.h
+)

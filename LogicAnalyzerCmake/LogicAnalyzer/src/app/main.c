@@ -7,35 +7,40 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "standard.h"
+#include "io_uart.h"
+
+#define MAX_MEMORY 1024
+char _buffer[MAX_MEMORY + 5];
+int _idx = 0;
+int data_sent = FALSE;
+int isBusy = FALSE;
+#define wait_host() while(!data_sent); data_sent=FALSE
 
 ISR(USART0_TX_vect)
 {
 	cli();
+	data_sent = TRUE;
 	sei();
 }
 
 ISR(USART0_RX_vect)
 {
 	cli();
+	int data = usart_receive();
+	PORTA = data;
+	// _buffer[_idx] = usart_receive();
+	// _idx++;
 	sei();
 }
 
 void config()
 {
-	PORTB = 0;
-	DDRB = (1 << DD0);
+	PORTA = 0;
+	DDRA = 255;
 }
 
 void loop() 
 {
-	if (PORTB & (1 << PB0)) 
-	{
-		PORTB &= ~(1 << PB0);
-	}
-	else 
-	{
-		PORTB |= (1 << PB0);
-	}
-	_delay_ms(200);
 }
 

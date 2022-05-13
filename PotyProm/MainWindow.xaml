@@ -21,6 +21,9 @@
         <CommandBinding Command="{x:Static local:MainWindow.OpenComport}"
                     Executed="ExecutedComportCommand"
                     CanExecute="CanExecuteComportCommand" />
+        <CommandBinding Command="{x:Static local:MainWindow.OpenSerialConsole}"
+                    Executed="ExecutedSerialConsoleCommand"
+                    CanExecute="CanExecuteSerialConsoleCommand" />
     </Window.CommandBindings>
     <Grid>
         
@@ -41,7 +44,10 @@
                 </MenuItem>
                 <MenuItem Header="_Connection">
                     <MenuItem Header="_Module">
-                        <MenuItem Header="_PotyPro I"/>
+                        <MenuItem Header="_PotyPro I"  />
+                    </MenuItem>
+                    <MenuItem Header="_Console">
+                        <MenuItem Command="local:MainWindow.OpenSerialConsole" Header="_Serial Console"/>
                     </MenuItem>
                     <MenuItem Header="_Configuration">
                         <MenuItem Command="local:MainWindow.OpenComport" Header="_Serial Port"/>
