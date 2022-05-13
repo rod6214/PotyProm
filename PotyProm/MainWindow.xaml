@@ -64,7 +64,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="5*" />
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1.2*" />
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="2*" />
@@ -74,15 +74,15 @@
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Go to:" Margin="1,0,1,0" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold"/>
+                <!--<TextBlock Text="Go to:" Margin="1,0,1,0" Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold"/>
                 
-                <TextBox Grid.Column="1" Height="Auto" Width="Auto" Margin="1,1,1,1"/>
+                <TextBox Grid.Column="1" Height="Auto" Width="Auto" Margin="1,1,1,1"/>-->
 
-                <TextBlock Text="Offset:" Margin="1,0,1,0" Grid.Column="2" VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBlock Text="Offset:" Margin="5,0,5,0" Grid.Column="2" VerticalAlignment="Center" FontWeight="Bold"/>
                 
                 <xctk:SingleUpDown Grid.Column="3" Value="{Binding Offset}" Increment="1"/>
 
-                <TextBlock Text="Size:" Margin="1,0,1,0" Grid.Column="4" VerticalAlignment="Center" FontWeight="Bold"/>
+                <TextBlock Text="Size:" Margin="5,0,1,0" Grid.Column="4" VerticalAlignment="Center" FontWeight="Bold"/>
 
                 <ComboBox Grid.Column="5" ItemsSource="{Binding MemSizes}" SelectedItem="{Binding SelectedSize}" />
                 
