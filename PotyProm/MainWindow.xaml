@@ -34,18 +34,18 @@
                     <MenuItem Command="ApplicationCommands.Save"/>
                     <MenuItem Command="ApplicationCommands.Close"/>
                 </MenuItem>
-                <MenuItem Header="_Device">
-                    <!--<MenuItem Header="_Bold" IsCheckable="True"/>
+                <!--<MenuItem Header="_Device">
+                    <MenuItem Header="_Bold" IsCheckable="True"/>
                     <MenuItem Header="_Italic" IsCheckable="True"/>
                     <Separator/>
                     <MenuItem Header="I_ncrease Font Size">
                         <MenuItem Header="_Decrease Font Size"/>
-                    </MenuItem>-->
-                </MenuItem>
-                <MenuItem Header="_Connection">
-                    <MenuItem Header="_Module">
-                        <MenuItem Header="_PotyPro I"  />
                     </MenuItem>
+                </MenuItem>-->
+                <MenuItem Header="_Connection">
+                    <!--<MenuItem Header="_Module">
+                        <MenuItem Header="_PotyPro I"  />
+                    </MenuItem>-->
                     <MenuItem Header="_Console">
                         <MenuItem Command="local:MainWindow.OpenSerialConsole" Header="_Serial Console"/>
                     </MenuItem>
@@ -119,14 +119,8 @@
             <DockPanel>
                 <StatusBar DockPanel.Dock="Bottom">
                     <StatusBarItem x:Name="statusLabel" Content="{Binding StatusMessage, Mode = TwoWay}" />
-                    
-                    <!--<StatusBarItem Content="Ram" />
-                    <StatusBarItem Content="Rom" />-->
                 </StatusBar>
                 <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progess, Mode=TwoWay}" Height="5" />
-                <!--<Grid x:Name="rootGrid">
-
-                </Grid>-->
             </DockPanel>
         </StackPanel>
         

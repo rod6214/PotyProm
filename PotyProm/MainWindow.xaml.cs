@@ -347,6 +347,8 @@ namespace PotyProm
 
         private void ExecutedSerialConsoleCommand(object sender, ExecutedRoutedEventArgs e)
         {
+            UART_Console console = new UART_Console();
+            console.ShowDialog();
         }
 
         private void CanExecuteComportCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -402,7 +404,7 @@ namespace PotyProm
             double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
             double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
             double windowWidth = this.Width;
-            double windowHeight = this.Height;
+            //double windowHeight = this.Height;
             this.Left = (screenWidth / 2) - (windowWidth / 2);
             this.Top = (screenHeight / 2) - (windowWidth / 2);
         }
