@@ -30,129 +30,6 @@ namespace PotyProm
         READ_MEMORY,
         WRITE_MEMORY
     }
-
-    public class MainWindowViewModel : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private bool isReadButtonEnabled;
-        private bool isWriteButtonEnabled;
-        private bool isCloseButtonEnabled;
-        private bool isOpenButtonEnabled;
-        private string statusMessage;
-        private readonly string[] memSizes = new string[] { "256", "512", "1024", "2048", "4096", "8192", "16384", "32768", "65536" };
-        private int offset;
-        private string selectedSize;
-        private double progess;
-
-        public string[] MemSizes 
-        {
-            get { return memSizes; }
-        }
-
-        public double Progess
-        {
-            get { return progess; }
-            set
-            {
-                if (value != progess)
-                {
-                    progess = value;
-                    OnPropertyChanged(nameof(Progess));
-                }
-            }
-        }
-
-        public string SelectedSize
-        {
-            get { return selectedSize; }
-            set
-            {
-                if (value != selectedSize)
-                {
-                    selectedSize = value;
-                    OnPropertyChanged(nameof(SelectedSize));
-                }
-            }
-        }
-
-        public int Offset 
-        {
-            get { return offset; }
-            set
-            {
-                if (value != offset)
-                {
-                    offset = value;
-                    OnPropertyChanged(nameof(Offset));
-                }
-            }
-        }
-
-        public bool IsReadButtonEnabled 
-        { 
-            get { return isReadButtonEnabled; } 
-            set 
-            {
-                if (value != isReadButtonEnabled) 
-                {
-                    isReadButtonEnabled = value;
-                    OnPropertyChanged(nameof(IsReadButtonEnabled));
-                }
-            } 
-        }
-        public bool IsWriteButtonEnabled 
-        { 
-            get { return isWriteButtonEnabled; } 
-            set 
-            {
-                if (value != isWriteButtonEnabled) 
-                {
-                    isWriteButtonEnabled = value;
-                    OnPropertyChanged(nameof(IsWriteButtonEnabled));
-                }
-            } 
-        }
-
-        public bool IsCloseButtonEnabled
-        {
-            get { return isCloseButtonEnabled; }
-            set
-            {
-                if (value != isCloseButtonEnabled)
-                {
-                    isCloseButtonEnabled = value;
-                    OnPropertyChanged(nameof(IsCloseButtonEnabled));
-                }
-            }
-        }
-        public bool IsOpenButtonEnabled
-        {
-            get { return isOpenButtonEnabled; }
-            set
-            {
-                if (value != isOpenButtonEnabled)
-                {
-                    isOpenButtonEnabled = value;
-                    OnPropertyChanged(nameof(IsOpenButtonEnabled));
-                }
-            }
-        }
-
-        public string StatusMessage
-        {
-            get { return statusMessage; }
-            set
-            {
-                if (value != statusMessage)
-                {
-                    statusMessage = value;
-                    OnPropertyChanged(nameof(StatusMessage));
-                }
-            }
-        }
-
-        public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -342,12 +219,12 @@ namespace PotyProm
         
         private void CanExecuteSerialConsoleCommand(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = true;
+            e.CanExecute = mainWindowViewModel.IsComportConfigured;
         }
 
         private void ExecutedSerialConsoleCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            UART_Console console = new UART_Console();
+            UART_Console console = new UART_Console(memory.SerialPort);
             console.ShowDialog();
         }
 
@@ -369,6 +246,7 @@ namespace PotyProm
             ((EEPROM_Mem)memory).PackageSentEvent += DataMemory_SerialSent;
             mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(memory.SerialPort.PortName) 
                 && memory.SerialPort.BaudRate > 0;
+            mainWindowViewModel.IsComportConfigured = mainWindowViewModel.IsOpenButtonEnabled;
         }
 
         private void DataMemory_SerialSent(object sender, PackageSentEventArgs args) 

@@ -70,14 +70,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="UART_Console.xaml.cs">
+    <Compile Include="Windows\MainWindowViewModel.cs" />
+    <Compile Include="Dialogs\UartConsole\UART_Console.xaml.cs">
       <DependentUpon>UART_Console.xaml</DependentUpon>
     </Compile>
-    <Page Include="ComportWindow.xaml">
+    <Compile Include="Dialogs\UartConsole\UART_ConsoleViewModel.cs" />
+    <Page Include="Dialogs\ComportConfig\ComportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -85,16 +87,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ComportEventArgs.cs" />
-    <Compile Include="ComportWindow.xaml.cs">
+    <Compile Include="Dialogs\ComportConfig\ComportEventArgs.cs" />
+    <Compile Include="Dialogs\ComportConfig\ComportWindow.xaml.cs">
       <DependentUpon>ComportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataReceivedEventArgs.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Events\DataReceivedEventArgs.cs" />
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UART_Console.xaml">
+    <Page Include="Dialogs\UartConsole\UART_Console.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -131,6 +133,9 @@
       <Project>{59dcddf6-b41e-470f-b14c-c4c1aeffd0bd}</Project>
       <Name>PotyCore</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Bases\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

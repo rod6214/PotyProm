@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,13 @@ namespace PotyProm
     /// </summary>
     public partial class UART_Console : Window
     {
-        public UART_Console()
+        private SerialPort serialPort { get; }
+
+        public UART_Console(SerialPort serialPort)
         {
             InitializeComponent();
             CenterWindowOnScreen();
+            this.serialPort = serialPort;
         }
 
         private void CenterWindowOnScreen()
