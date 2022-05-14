@@ -12,7 +12,7 @@
 #define HIGH_BYTE(x) (x >> 8)
 #define READ_MEMORY 0x0A
 #define WRITE_MEMORY 0x0B
-#define ACK 0x0C
+#define ACK 0x10C
 #define NULL 0
 #define COMMAND_STEP 1
 #define LOW_BYTE_STEP 2
