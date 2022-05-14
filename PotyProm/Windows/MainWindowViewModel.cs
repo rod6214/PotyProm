@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PotyProm.Bases;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,9 +9,8 @@ using System.Windows.Input;
 
 namespace PotyProm
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : ViewModelBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private bool isReadButtonEnabled;
         private bool isWriteButtonEnabled;
         private bool isCloseButtonEnabled;
@@ -142,6 +142,6 @@ namespace PotyProm
             }
         }
 
-        public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        
     }
 }
