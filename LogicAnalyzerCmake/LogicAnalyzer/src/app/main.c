@@ -13,14 +13,14 @@
 #define MAX_MEMORY 1024
 char _buffer[MAX_MEMORY + 5];
 int _idx = 0;
-int data_sent = FALSE;
+
 int isBusy = FALSE;
-#define wait_host() while(!data_sent); data_sent=FALSE
+
 
 ISR(USART0_TX_vect)
 {
 	cli();
-	data_sent = TRUE;
+	// data_sent = TRUE;
 	sei();
 }
 

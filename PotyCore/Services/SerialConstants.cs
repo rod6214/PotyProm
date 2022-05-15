@@ -13,5 +13,6 @@ namespace PotyCore.Services
         public const int ACK = 0x10C;
         public const int GET_INFORMATION = 0x70A;
         public const int RESET = 0x100;
+        public const int READ_PROCESSOR = 0x2f1;
     }
 }

@@ -7,7 +7,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include "standard.h"
 #include "io_uart.h"
+
+static int data_sent = FALSE;
 
 void usart_start()
 {
@@ -17,9 +20,9 @@ void usart_start()
     UCSR0A = (1 << U2X0);
     UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0) | (1 << TXCIE0);
     UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
-    UBRR0 = 207;
-    //UBRR0 = 103;
-    _delay_loop_1(1);
+    // UBRR0 = 207; // 9660
+    UBRR0 = 103; // 19200
+    _delay_loop_1(5);
 }
 
 void usart_send(char data)
@@ -30,4 +33,15 @@ void usart_send(char data)
 char usart_receive()
 {
     return UDR0;
+}
+
+void wait_host()
+{
+    while(!data_sent); 
+    data_sent=FALSE;
+}
+
+void set_as_sent() 
+{
+    data_sent = TRUE;
 }

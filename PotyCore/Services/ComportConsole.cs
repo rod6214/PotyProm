@@ -21,40 +21,31 @@ namespace PotyCore.Services
         {
             try 
             {
-                int index = 0;
+                //int index = 0;
                 
-                byte commandL = DataTypeHelper.GetLowByte(SerialConstants.GET_INFORMATION);
-                byte commandH = DataTypeHelper.GetHighByte(SerialConstants.GET_INFORMATION);
+                byte commandL = DataTypeHelper.GetLowByte(SerialConstants.READ_PROCESSOR);
+                byte commandH = DataTypeHelper.GetHighByte(SerialConstants.READ_PROCESSOR);
                 byte lengthL = DataTypeHelper.GetLowByte(count);
                 byte lengthH = DataTypeHelper.GetHighByte(count);
                 byte offsetl = DataTypeHelper.GetLowByte(offset);
                 byte offseth = DataTypeHelper.GetHighByte(offset);
 
                 byte[] command = new byte[6] { commandL, commandH, lengthL, lengthH, offsetl, offseth };
-                byte[] inputCommand = new byte[2];
+                byte[] commandBuffer = new byte[6];
                 byte[] buffer = new byte[count];
+                
 
-                serialPort.Write(command, 0, command.Length);
-
-                while (index < 2)
+                for (int i = 0; i < 6; i++) 
                 {
-                    inputCommand[index] = (byte)serialPort.ReadByte();
-                    index++;
+                    serialPort.Write(command, i, 1);
                 }
 
-                int cmd = inputCommand[0] << 8 | inputCommand[1];
+                while (serialPort.BytesToRead != count + 6) ;
 
-                if (cmd != SerialConstants.ACK)
-                {
-                    throw new Exception("A wrong command received fromm device.");
-                }
-
-                if (serialPort.BytesToRead != buffer.Length)
-                {
-                    throw new Exception("Wrong buffer size.");
-                }
+                serialPort.Read(commandBuffer, 0, commandBuffer.Length);
 
                 var bytes = serialPort.Read(buffer, 0, buffer.Length);
+
                 if (bytes > 0)
                 {
                     var result = Encoding.ASCII.GetString(buffer);

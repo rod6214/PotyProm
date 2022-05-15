@@ -4,15 +4,16 @@
  * Created: 5/14/2022 12:31:53 PM
  * Author : Nelson
  */ 
+#include <avr/io.h>
 #include "io_uart.h"
 #include "standard.h"
 #include "serial.h"
 #if defined (SERIAL_CONSOLE)
-static char _buffer[1030];
-static int command_idx;
-static int step = NOT_STARTED;
+char _buffer[1030];
+int command_idx = 0;
+int step = NOT_STARTED;
 
-struct 
+typedef struct
 {
     union 
     {
@@ -42,7 +43,9 @@ struct
         int offset;
     };
     char* pData;
-}* _data_buffer = _buffer;
+}Command_t;
+
+Command_t* _data_buffer;
 
 int serial_set_command(char byte) 
 {
@@ -50,8 +53,11 @@ int serial_set_command(char byte)
         return NOT_STARTED;
     if (step == PENDING)
         return PENDING;
-    _buffer[command_idx++] = byte;
-    if (step >= command_idx)
+    if (step == READY && byte == 255)
+        return INVALID;
+    _buffer[command_idx] = byte;
+    command_idx++;
+    if (6 == command_idx)
     {
         step = PENDING;
         command_idx = 0;
@@ -68,6 +74,8 @@ void init_serial()
 {
     command_idx = 0;
     step = READY;
+    _data_buffer = (Command_t*)_buffer;
+    _data_buffer->pData = &_buffer[6];
 }
 
 int serial_count()
@@ -95,7 +103,19 @@ void serial_send_response()
     {
         char data = _buffer[i];
         usart_send(data);
+        wait_host();
     }
     step = READY;
+}
+
+void serial_send_data(const char* data, int bytes) 
+{
+    char* ibuffer = serial_get_buffer();
+    int len = serial_count();
+    for(int i = 0; i < len; i++) 
+    {
+        ibuffer[i] = data[i];
+    }
+    serial_send_response();
 }
 #endif

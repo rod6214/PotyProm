@@ -57,6 +57,7 @@
     <Compile Include="EEPROM_Mem.cs" />
     <Compile Include="FileLoader.cs" />
     <Compile Include="GridMap.cs" />
+    <Compile Include="Helpers\DataTypeHelper.cs" />
     <Compile Include="IMemory.cs" />
     <Compile Include="IntelHexFormatter.cs" />
     <Compile Include="IFormatter.cs" />

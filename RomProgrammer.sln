@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotyProm", "PotyProm\PotyPr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotyCoreTest", "PotyCoreTest\PotyCoreTest.csproj", "{BD9C329B-7EC9-49A9-94DB-3894FF529976}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotyCoreConsole", "PotyCoreConsole\PotyCoreConsole.csproj", "{9EBBBEB8-3057-4711-9FE1-4A815614BD8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BD9C329B-7EC9-49A9-94DB-3894FF529976}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD9C329B-7EC9-49A9-94DB-3894FF529976}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD9C329B-7EC9-49A9-94DB-3894FF529976}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EBBBEB8-3057-4711-9FE1-4A815614BD8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EBBBEB8-3057-4711-9FE1-4A815614BD8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EBBBEB8-3057-4711-9FE1-4A815614BD8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EBBBEB8-3057-4711-9FE1-4A815614BD8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
