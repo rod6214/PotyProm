@@ -32,8 +32,6 @@ ISR(USART0_RX_vect)
 void config()
 {
     usart_start();
-    PORTA = 0;
-    DDRA = 255;
     init_serial();
     sei();
 }
