@@ -12,17 +12,7 @@
 #include "io_uart.h"
 #include "serial.h"
 
-// static const char* _msg = "There can only be one root content control inside the GroupBox. If you would like to add.";
-
 void read_processor();
-
-// #define MAX_MEMORY 1024
-// #define MAX_COMMAND_BUFFER 6
-
-// char _buffer[MAX_MEMORY];
-// char _command_buffer[MAX_COMMAND_BUFFER];
-// int _idx = 0;
-// int isBusy = FALSE;
 
 ISR(USART0_TX_vect)
 {
@@ -66,11 +56,4 @@ void loop()
 void read_processor() 
 {
     serial_send_data("There can only be one root content control inside the GroupBox. If you would like to add.", 89);
-    // char* dat = serial_get_buffer();
-    // int len = serial_count();
-    // for(int i = 0; i < len; i++) 
-    // {
-    //     dat[i] = _msg[i];
-    // }
-    // serial_send_response();
 }
