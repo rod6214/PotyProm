@@ -17,27 +17,24 @@ namespace PotyCore.Services
             this.serialPort = serialPort;
         }
 
-        public string Read(int offset, int count)
+        public Comport Read(int offset, int count, int command)
         {
             try 
             {
-                //int index = 0;
-                
-                byte commandL = DataTypeHelper.GetLowByte(SerialConstants.READ_PROCESSOR);
-                byte commandH = DataTypeHelper.GetHighByte(SerialConstants.READ_PROCESSOR);
+                byte commandL = DataTypeHelper.GetLowByte(command);
+                byte commandH = DataTypeHelper.GetHighByte(command);
                 byte lengthL = DataTypeHelper.GetLowByte(count);
                 byte lengthH = DataTypeHelper.GetHighByte(count);
                 byte offsetl = DataTypeHelper.GetLowByte(offset);
                 byte offseth = DataTypeHelper.GetHighByte(offset);
 
-                byte[] command = new byte[6] { commandL, commandH, lengthL, lengthH, offsetl, offseth };
+                byte[] cmd = new byte[6] { commandL, commandH, lengthL, lengthH, offsetl, offseth };
                 byte[] commandBuffer = new byte[6];
                 byte[] buffer = new byte[count];
                 
-
-                for (int i = 0; i < 6; i++) 
+                for (int i = 0; i < cmd.Length; i++) 
                 {
-                    serialPort.Write(command, i, 1);
+                    serialPort.Write(cmd, i, 1);
                 }
 
                 while (serialPort.BytesToRead != count + 6) ;
@@ -46,18 +43,18 @@ namespace PotyCore.Services
 
                 var bytes = serialPort.Read(buffer, 0, buffer.Length);
 
-                if (bytes > 0)
+                return new Comport 
                 {
-                    var result = Encoding.ASCII.GetString(buffer);
-                    return result;
-                }
+                    CommandBuffer = commandBuffer,
+                    BufferData = buffer
+                };
             }
             catch (Exception ex) 
             {
                 throw;
             }
 
-            return null;
+            //return null;
         }
 
         public void Write(string data)

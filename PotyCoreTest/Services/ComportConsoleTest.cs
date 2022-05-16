@@ -12,22 +12,68 @@ namespace PotyCoreTest.Services
     public class ComportConsoleTest
     {
         private const string EXPECTED_READ = "There can only be one root content control inside the GroupBox. If you would like to add.";
+
         private const string PORT_NAME = "COM7";
         private const int BAUD_RATE = 19200;
+        public SerialPort serial;
 
-        [Test]
-        public void Read_DataFromBuffer() 
+        public ComportConsoleTest() 
         {
-            SerialPort serial = new SerialPort(PORT_NAME);
+            
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            serial = new SerialPort(PORT_NAME);
             serial.BaudRate = BAUD_RATE;
             serial.Parity = Parity.None;
             serial.StopBits = StopBits.Two;
             serial.Handshake = Handshake.None;
             serial.Open();
+        }
+
+        [Test]
+        public void CanRead_StringFromBuffer()
+        {
             ComportConsole console = new ComportConsole(serial);
-            var result = console.Read(0, 89);
-            serial.Close();
+            var comport = console.Read(0, 89, SerialConstants.READ_STRING);
+            var buffer = comport.BufferData;
+            var bytes = buffer.Length;
+            string result = "";
+            if (bytes > 0)
+            {
+                result = Encoding.ASCII.GetString(buffer);
+            }
+
             Assert.AreEqual(EXPECTED_READ, result);
+            serial.Close();
+        }
+
+        [Test]
+        public void CanTurnOnPINA1()
+        {
+
+            ComportConsole console = new ComportConsole(serial);
+            var comport = console.Read(0, 1, SerialConstants.TURN_ON_PINC1);
+            Assert.IsNotNull(comport.BufferData);
+            Assert.IsTrue(comport.BufferData.Length > 0);
+            var result = comport.BufferData[0];
+            Assert.AreEqual(1, result);
+            serial.Close();
+        }
+
+        [Test]
+        public void CanTurnOffPINA1()
+        {
+
+            ComportConsole console = new ComportConsole(serial);
+            var comport = console.Read(0, 1, SerialConstants.TURN_OFF_PINC1);
+            Assert.IsNotNull(comport.BufferData);
+            Assert.IsTrue(comport.BufferData.Length > 0);
+            var result = comport.BufferData[0];
+            Assert.AreEqual(0, result);
+            serial.Close();
         }
     }
 }

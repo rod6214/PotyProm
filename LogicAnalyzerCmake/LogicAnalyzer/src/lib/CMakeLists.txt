@@ -18,4 +18,8 @@ add_avr_library(
    io_uart.h
 )
 
-
+add_avr_library(
+   io_ports
+   io_ports.c
+   io_ports.h
+)

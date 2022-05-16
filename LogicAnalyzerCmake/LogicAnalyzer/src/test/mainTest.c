@@ -11,8 +11,12 @@
 #include "standard.h"
 #include "io_uart.h"
 #include "serial.h"
+#include "io_ports.h"
 
+void read_string();
 void read_processor();
+void turn_on_pinC1();
+void turn_off_pinC1();
 
 ISR(USART0_TX_vect)
 {
@@ -33,25 +37,66 @@ void config()
 {
     usart_start();
     init_serial();
+    set_porta(0);
+    set_portc(0);
+    set_porta_direction(0);
+    set_portc_direction((1 << PIN_SCK) | (1 << PIN_READY) | (1 << PIN_RESET));
     sei();
 }
 
 void loop() 
 {
-    int status = serial_get_status();
+    int idx = get_pointer_value();
+    if (idx < 6)
+    {
+        return;
+    }
+    else 
+    {
+        reset_pointer();
+    }
 
+    int status = serial_get_status();
     if (status == PENDING) 
     {
         int command = serial_get_command();
 
-        if (command == READ_PROCESSOR) 
+        if (command == READ_STRING) 
         {
-            read_processor();
+            read_string();
+        }
+        else if (command == TURN_ON_PINC1) 
+        {
+            turn_on_pinC1();
+        }
+        else if (command == TURN_OFF_PINC1) 
+        {
+            turn_off_pinC1();
         }
     }
 }
 
-void read_processor() 
+void read_string() 
 {
     serial_send_data("There can only be one root content control inside the GroupBox. If you would like to add.", 89);
+}
+
+void turn_on_pinC1() 
+{
+    set_pin(&PORTC, PINC1);
+    char* ibuffer = serial_get_buffer();
+    ibuffer[0] = PORTC & (1 << PINC1) ? TRUE : FALSE;
+    serial_send_response();
+}
+
+void turn_off_pinC1() 
+{
+    clear_pin(&PORTC, PINC1);
+    char* ibuffer = serial_get_buffer();
+    ibuffer[0] = PORTC & (1 << PINC1) ? TRUE : FALSE;
+    serial_send_response();
+}
+
+void read_processor()
+{
 }

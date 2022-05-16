@@ -12,6 +12,7 @@
 char _buffer[1030];
 int command_idx = 0;
 int step = NOT_STARTED;
+char* pData;
 
 typedef struct
 {
@@ -42,8 +43,7 @@ typedef struct
         };
         int offset;
     };
-    char* pData;
-}Command_t;
+} Command_t;
 
 Command_t* _data_buffer;
 
@@ -60,9 +60,24 @@ int serial_set_command(char byte)
     if (6 == command_idx)
     {
         step = PENDING;
-        command_idx = 0;
+        return PENDING;
     }
-    return IN_PROCESS;
+    else 
+    {
+        step = IN_PROCESS;
+        return IN_PROCESS;
+    }
+    return NULL;
+}
+
+void reset_pointer() 
+{
+    command_idx = 0;
+}
+
+int get_pointer_value() 
+{
+    return command_idx;
 }
 
 int serial_get_command() 
@@ -74,8 +89,8 @@ void init_serial()
 {
     command_idx = 0;
     step = READY;
-    _data_buffer = (Command_t*)_buffer;
-    _data_buffer->pData = &_buffer[6];
+    _data_buffer = (Command_t*)&_buffer[0];
+    pData = &_buffer[6];
 }
 
 int serial_count()
@@ -90,14 +105,12 @@ int serial_get_status()
 
 char* serial_get_buffer() 
 {
-    return _data_buffer->pData;
+    return pData;
 }
 
 void serial_send_response() 
 {
     int len = serial_count();
-    _data_buffer->command = ACK;
-    _data_buffer->offset = 0;
 
     for(int i = 0; i < len + 6; i++) 
     {

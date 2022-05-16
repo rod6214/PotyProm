@@ -15,15 +15,15 @@ namespace PotyCoreConsole
         private const int BAUD_RATE = 19200;
         static void Main(string[] args)
         {
-            SerialPort serial = new SerialPort(PORT_NAME);
-            serial.BaudRate = BAUD_RATE;
-            serial.Parity = Parity.None;
-            serial.StopBits = StopBits.Two;
-            serial.Handshake = Handshake.None;
-            serial.Open();
-            ComportConsole console = new ComportConsole(serial);
-            var result = console.Read(0, EXPECTED_READ.Length);
-            serial.Close();
+            //SerialPort serial = new SerialPort(PORT_NAME);
+            //serial.BaudRate = BAUD_RATE;
+            //serial.Parity = Parity.None;
+            //serial.StopBits = StopBits.Two;
+            //serial.Handshake = Handshake.None;
+            //serial.Open();
+            //ComportConsole console = new ComportConsole(serial);
+            //var result = console.Read(0, EXPECTED_READ.Length);
+            //serial.Close();
         }
     }
 }

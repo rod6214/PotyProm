@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PotyCore.Services
 {
-    public interface IComportConsoleService
+    public class Comport
     {
-        Comport Read(int offset, int count, int command);
-        void Write(string data);
+        public byte[] CommandBuffer { get; set; }
+        public byte[] BufferData { get; set; }
     }
 }
