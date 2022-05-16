@@ -74,10 +74,10 @@ void loop()
         {
             turn_off_pinC1();
         }
-        // else if (command == READ_PROCESSOR) 
-        // {
-
-        // }
+        else if (command == READ_PROCESSOR) 
+        {
+            read_processor();
+        }
         else 
         {
             send_invalid_command_error();
@@ -112,6 +112,14 @@ void send_invalid_command_error()
     serial_send_data("Invalid command error.", 22);
 }
 
-void read_processor()
+void read_processor() 
 {
+	set_pin(&PORTC, PIN_SCK);
+	set_pin(&PORTC, PIN_READY);
+	_delay_us(10);
+	clear_pin(&PORTC, PIN_SCK);
+	clear_pin(&PORTC, PIN_READY);
+    _delay_us(50);
+	char portState[] = { 45 };
+	serial_send_data(portState, 1);
 }

@@ -15,6 +15,7 @@
 #define READ_PROCESSOR 0x2f2
 #define TURN_ON_PINC1 0x2f3
 #define TURN_OFF_PINC1 0x2f4
+#define RESET_PROCESSOR 0x2f5
 #define ERROR 0x2ff
 #define PIN_SCK 0
 #define PIN_READY 1

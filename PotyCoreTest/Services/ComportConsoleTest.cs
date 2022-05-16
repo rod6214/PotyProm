@@ -34,7 +34,7 @@ namespace PotyCoreTest.Services
             serial.Open();
         }
 
-        [Test]
+        [Test, Order(1)]
         public void CanRead_StringFromBuffer()
         {
             ComportConsole console = new ComportConsole(serial);
@@ -53,7 +53,7 @@ namespace PotyCoreTest.Services
             serial.Close();
         }
 
-        [Test]
+        [Test, Order(2)]
         public void CanTurnOnPINA1()
         {
 
@@ -66,7 +66,7 @@ namespace PotyCoreTest.Services
             serial.Close();
         }
 
-        [Test]
+        [Test, Order(3)]
         public void CanTurnOffPINA1()
         {
 
@@ -79,7 +79,7 @@ namespace PotyCoreTest.Services
             serial.Close();
         }
 
-        [Test]
+        [Test, Order(4)]
         public void CanThrowInvalidCommandError()
         {
 
@@ -97,6 +97,19 @@ namespace PotyCoreTest.Services
             }
 
             Assert.AreEqual(EXPECTED_INVALID_COMAND_MSG, result);
+            serial.Close();
+        }
+
+        [Test, Order(5)]
+        public void CanReadProcessor()
+        {
+
+            ComportConsole console = new ComportConsole(serial);
+            var comport = console.Read(0, 1, SerialConstants.READ_PROCESSOR);
+            Assert.IsNotNull(comport.BufferData);
+            Assert.IsTrue(comport.BufferData.Length > 0);
+            var result = comport.BufferData[0];
+            Assert.AreEqual(45, result);
             serial.Close();
         }
     }

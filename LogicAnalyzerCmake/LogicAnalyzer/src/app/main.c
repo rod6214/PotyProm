@@ -13,6 +13,8 @@
 #include "io_ports.h"
 
 void read_processor();
+void reset_processor();
+void send_invalid_command_error();
 
 ISR(USART0_TX_vect)
 {
@@ -35,6 +37,7 @@ void config()
     init_serial();
     set_porta(0);
     set_portc(0);
+	set_pin(&PORTC, PIN_RESET);
     set_porta_direction(0);
     set_portc_direction((1 << PIN_SCK) | (1 << PIN_READY) | (1 << PIN_RESET));
     sei();
@@ -58,9 +61,62 @@ void loop()
         int command = serial_get_command();
 
         if (command == READ_PROCESSOR) 
-        {    
+        {   
+			read_processor(); 
         }
-		else {}
+		else if (command == RESET_PROCESSOR) 
+		{
+			reset_processor();
+		}
+		else 
+		{
+			send_invalid_command_error();
+		}
     }
 }
 
+void read_processor() 
+{
+	set_pin(&PORTC, PIN_RESET);
+	set_pin(&PORTC, PIN_SCK);
+	set_pin(&PORTC, PIN_READY);
+	_delay_us(10);
+	clear_pin(&PORTC, PIN_SCK);
+	clear_pin(&PORTC, PIN_READY);
+    char pinValue;
+	int i = 0;
+	while(i < 50) 
+	{
+		pinValue = PINA;
+		_delay_us(1);
+	}
+	char portState[] = { pinValue };
+	serial_send_data(portState, 1);
+}
+
+void reset_processor() 
+{
+	set_pin(&PORTC, PIN_SCK);
+	set_pin(&PORTC, PIN_READY);
+	_delay_us(10);
+	clear_pin(&PORTC, PIN_SCK);
+	clear_pin(&PORTC, PIN_RESET);
+	_delay_us(10);
+	set_pin(&PORTC, PIN_SCK);
+	_delay_us(10);
+	char pinValue;
+	int i = 0;
+	while(i < 50) 
+	{
+		pinValue = PINA;
+		_delay_us(1);
+	}
+	char portState[] = { pinValue };
+	serial_send_data(portState, 1);
+}
+
+void send_invalid_command_error() 
+{
+    serial_set_command(ERROR);
+    serial_send_data("Invalid command error.", 22);
+}

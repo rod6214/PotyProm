@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 set(AVR_MCU atmega2560)
-set(LOGIC_ANALYZER_TEST atmega2560)
+# set(LOGIC_ANALYZER_TEST atmega2560)
 add_compile_definitions(F_CPU=16E6)
 add_compile_definitions(SERIAL_CONSOLE)
 add_compile_definitions(__AVR_ATmega2560__)

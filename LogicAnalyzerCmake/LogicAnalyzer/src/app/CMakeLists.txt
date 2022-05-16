@@ -2,4 +2,4 @@
 
 add_avr_executable(LogicAnalyzer main.c)
 
-avr_target_link_libraries(LogicAnalyzer startup io_uart)
+avr_target_link_libraries(LogicAnalyzer io_ports startup serial io_uart)
