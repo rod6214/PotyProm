@@ -9,38 +9,58 @@
 #include <avr/interrupt.h>
 #include "standard.h"
 #include "io_uart.h"
+#include "serial.h"
+#include "io_ports.h"
 
-#define MAX_MEMORY 1024
-char _buffer[MAX_MEMORY + 5];
-int _idx = 0;
-
-int isBusy = FALSE;
-
+void read_processor();
 
 ISR(USART0_TX_vect)
 {
 	cli();
-	// data_sent = TRUE;
+    set_as_sent();
 	sei();
 }
 
 ISR(USART0_RX_vect)
 {
 	cli();
-	int data = usart_receive();
-	PORTA = data;
-	// _buffer[_idx] = usart_receive();
-	// _idx++;
+	char data = usart_receive();
+	serial_process_input(data);
 	sei();
 }
 
 void config()
 {
-	PORTA = 0;
-	DDRA = 255;
+	usart_start();
+    init_serial();
+    set_porta(0);
+    set_portc(0);
+    set_porta_direction(0);
+    set_portc_direction((1 << PIN_SCK) | (1 << PIN_READY) | (1 << PIN_RESET));
+    sei();
 }
 
 void loop() 
 {
+	int idx = get_pointer_value();
+    if (idx < 6)
+    {
+        return;
+    }
+    else 
+    {
+        reset_pointer();
+    }
+
+    int status = serial_get_status();
+    if (status == PENDING) 
+    {
+        int command = serial_get_command();
+
+        if (command == READ_PROCESSOR) 
+        {    
+        }
+		else {}
+    }
 }
 

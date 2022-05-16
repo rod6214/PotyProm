@@ -17,6 +17,7 @@ void read_string();
 void read_processor();
 void turn_on_pinC1();
 void turn_off_pinC1();
+void send_invalid_command_error();
 
 ISR(USART0_TX_vect)
 {
@@ -29,7 +30,7 @@ ISR(USART0_RX_vect)
 {
 	cli();
 	char data = usart_receive();
-	serial_set_command(data);
+	serial_process_input(data);
 	sei();
 }
 
@@ -73,9 +74,13 @@ void loop()
         {
             turn_off_pinC1();
         }
-        else if (command == READ_PROCESSOR) 
+        // else if (command == READ_PROCESSOR) 
+        // {
+
+        // }
+        else 
         {
-            
+            send_invalid_command_error();
         }
     }
 }
@@ -99,6 +104,12 @@ void turn_off_pinC1()
     char* ibuffer = serial_get_buffer();
     ibuffer[0] = PORTC & (1 << PINC1) ? TRUE : FALSE;
     serial_send_response();
+}
+
+void send_invalid_command_error() 
+{
+    serial_set_command(ERROR);
+    serial_send_data("Invalid command error.", 22);
 }
 
 void read_processor()

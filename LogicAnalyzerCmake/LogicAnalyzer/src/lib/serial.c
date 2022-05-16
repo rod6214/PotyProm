@@ -47,7 +47,17 @@ typedef struct
 
 Command_t* _data_buffer;
 
-int serial_set_command(char byte) 
+void serial_set_command(int command) 
+{
+    _data_buffer->command = command;
+}
+
+void serial_set_bytes(int count) 
+{
+    _data_buffer->count = count;
+}
+
+int serial_process_input(char byte) 
 {
     if (step == NOT_STARTED)
         return NOT_STARTED;

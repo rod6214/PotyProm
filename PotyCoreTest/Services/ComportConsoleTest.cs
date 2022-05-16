@@ -12,6 +12,7 @@ namespace PotyCoreTest.Services
     public class ComportConsoleTest
     {
         private const string EXPECTED_READ = "There can only be one root content control inside the GroupBox. If you would like to add.";
+        private const string EXPECTED_INVALID_COMAND_MSG = "Invalid command error.";
 
         private const string PORT_NAME = "COM7";
         private const int BAUD_RATE = 19200;
@@ -38,6 +39,8 @@ namespace PotyCoreTest.Services
         {
             ComportConsole console = new ComportConsole(serial);
             var comport = console.Read(0, 89, SerialConstants.READ_STRING);
+            Assert.IsNotNull(comport.BufferData);
+            Assert.IsTrue(comport.BufferData.Length > 0);
             var buffer = comport.BufferData;
             var bytes = buffer.Length;
             string result = "";
@@ -73,6 +76,27 @@ namespace PotyCoreTest.Services
             Assert.IsTrue(comport.BufferData.Length > 0);
             var result = comport.BufferData[0];
             Assert.AreEqual(0, result);
+            serial.Close();
+        }
+
+        [Test]
+        public void CanThrowInvalidCommandError()
+        {
+
+            ComportConsole console = new ComportConsole(serial);
+            // Currently 11 is an invalid command
+            var comport = console.Read(0, 22, 11);
+            Assert.IsNotNull(comport.BufferData);
+            Assert.IsTrue(comport.BufferData.Length > 0);
+            var buffer = comport.BufferData;
+            var bytes = buffer.Length;
+            string result = "";
+            if (bytes > 0)
+            {
+                result = Encoding.ASCII.GetString(buffer);
+            }
+
+            Assert.AreEqual(EXPECTED_INVALID_COMAND_MSG, result);
             serial.Close();
         }
     }
