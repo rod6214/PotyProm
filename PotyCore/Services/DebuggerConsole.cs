@@ -17,6 +17,15 @@ namespace PotyCore.Services
             this.serialPort = serialPort;
         }
 
+        public async Task<Comport> ReadAsync(int offset, int count, int command) 
+        {
+            var data = await Task.Run(() => {
+                var result = Read(offset, count, command);
+                return result;
+            });
+            return data;
+        }
+
         public Comport Read(int offset, int count, int command)
         {
             try 

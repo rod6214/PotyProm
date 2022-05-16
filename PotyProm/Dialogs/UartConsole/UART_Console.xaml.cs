@@ -1,4 +1,5 @@
-﻿using PotyCore.Services;
+﻿using PotyCore.Helpers;
+using PotyCore.Services;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -21,17 +22,17 @@ namespace PotyProm
     /// </summary>
     public partial class UART_Console : Window
     {
-        private SerialPort serialPort { get; }
         private IDebuggerService comportConsoleService;
         public static RoutedCommand ResetProcessorCommand = new RoutedCommand();
         public static RoutedCommand ReadProcessorCommand = new RoutedCommand();
         public static RoutedCommand ClearDisplayCommand = new RoutedCommand();
+        private UART_ConsoleViewModel consoleViewModel = new UART_ConsoleViewModel();
 
         public UART_Console(IDebuggerService comportConsoleService)
         {
+            DataContext = consoleViewModel;
             InitializeComponent();
             CenterWindowOnScreen();
-            this.serialPort = serialPort;
             this.comportConsoleService = comportConsoleService;
         }
 
@@ -45,9 +46,12 @@ namespace PotyProm
             this.Top = (screenHeight / 2) - (windowHeight / 2);
         }
 
-        private void ExecutedReadProcessorCommand(object sender, ExecutedRoutedEventArgs e) 
+        private async void ExecutedReadProcessorCommand(object sender, ExecutedRoutedEventArgs e) 
         {
-            var comport = comportConsoleService.Read(0, 1, SerialConstants.READ_PROCESSOR);
+            var comport = await comportConsoleService.ReadAsync(0, 1, SerialConstants.READ_PROCESSOR);
+            var value = comport.BufferData[0];
+            var binary = DataTypeHelper.GetBinary(value);
+            consoleViewModel.InsertLine(binary);
         }
 
         private void CanExecuteReadProcessorCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -66,6 +70,7 @@ namespace PotyProm
 
         private void ExecutedClearDisplayCommand(object sender, ExecutedRoutedEventArgs e) 
         {
+            consoleViewModel.ClearOuputContent();
         }
 
         private void CanExecuteClearDisplayCommand(object sender, CanExecuteRoutedEventArgs e)

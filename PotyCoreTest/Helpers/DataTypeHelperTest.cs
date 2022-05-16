@@ -40,8 +40,10 @@ namespace PotyCoreTest.Helpers
                 Assert.AreEqual(BINARIES[index], result, $"Cannot convert {index}");
                 index++;
             }
-
             
+            result = DataTypeHelper.GetBinary(89);
+            Assert.AreEqual("01011001", result, "Cannot convert 89");
+
             result = DataTypeHelper.GetBinary(174);
             Assert.AreEqual("10101110", result, "Cannot convert 174");
 

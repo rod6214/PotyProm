@@ -89,6 +89,7 @@ void read_processor()
 	{
 		pinValue = PINA;
 		_delay_us(1);
+		i++;
 	}
 	char portState[] = { pinValue };
 	serial_send_data(portState, 1);
