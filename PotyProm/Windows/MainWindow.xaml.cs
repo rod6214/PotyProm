@@ -21,6 +21,7 @@ using System.ComponentModel;
 using System.IO.Ports;
 using System.Threading;
 using System.Reflection;
+using PotyCore.Services;
 
 namespace PotyProm
 {
@@ -44,6 +45,7 @@ namespace PotyProm
         private int rowLength = 25;
         private int numColumns = 16;
         private IMemory memory;
+        //private IDebuggerService debugger;
 
         public SerialPortCommand serialPortCommand;
         private MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
@@ -224,7 +226,8 @@ namespace PotyProm
 
         private void ExecutedSerialConsoleCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            UART_Console console = new UART_Console(memory.SerialPort);
+            IDebuggerService debugger = new DebuggerConsole(memory.SerialPort);
+            UART_Console console = new UART_Console(debugger);
             console.ShowDialog();
         }
 

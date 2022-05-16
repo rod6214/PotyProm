@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PotyCore.Services
 {
-    public interface IComportConsoleService
+    public interface IDebuggerService
     {
         Comport Read(int offset, int count, int command);
         void Write(string data);

@@ -76,8 +76,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Services\Comport.cs" />
-    <Compile Include="Services\ComportConsole.cs" />
-    <Compile Include="Services\IComportConsoleService.cs" />
+    <Compile Include="Services\DebuggerConsole.cs" />
+    <Compile Include="Services\IDebuggerService.cs" />
     <Compile Include="Services\SerialConstants.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

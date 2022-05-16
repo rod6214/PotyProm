@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace PotyCore.Services
 {
-    public class ComportConsole : IComportConsoleService
+    public class DebuggerConsole : IDebuggerService
     {
         private SerialPort serialPort;
         
-        public ComportConsole(SerialPort serialPort) 
+        public DebuggerConsole(SerialPort serialPort) 
         {
             this.serialPort = serialPort;
         }

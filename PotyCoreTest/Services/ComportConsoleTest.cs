@@ -37,7 +37,7 @@ namespace PotyCoreTest.Services
         [Test, Order(1)]
         public void CanRead_StringFromBuffer()
         {
-            ComportConsole console = new ComportConsole(serial);
+            DebuggerConsole console = new DebuggerConsole(serial);
             var comport = console.Read(0, 89, SerialConstants.READ_STRING);
             Assert.IsNotNull(comport.BufferData);
             Assert.IsTrue(comport.BufferData.Length > 0);
@@ -57,7 +57,7 @@ namespace PotyCoreTest.Services
         public void CanTurnOnPINA1()
         {
 
-            ComportConsole console = new ComportConsole(serial);
+            DebuggerConsole console = new DebuggerConsole(serial);
             var comport = console.Read(0, 1, SerialConstants.TURN_ON_PINC1);
             Assert.IsNotNull(comport.BufferData);
             Assert.IsTrue(comport.BufferData.Length > 0);
@@ -70,7 +70,7 @@ namespace PotyCoreTest.Services
         public void CanTurnOffPINA1()
         {
 
-            ComportConsole console = new ComportConsole(serial);
+            DebuggerConsole console = new DebuggerConsole(serial);
             var comport = console.Read(0, 1, SerialConstants.TURN_OFF_PINC1);
             Assert.IsNotNull(comport.BufferData);
             Assert.IsTrue(comport.BufferData.Length > 0);
@@ -83,7 +83,7 @@ namespace PotyCoreTest.Services
         public void CanThrowInvalidCommandError()
         {
 
-            ComportConsole console = new ComportConsole(serial);
+            DebuggerConsole console = new DebuggerConsole(serial);
             // Currently 11 is an invalid command
             var comport = console.Read(0, 22, 11);
             Assert.IsNotNull(comport.BufferData);
@@ -104,7 +104,7 @@ namespace PotyCoreTest.Services
         public void CanReadProcessor()
         {
 
-            ComportConsole console = new ComportConsole(serial);
+            DebuggerConsole console = new DebuggerConsole(serial);
             var comport = console.Read(0, 1, SerialConstants.READ_PROCESSOR);
             Assert.IsNotNull(comport.BufferData);
             Assert.IsTrue(comport.BufferData.Length > 0);

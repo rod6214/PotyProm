@@ -5,41 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PotyProm"
         mc:Ignorable="d"
-        Title="Serial Console" Height="600" Width="800">
+        Title="6502 debugger" Height="300" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:UART_Console.ReadProcessorCommand}"
+                    Executed="ExecutedReadProcessorCommand"
+                    CanExecute="CanExecuteReadProcessorCommand" />
+        <CommandBinding Command="{x:Static local:UART_Console.ResetProcessorCommand}"
+                    Executed="ExecutedResetProcessorCommand"
+                    CanExecute="CanExecuteResetProcessorCommand" />
+        <CommandBinding Command="{x:Static local:UART_Console.ClearDisplayCommand}"
+                    Executed="ExecutedClearDisplayCommand"
+                    CanExecute="CanExecuteClearDisplayCommand" />
+    </Window.CommandBindings>
     <Grid>
-
         <StackPanel>
-            <GroupBox Header="Input Command">
-                <StackPanel>
-                    <TextBox HorizontalAlignment="Stretch" 
-                     MaxLines="300" 
-                     Height="200" 
-                     Margin="0,0,0,0" 
-                     TextWrapping="Wrap" 
-                     AcceptsReturn="True"
-                     VerticalScrollBarVisibility="Visible"
-                     VerticalAlignment="Stretch"/>
-                    <Grid DockPanel.Dock="Bottom">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="5*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
-                        <Button Name="crearWriterButton" IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="8" Content="Clear" />
-                        <Button Name="sentButton" IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="9" Content="Sent" />
-                    </Grid>
-                    <StatusBar DockPanel.Dock="Bottom">
-                        <StatusBarItem x:Name="input_status" Content="Working progess" />
-                    </StatusBar>
-                </StackPanel>
-            </GroupBox>
             <GroupBox Header="Ouput Command">
                 <StackPanel>
                     <TextBox HorizontalAlignment="Stretch" 
@@ -64,7 +43,24 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <Button Name="clearReaderButton" IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="9" Content="Clear" />
+                        <Button Name="resetProcessorButton" 
+                                IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" 
+                                Margin="1,1,1,1" 
+                                Grid.Column="7" 
+                                Content="Reset" 
+                                Command="local:UART_Console.ResetProcessorCommand"/>
+                        <Button Name="readProcessorButton" 
+                                IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" 
+                                Margin="1,1,1,1" 
+                                Grid.Column="8" 
+                                Content="Read" 
+                                Command="local:UART_Console.ReadProcessorCommand"/>
+                        <Button Name="clearReaderButton" 
+                                IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" 
+                                Margin="1,1,1,1" 
+                                Grid.Column="9" 
+                                Content="Clear" 
+                                Command="local:UART_Console.ClearDisplayCommand"/>
                     </Grid>
                     <StatusBar DockPanel.Dock="Bottom">
                         <StatusBarItem x:Name="output_status" Content="Working progess" />
