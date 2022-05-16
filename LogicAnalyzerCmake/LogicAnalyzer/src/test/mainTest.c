@@ -73,6 +73,10 @@ void loop()
         {
             turn_off_pinC1();
         }
+        else if (command == READ_PROCESSOR) 
+        {
+            
+        }
     }
 }
 
