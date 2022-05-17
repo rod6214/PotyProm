@@ -6,6 +6,7 @@
         "interrupt.h": "c",
         "startup.h": "c",
         "io_uart.h": "c",
-        "serial.h": "c"
+        "serial.h": "c",
+        "external_int.h": "c"
     }
 }

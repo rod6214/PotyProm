@@ -23,3 +23,9 @@ add_avr_library(
    io_ports.c
    io_ports.h
 )
+
+add_avr_library(
+   external_int
+   external_int.c
+   external_int.h
+)

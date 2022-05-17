@@ -11,6 +11,7 @@
 #include "io_uart.h"
 #include "serial.h"
 #include "io_ports.h"
+#include "external_int.h"
 
 void read_processor();
 void reset_processor();
@@ -31,15 +32,28 @@ ISR(USART0_RX_vect)
 	sei();
 }
 
+ISR(INT4_vect) 
+{
+	disable_int4();
+	clear_int4_flag();
+	inc_portl();
+	enable_int4();
+}
+
 void config()
 {
 	usart_start();
     init_serial();
     set_porta(0);
     set_portc(0);
+	set_portl(0);
 	set_pin(&PORTC, PIN_RESET);
+	set_portl_direction(255);
     set_porta_direction(0);
     set_portc_direction((1 << PIN_SCK) | (1 << PIN_READY) | (1 << PIN_RESET));
+	sense_on_falling_edge_int4();
+	_delay_loop_1(10);
+	enable_int4();
     sei();
 }
 
@@ -111,6 +125,7 @@ void reset_processor()
 	{
 		pinValue = PINA;
 		_delay_us(1);
+		i++;
 	}
 	char portState[] = { pinValue };
 	serial_send_data(portState, 1);
