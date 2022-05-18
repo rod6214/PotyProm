@@ -16,6 +16,7 @@
 void read_processor();
 void reset_processor();
 void send_invalid_command_error();
+int edge_state = 0;
 
 ISR(USART0_TX_vect)
 {
@@ -36,8 +37,12 @@ ISR(INT4_vect)
 {
 	disable_int4();
 	clear_int4_flag();
-	inc_portl();
-	enable_int4();
+	// if (edge_state == 0)
+	// 	set_pin(&PORTC, PIN_READY);
+	// else if (edge_state == 1)
+	// 	clear_pin(&PORTC, PIN_READY);
+	// edge_state++;
+	// enable_int4();
 }
 
 void config()
@@ -48,12 +53,12 @@ void config()
     set_portc(0);
 	set_portl(0);
 	set_pin(&PORTC, PIN_RESET);
-	set_portl_direction(255);
+	// set_portl_direction(255);
     set_porta_direction(0);
     set_portc_direction((1 << PIN_SCK) | (1 << PIN_READY) | (1 << PIN_RESET));
-	sense_on_falling_edge_int4();
+	// sense_on_falling_edge_int4();
 	_delay_loop_1(10);
-	enable_int4();
+	// enable_int4();
     sei();
 }
 
@@ -74,13 +79,12 @@ void loop()
     {
         int command = serial_get_command();
 
-        if (command == READ_PROCESSOR) 
-        {   
-			read_processor(); 
-        }
-		else if (command == RESET_PROCESSOR) 
+		if (command == READ_PROCESSOR) 
 		{
-			reset_processor();
+			set_pin(&PORTC, PIN_READY);
+			_delay_loop_1(1);
+			clear_pin(&PORTC, PIN_READY);
+			read_processor();
 		}
 		else 
 		{
@@ -91,45 +95,43 @@ void loop()
 
 void read_processor() 
 {
-	set_pin(&PORTC, PIN_RESET);
-	set_pin(&PORTC, PIN_SCK);
-	set_pin(&PORTC, PIN_READY);
-	_delay_us(10);
-	clear_pin(&PORTC, PIN_SCK);
-	clear_pin(&PORTC, PIN_READY);
+	// set_pin(&PORTC, PIN_RESET);
+	// set_pin(&PORTC, PIN_SCK);
+	// set_pin(&PORTC, PIN_READY);
+	// _delay_us(10);
+	// clear_pin(&PORTC, PIN_SCK);
     char pinValue;
 	int i = 0;
 	while(i < 50) 
 	{
 		pinValue = PINA;
-		_delay_us(1);
 		i++;
 	}
 	char portState[] = { pinValue };
 	serial_send_data(portState, 1);
 }
 
-void reset_processor() 
-{
-	set_pin(&PORTC, PIN_SCK);
-	set_pin(&PORTC, PIN_READY);
-	_delay_us(10);
-	clear_pin(&PORTC, PIN_SCK);
-	clear_pin(&PORTC, PIN_RESET);
-	_delay_us(10);
-	set_pin(&PORTC, PIN_SCK);
-	_delay_us(10);
-	char pinValue;
-	int i = 0;
-	while(i < 50) 
-	{
-		pinValue = PINA;
-		_delay_us(1);
-		i++;
-	}
-	char portState[] = { pinValue };
-	serial_send_data(portState, 1);
-}
+// void reset_processor() 
+// {
+// 	set_pin(&PORTC, PIN_SCK);
+// 	set_pin(&PORTC, PIN_READY);
+// 	_delay_us(10);
+// 	clear_pin(&PORTC, PIN_SCK);
+// 	clear_pin(&PORTC, PIN_RESET);
+// 	_delay_us(10);
+// 	set_pin(&PORTC, PIN_SCK);
+// 	_delay_us(10);
+// 	char pinValue;
+// 	int i = 0;
+// 	while(i < 50) 
+// 	{
+// 		pinValue = PINA;
+// 		_delay_us(1);
+// 		i++;
+// 	}
+// 	char portState[] = { pinValue };
+// 	serial_send_data(portState, 1);
+// }
 
 void send_invalid_command_error() 
 {
