@@ -16,10 +16,12 @@
 #define TURN_ON_PINC1 0x2f3
 #define TURN_OFF_PINC1 0x2f4
 #define RESET_PROCESSOR 0x2f5
+#define READ_VARIABLE 0x2f6
 #define ERROR 0x2ff
 #define PIN_SCK 0
 #define PIN_READY 1
 #define PIN_RESET 2
+#define PIN_SYSTEM_RDY 3
 extern int serial_process_input(char byte);
 extern int serial_get_command();
 extern int serial_get_status();

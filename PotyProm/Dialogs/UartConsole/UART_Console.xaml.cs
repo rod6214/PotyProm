@@ -48,7 +48,7 @@ namespace PotyProm
 
         private async void ExecutedReadProcessorCommand(object sender, ExecutedRoutedEventArgs e) 
         {
-            var comport = await comportConsoleService.ReadAsync(0, 1, SerialConstants.READ_PROCESSOR);
+            var comport = await comportConsoleService.ReadAsync(0, 1, SerialConstants.READ_VARIABLE);
             var value = comport.BufferData[0];
             var binary = DataTypeHelper.GetBinary(value);
             consoleViewModel.InsertLine(binary);

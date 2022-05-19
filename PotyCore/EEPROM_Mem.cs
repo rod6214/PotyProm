@@ -69,7 +69,7 @@ namespace PotyCore
             int j = offset;
             int k = 0;
 
-            while (j < count) 
+            while (j < count + offset) 
             {
                 byte[] packet;
                 if (k < number_of_packets && count >= MAX_PACKAGE_SIZE)
@@ -81,9 +81,9 @@ namespace PotyCore
                     packet = new byte[rest_of_packets];
                 }
 
-                for (int i = offset; j < count && i < MAX_PACKAGE_SIZE; i++, j++) 
+                for (int i = 0; j < (count + offset) && i < MAX_PACKAGE_SIZE; i++, j++) 
                 {
-                    packet[i] = buffer[j];
+                    packet[i] = buffer[j - offset];
                 }
                 write(packet, j - packet.Length, packet.Length);
                 PackageSentEvent?.Invoke(this, new PackageSentEventArgs(packet.Length, j, count));
