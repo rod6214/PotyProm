@@ -7,8 +7,17 @@
 #define F_CPU 1000000UL
 #include <avr/io.h>
 
+char ACUM;
+char IR;
+
 void config()
 {
+  PORTB = 0;
+  PORTA = 0;
+  PORTC = 0;
+  DDRA = 255;
+  DDRC = 255;
+  DDRB = 0;
 }
 
 void loop() 
