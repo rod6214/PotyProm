@@ -22,6 +22,6 @@ add_definitions("-MP")
 add_definitions("-MF")
 add_definitions("-std=gnu99")
 
-set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/AT90ProgrammerCmake/AT90Programmer/src")
+set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/AT90CPUSyncCmake/AT90CPUSync/src")
 
 add_subdirectory(src)
