@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PotyCore.Services;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -8,37 +9,23 @@ using System.Threading.Tasks;
 
 namespace PotyCore
 {
-    public delegate void PackageSentEventHandler(object sender, PackageSentEventArgs args);
-
-    public class EEPROM_Mem : IMemory
+    public class SerialCommand : ISerialCommand
     {
         private byte[] commandBuffer;
         public const int MAX_PACKAGE_SIZE = 64;
-        public const byte READ_MEMORY = 0x0A;
-        public const byte WRITE_MEMORY = 0x0B;
         public const byte ACK = 0x0C;
 
         public PackageSentEventHandler PackageSentEvent;
 
         public SerialPort SerialPort { get; set; }
 
-        public EEPROM_Mem(SerialPort serialPort) 
+        public SerialCommand(SerialPort serialPort) 
         {
             SerialPort = serialPort;
             commandBuffer = new byte[MAX_PACKAGE_SIZE + 5];
         }
 
-        private void sendChallenge() 
-        {
-            byte[] challengeArray = new byte[] { 241, 33, 78, 91 };
-            for (int i = 0; i < challengeArray.Length; i++)
-            {
-                SerialPort.Write(challengeArray, i, 1);
-                Thread.Sleep(1);
-            }
-        }
-
-        public byte[] Read(int offset, int count)
+        public byte[] Read(int offset, int count, byte mcCommand)
         {
             int number_of_packets = count / MAX_PACKAGE_SIZE;
             int rest_of_packets = count % MAX_PACKAGE_SIZE;
@@ -46,9 +33,7 @@ namespace PotyCore
             int j = 0;
 
             List<byte> items = new List<byte>();
-
-            sendChallenge();
-
+            
             while (j < n) 
             {
                 int length;
@@ -64,9 +49,9 @@ namespace PotyCore
                 }
 
                 if (count < MAX_PACKAGE_SIZE)
-                    bytes = read(j + offset, count);
+                    bytes = read(j + offset, count, mcCommand);
                 else
-                    bytes = read(j * MAX_PACKAGE_SIZE + offset, length);
+                    bytes = read(j * MAX_PACKAGE_SIZE + offset, length, mcCommand);
                 items.AddRange(bytes);
                 PackageSentEvent?.Invoke(this, new PackageSentEventArgs(length, items.Count, count));
                 j++;
@@ -74,14 +59,12 @@ namespace PotyCore
             return items.ToArray();
         }
 
-        public void Write(byte[] buffer, int offset, int count)
+        public void Write(byte[] buffer, int offset, int count, byte mcCommand)
         {
             int number_of_packets = count / MAX_PACKAGE_SIZE;
             int rest_of_packets = count % MAX_PACKAGE_SIZE;
             int j = offset;
             int k = 0;
-
-            sendChallenge();
 
             while (j < count + offset) 
             {
@@ -99,13 +82,13 @@ namespace PotyCore
                 {
                     packet[i] = buffer[j - offset];
                 }
-                write(packet, j - packet.Length, packet.Length);
+                write(packet, j - packet.Length, packet.Length, mcCommand);
                 PackageSentEvent?.Invoke(this, new PackageSentEventArgs(packet.Length, j, count));
                 k++;
             }
         }
 
-        private byte[] read(int offset, int count)
+        private byte[] read(int offset, int count, byte mcCommand)
         {
             byte addressl = (byte)(0xff & count);
             byte addressh = (byte)((0xff00 & count) >> 8);
@@ -113,7 +96,7 @@ namespace PotyCore
             byte offseth = (byte)((0xff00 & offset) >> 8);
             byte[] output = new byte[count];
 
-            commandBuffer[0] = READ_MEMORY;
+            commandBuffer[0] = mcCommand;
             commandBuffer[1] = addressl;
             commandBuffer[2] = addressh;
             commandBuffer[3] = offsetl;
@@ -141,14 +124,14 @@ namespace PotyCore
             return output;
         }
 
-        private void write(byte[] buffer, int offset, int count) 
+        private void write(byte[] buffer, int offset, int count, byte mcCommand) 
         {
             byte addressl = (byte)(0xff & count);
             byte addressh = (byte)((0xff00 & count) >> 8);
             byte offsetl = (byte)(0xff & offset);
             byte offseth = (byte)((0xff00 & offset) >> 8);
 
-            commandBuffer[0] = WRITE_MEMORY;
+            commandBuffer[0] = mcCommand;
             commandBuffer[1] = addressl;
             commandBuffer[2] = addressh;
             commandBuffer[3] = offsetl;
@@ -176,6 +159,23 @@ namespace PotyCore
                     throw new Exception("A wrong command received fromm device.");
                 }
             }
+        }
+
+        public async Task<byte[]> ReadAsync(int offset, int count, byte mcCommand)
+        {
+            var bytes = await Task.Run(() => {
+                var result = Read(offset, count, mcCommand);
+                return result;
+            });
+            return bytes;
+        }
+
+        public async Task WriteAsync(byte[] buffer, int offset, byte mcCommand)
+        {
+            await Task.Run(() => {
+
+                Write(buffer, offset, buffer.Length, mcCommand);
+            });
         }
     }
 }

@@ -45,6 +45,7 @@ namespace PotyProm
         private int rowLength = 25;
         private int numColumns = 16;
         private IMemory memory;
+        private ICPUCard cpuCard;
         //private IDebuggerService debugger;
 
         public SerialPortCommand serialPortCommand;
@@ -55,6 +56,9 @@ namespace PotyProm
         public const int MAX_BUFFER_WRITE_LENGTH = 200;
         public const byte GET_MORE = 0x0D;
         public const byte STORE_DATA = 0x0E;
+        public const byte DEBUG_MODE = 0x10;
+        public const byte RUN_MODE = 0x11;
+        public const byte PROGRAM_MODE = 0x12;
 
         public MainWindow()
         {
@@ -246,6 +250,7 @@ namespace PotyProm
         private void ComportWindow_SaveEvent(object sender, ComportEventArgs e)
         {
             memory = new EEPROM_Mem(e.SerialPort);
+            cpuCard = new CPUCard(new SerialCommand(e.SerialPort));
             ((EEPROM_Mem)memory).PackageSentEvent += DataMemory_SerialSent;
             mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(memory.SerialPort.PortName) 
                 && memory.SerialPort.BaudRate > 0;
@@ -391,6 +396,20 @@ namespace PotyProm
                 mainWindowViewModel.StatusMessage = "Writing memory.";
                 serialPortCommand = SerialPortCommand.NONE;
             });
+        }
+
+        private void DebugRequestButtonEvent(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private async void ProgramRequestButtonEvent(object sender, RoutedEventArgs e)
+        {
+            await cpuCard.RequestProgram();
+        }
+
+        private async void RunRequestButtonEvent(object sender, RoutedEventArgs e)
+        {
+            await cpuCard.RequestRun();
         }
     }
 }

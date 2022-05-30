@@ -75,9 +75,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SerialCommand.cs" />
     <Compile Include="Services\Comport.cs" />
+    <Compile Include="Services\CPUCard.cs" />
     <Compile Include="Services\DebuggerConsole.cs" />
+    <Compile Include="Services\ICPUCard.cs" />
     <Compile Include="Services\IDebuggerService.cs" />
+    <Compile Include="Services\ISerialCommand.cs" />
     <Compile Include="Services\SerialConstants.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

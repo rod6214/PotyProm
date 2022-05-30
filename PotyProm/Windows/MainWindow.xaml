@@ -26,7 +26,7 @@
                     CanExecute="CanExecuteSerialConsoleCommand" />
     </Window.CommandBindings>
     <Grid>
-        
+
         <StackPanel>
             <Menu>
                 <MenuItem Header="_File" HorizontalAlignment="Right">
@@ -79,13 +79,13 @@
                 <TextBox Grid.Column="1" Height="Auto" Width="Auto" Margin="1,1,1,1"/>-->
 
                 <TextBlock Text="Offset:" Margin="5,0,5,0" Grid.Column="2" VerticalAlignment="Center" FontWeight="Bold"/>
-                
+
                 <xctk:SingleUpDown Grid.Column="3" Value="{Binding Offset}" Increment="1"/>
 
                 <TextBlock Text="Size:" Margin="5,0,1,0" Grid.Column="4" VerticalAlignment="Center" FontWeight="Bold"/>
 
                 <ComboBox Grid.Column="5" ItemsSource="{Binding MemSizes}" SelectedItem="{Binding SelectedSize}" />
-                
+
                 <Button Name="connectButton" IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="6" Content="Connect" Click="ConnectPortButtonEvent" />
                 <Button Name="closeButton" IsEnabled="{Binding IsCloseButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="7" Content="Close" Click="ClosePortButtonEvent" />
                 <Button Name="readButton" IsEnabled="{Binding IsReadButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="8" Content="Read" Click="ReadPortButtonEvent" />
@@ -99,6 +99,27 @@
             <!--<StackPanel x:Name="myStackPanel" Orientation="Vertical"></StackPanel>-->
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="88*" />
+                    <ColumnDefinition Width="87*" />
+                    <ColumnDefinition Width="68*" />
+                    <ColumnDefinition Width="19*"/>
+                </Grid.ColumnDefinitions>
+                <!--<xctk:SingleUpDown Grid.Column="0" Value="1" Increment="1"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding MemSizes}" />-->
+                <!--<ScrollBar Grid.Column="2" Width="Auto" Scroll="ScrollBar_Scroll"/>-->
+                <Button IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="6" Content="Debug" Click="DebugRequestButtonEvent" />
+                <Button IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="7" Content="Program" Click="ProgramRequestButtonEvent" />
+                <Button IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="8" Content="Run" Click="RunRequestButtonEvent" />
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
                     <!--<ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="6*" />-->
@@ -107,7 +128,7 @@
                 <ComboBox Grid.Column="1" ItemsSource="{Binding MemSizes}" />-->
                 <ScrollBar Grid.Column="2" x:Name="gridScroll" Width="Auto" Scroll="ScrollBar_Scroll"/>
             </Grid>
-            
+
             <DataGrid x:Name="myDataGrid" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False">
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}">
@@ -123,6 +144,6 @@
                 <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progess, Mode=TwoWay}" Height="5" />
             </DockPanel>
         </StackPanel>
-        
+
     </Grid>
 </Window>

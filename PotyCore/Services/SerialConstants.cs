@@ -19,5 +19,8 @@ namespace PotyCore.Services
         public const int TURN_OFF_PINC1 = 0x2f4;
         public const int RESET_PROCESSOR = 0x2f5;
         public const int READ_VARIABLE = 0x2f6;
+        public const int DEBUG_MODE = 0x10;
+        public const int RUN_MODE = 0x11;
+        public const int PROGRAM_MODE = 0x12;
     }
 }

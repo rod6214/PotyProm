@@ -16,9 +16,9 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
-#define _DEBUG_MODE 0x10
-#define _RUN_MODE 0x11
-#define _PROGRAM_MODE 0x12
+#define DEBUG_MODE 0x10
+#define RUN_MODE 0x11
+#define PROGRAM_MODE 0x12
 
 #define LOW_BYTE(x) (0xff & x)
 #define HIGH_BYTE(x) (x >> 8)
