@@ -16,7 +16,9 @@
 #ifndef TRUE
 #define TRUE 1
 #endif
-
+#define _DEBUG_MODE 0x10
+#define _RUN_MODE 0x11
+#define _PROGRAM_MODE 0x12
 
 #define LOW_BYTE(x) (0xff & x)
 #define HIGH_BYTE(x) (x >> 8)
@@ -28,6 +30,7 @@
 #define EXECUTE_PROC 0x0D
 #define STORE_DATA 0x0E
 #define FINISH_STORE_DATA 0x0F
+
 #define NULL 0
 #define COMMAND_STEP 1
 #define LOW_BYTE_STEP 2

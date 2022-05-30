@@ -21,7 +21,11 @@ int execute_proc = FALSE;
 
 #define wait_host() while(!data_sent); data_sent=FALSE
 
-ISR(USART_TX_vect)
+void start_system();
+void start_program();
+void debug_mode();
+
+ISR(INT0_vect)
 {
 	cli();
 	data_sent = TRUE;
@@ -43,7 +47,46 @@ void config()
 	_delay_loop_1(100);
 	_idx = 0;
 	execute_proc = FALSE;
+	start_system();
 	sei();
+}
+
+void start_system()
+{
+	// PB0 RESET
+	// PB1 NMI
+	// PB2 RDY
+	// PB5 CPU BUFFER
+	_delay_loop_1(4);
+	PORTB = PORTB | (1 << PB5);
+	_delay_loop_1(4);
+	PORTB = PORTB | (1 << PB2);
+	_delay_loop_1(8);
+	PORTB = PORTB | (1 << PB0);
+	_delay_loop_1(8);
+	PORTB = PORTB | (1 << PB1);
+	_delay_loop_1(12);
+}
+
+void start_program()
+{
+	PORTB = PORTB & ~(1 << PB2);
+	_delay_loop_1(4);
+	PORTB = PORTB & ~(1 << PB0);
+	_delay_loop_1(4);
+	PORTB = PORTB & ~(1 << PB5);
+	_delay_loop_1(8);
+}
+
+void debug_mode()
+{
+	PORTB = PORTB & ~(1 << PB2);
+	_delay_loop_1(4);
+}
+
+void prepare_cpu_card()
+{
+	PORTB = PORTB & ~(1 << PB0) & ~(1 << PB1) & ~(1 << PB2) & ~(1 << PB5);
 }
 
 void loop() 
@@ -96,6 +139,23 @@ void loop()
 			
 			reset_ctrl();
 		}
+		// else if (command == _PROGRAM_MODE) 
+		// {
+		// 	start_program();
+		// 	usart_send(ACK);
+		// 	wait_host();
+		// }
+		// else if (command == DEBUG_MODE) 
+		// {
+		// 	// TODO: Make this option selectable, now this is activated by default
+		// }
+		// else if (command == RUN_MODE) 
+		// {
+		// 	// TODO: Add logic for run mode, it is momentarily deactivated
+		// 	start_system();
+		// 	usart_send(ACK);
+		// 	wait_host();
+		// }
 		
 		command = NULL;
 		_idx = 0;
