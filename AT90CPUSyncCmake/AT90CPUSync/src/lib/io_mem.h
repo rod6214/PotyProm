@@ -27,6 +27,7 @@
 #define READ_MEMORY 0x0A
 #define WRITE_MEMORY 0x0B
 #define ACK 0x0C
+#define ERROR 0xFE
 #define EXECUTE_PROC 0x0D
 #define STORE_DATA 0x0E
 #define FINISH_STORE_DATA 0x0F

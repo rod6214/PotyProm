@@ -19,6 +19,7 @@ int command = 0;
 int data_sent = FALSE;
 int execute_proc = FALSE;
 int starting_sequence = 0;
+int isModeProgramming = FALSE;
 char start_tokens[] = {241, 33, 78, 91};
 
 #define wait_host() while(!data_sent); data_sent=FALSE
@@ -81,6 +82,7 @@ void start_system()
 	_delay_loop_1(8);
 	PORTC = PORTC | (1 << PC7);
 	_delay_loop_1(8);
+	isModeProgramming = FALSE;
 }
 
 void start_program()
@@ -89,6 +91,7 @@ void start_program()
 	_delay_loop_1(4);
 	PORTC = PORTC & ~(1 << PC7);
 	_delay_loop_1(100);
+	isModeProgramming = TRUE;
 }
 
 void debug_mode()
@@ -116,7 +119,7 @@ void loop()
 	{
 		char command = _buffer[0];
 		
-		if (command == WRITE_MEMORY)
+		if (command == WRITE_MEMORY && isModeProgramming)
 		{
 			reset_ctrl();
 			prepare_for_write();
@@ -135,7 +138,7 @@ void loop()
 			usart_send(ACK);
 			wait_host();
 		}
-		else if (command == READ_MEMORY)
+		else if (command == READ_MEMORY && isModeProgramming)
 		{
 			reset_ctrl();
 			prepare_for_read();
@@ -168,6 +171,11 @@ void loop()
 			// TODO: Add logic for run mode, it is momentarily deactivated
 			start_system();
 			usart_send(ACK);
+			wait_host();
+		}
+		else 
+		{
+			usart_send(ERROR);
 			wait_host();
 		}
 		

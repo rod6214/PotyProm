@@ -22,5 +22,6 @@ namespace PotyCore.Services
         public const int DEBUG_MODE = 0x10;
         public const int RUN_MODE = 0x11;
         public const int PROGRAM_MODE = 0x12;
+        public const int ERROR = 0xFE;
     }
 }

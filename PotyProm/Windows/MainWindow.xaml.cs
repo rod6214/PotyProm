@@ -164,10 +164,10 @@ namespace PotyProm
         {
             if (memory == null)
                 return;
-            if (memory.SerialPort == null)
+            if (memory.SerialCommand.SerialPort == null)
                 return;
-            if (memory.SerialPort.IsOpen)
-                memory.SerialPort.Close();
+            if (memory.SerialCommand.SerialPort.IsOpen)
+                memory.SerialCommand.SerialPort.Close();
         }
 
         private void CanExecuteCloseCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -230,7 +230,7 @@ namespace PotyProm
 
         private void ExecutedSerialConsoleCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            IDebuggerService debugger = new DebuggerConsole(memory.SerialPort);
+            IDebuggerService debugger = new DebuggerConsole(memory.SerialCommand.SerialPort);
             UART_Console console = new UART_Console(debugger);
             console.ShowDialog();
         }
@@ -249,11 +249,12 @@ namespace PotyProm
 
         private void ComportWindow_SaveEvent(object sender, ComportEventArgs e)
         {
-            memory = new EEPROM_Mem(e.SerialPort);
-            cpuCard = new CPUCard(new SerialCommand(e.SerialPort));
+            var serialCommand = new SerialCommand(e.SerialPort);
+            memory = new EEPROM_Mem(serialCommand);
+            cpuCard = new CPUCard(serialCommand);
             ((EEPROM_Mem)memory).PackageSentEvent += DataMemory_SerialSent;
-            mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(memory.SerialPort.PortName) 
-                && memory.SerialPort.BaudRate > 0;
+            mainWindowViewModel.IsOpenButtonEnabled = !string.IsNullOrEmpty(memory.SerialCommand.SerialPort.PortName) 
+                && memory.SerialCommand.SerialPort.BaudRate > 0;
             mainWindowViewModel.IsComportConfigured = mainWindowViewModel.IsOpenButtonEnabled;
         }
 
@@ -272,7 +273,7 @@ namespace PotyProm
         {
             try
             {
-                memory.SerialPort.Open();
+                memory.SerialCommand.SerialPort.Open();
                 statusLabel.Content = "Serial port connected.";
                 mainWindowViewModel.IsReadButtonEnabled = true;
                 mainWindowViewModel.IsWriteButtonEnabled = true;
@@ -361,7 +362,7 @@ namespace PotyProm
         {
             try
             {
-                memory.SerialPort.Close();
+                memory.SerialCommand.SerialPort.Close();
                 statusLabel.Content = "Serial port closed.";
                 mainWindowViewModel.IsReadButtonEnabled = false;
                 mainWindowViewModel.IsWriteButtonEnabled = false;
@@ -376,26 +377,43 @@ namespace PotyProm
 
         private async Task<byte[]> readMemoryAsync(int offset, int size) 
         {
-            if (!memory.SerialPort.IsOpen)
+            if (!memory.SerialCommand.SerialPort.IsOpen)
                 throw new Exception("Serial port is not opened");
-            var bytes = await Task.Run(() => {
-                var result = memory.Read(offset, size);
-                return result;
-            });
+            byte[] bytes = new byte[0];
+            try 
+            {
+                bytes = await memory.ReadAsync(offset, size);
+            }
+            catch (Exception ex) 
+            {
+                Trace.TraceError(ex.Message);
+            }
+            //var bytes = await Task.Run(() => {
+            //    var result = memory.Read(offset, size);
+            //    return result;
+            //});
 
             return bytes;
         }
 
         private async Task writeMemoryAsync(byte[] buffer, int offset) 
         {
-            await Task.Run(() => {
+            try 
+            {
+                await memory.WriteAsync(buffer, offset);
+            }
+            catch(Exception ex) 
+            {
+                Trace.TraceError(ex.Message);
+            }
+            //await Task.Run(() => {
 
-                memory.Write(buffer, offset, buffer.Length);
+            //    memory.Write(buffer, offset, buffer.Length);
 
-                Trace.WriteLine("Writing memory.");
-                mainWindowViewModel.StatusMessage = "Writing memory.";
-                serialPortCommand = SerialPortCommand.NONE;
-            });
+            //    Trace.WriteLine("Writing memory.");
+            //    mainWindowViewModel.StatusMessage = "Writing memory.";
+            //    serialPortCommand = SerialPortCommand.NONE;
+            //});
         }
 
         private void DebugRequestButtonEvent(object sender, RoutedEventArgs e)

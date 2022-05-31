@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace PotyCore
 {
+    public delegate void PackageSentEventHandler(object sender, PackageSentEventArgs args);
+
     public class SerialCommand : ISerialCommand
     {
         private byte[] commandBuffer;
