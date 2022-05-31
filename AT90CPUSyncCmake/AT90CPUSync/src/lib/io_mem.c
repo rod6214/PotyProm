@@ -9,12 +9,26 @@
 #include <util/delay.h>
 #include "io_mem.h"
 
+IO_MEM_t io_mem;
+
+/**
+ * @brief Set the address low as input object
+ * When it works with a register to address low address 
+ */
+
 void set_address_low_as_input() 
 {
-	PORTC = 0;
-	_delay_loop_1(2);
-	DDRC = 0;
-	_delay_loop_1(2);
+	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
+	{
+		PORTC = 0;
+		_delay_loop_1(2);
+		DDRC = 0;
+		_delay_loop_1(2);
+	}
+	else if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	{
+		PORTC |= (1 << PC0);
+	}
 }
 
 void set_address_high_as_input()
@@ -39,10 +53,17 @@ void set_data_as_input()
 
 void set_address_low_as_output()
 {
-	PORTC = 0;
-	_delay_loop_1(2);
-	DDRC = 255;
-	_delay_loop_1(2);
+	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
+	{
+		PORTC = 0;
+		_delay_loop_1(2);
+		DDRC = 255;
+		_delay_loop_1(2);
+	}
+	else if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	{
+		PORTC &= ~(1 << PC0);
+	}
 }
 
 void set_address_high_as_output()
@@ -67,14 +88,56 @@ void set_data_as_output()
 
 void set_address_low(char addressl) 
 {
-	__asm__ volatile (
-	"out %1, %0" "\n\t"
-	"nop " "\n\t"
-	"nop" "\n\t"
-	"nop"
-	: 
-	: "r" (addressl), "I" (0x15)
-	);
+	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
+	{
+		__asm__ volatile (
+		"out %1, %0" "\n\t"
+		"nop " "\n\t"
+		"nop" "\n\t"
+		"nop"
+		: 
+		: "r" (addressl), "I" (0x15)
+		);
+	}
+	else if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	{
+		char data = addressl;
+
+		// PC0: OUTPUT ENABLE
+		// PC1: LATCH CLOCK
+		// PC2: SERIAL INPUT DATA A
+		// PC3: SHIFT CLOCK
+		// PC4: RESET
+		PORTC &= ~(1 << PC4);
+		_delay_loop_1(1);
+		PORTC |= (1 << PC4);
+		_delay_loop_1(1);
+
+		for(int i = 0; i < 8; i++, data >>= 1) 
+		{
+			if ((data & 1) == 1) 
+			{
+				PORTC |= (1 << PC2);
+			}
+			else 
+			{
+				PORTC &= ~(1 << PC2);
+			}
+			_delay_loop_1(1);
+			PORTC |= (1 << PC3);
+			_delay_loop_1(1);
+			PORTC &= ~(1 << PC3);
+			_delay_loop_1(1);
+		}
+
+		_delay_loop_1(1);
+		PORTC |= (1 << PC1);
+		_delay_loop_1(1);
+		PORTC &= ~(1 << PC1);
+		_delay_loop_1(1);
+
+		_delay_us(1);
+	}
 }
 
 void set_address_high(char addressh)
@@ -149,13 +212,27 @@ void set_write_enable(int value)
 	}
 }
 
-void init_ctrl_mem()
+void init_ctrl_mem(int mode)
 {
+	io_mem.mode = mode;
 	deactivate_ports();
 	reset_ctrl();
 	_delay_loop_1(20);
 	DDRB = DDRB | ((1 << DDB0) | (1 << DDB1) | (1 << DDB2));
 	_delay_loop_1(20);
+
+	if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	{
+		// PC0: OUTPUT ENABLE
+		// PC1: LATCH CLOCK
+		// PC2: SERIAL INPUT DATA A
+		// PC3: SHIFT CLOCK
+		// PC4: RESET
+		DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4);
+		PORTC |= (1 << PC0) | (1 << PC4); 
+		PORTC |=  (1 << PC4); 
+		// PORTC &= ~(1 << PC1) & ~(1 << PC2) & ~(1 << PC3);
+	}
 }
 
 void deactivate_ports()

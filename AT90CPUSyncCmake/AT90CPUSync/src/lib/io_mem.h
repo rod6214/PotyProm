@@ -41,6 +41,13 @@
 #define WRITE_MEMORY_EXEC 7
 #define USART_TX_vect _VECTOR(13)
 #define USART_RX_vect _VECTOR(11)
+#define MEM_ADDR_LOW_PORTC 7
+#define MEM_ADDR_LOW_REGISTER 10
+
+typedef struct _IO_MEM 
+{
+    int mode;
+} IO_MEM_t;
 
 extern void set_address_low(char addressl);
 extern void set_address_high(char addressh);
@@ -54,7 +61,8 @@ extern void reset_ctrl();
 extern void deactivate_ports();
 extern char get_data();
 extern void set_data(char data);
-extern void init_ctrl_mem();
+extern void init_ctrl_mem(int mode);
+// extern void init_ctrl_mem();
 extern void set_chip_enable(int value);
 extern void set_output_enable(int value);
 extern void set_write_enable(int value);

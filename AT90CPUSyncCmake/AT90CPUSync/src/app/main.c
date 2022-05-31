@@ -58,54 +58,49 @@ ISR(USART_RX_vect)
 void config()
 {
 	usart_start();
-	init_ctrl_mem();
-	// prepare_cpu_card();
+	// // Use a shift register as low address bits
+	init_ctrl_mem(MEM_ADDR_LOW_REGISTER);
+	// init_ctrl_mem(MEM_ADDR_LOW_PORTC);
+	prepare_cpu_card();
 	_delay_loop_1(100);
 	_idx = 0;
 	execute_proc = FALSE;
-	// start_system();
+	start_system();
 	sei();
 }
 
 void start_system()
 {
-	// PB0 RESET
-	// PB1 NMI
-	// PB2 RDY
-	// PB5 CPU BUFFER
+	// PC5 RESET
+	// PC6 NMI
+	// PC7 CPU BUFFER
 	_delay_loop_1(4);
-	PORTB = PORTB | (1 << PB5);
+	PORTC = PORTC | (1 << PC5);
 	_delay_loop_1(4);
-	PORTB = PORTB | (1 << PB2);
+	PORTC = PORTC | (1 << PC6);
 	_delay_loop_1(8);
-	PORTB = PORTB | (1 << PB0);
+	PORTC = PORTC | (1 << PC7);
 	_delay_loop_1(8);
-	PORTB = PORTB | (1 << PB1);
-	_delay_loop_1(12);
 }
 
 void start_program()
 {
-	PORTB = PORTB & ~(1 << PB2);
+	PORTC = PORTC & ~(1 << PC5);
 	_delay_loop_1(4);
-	PORTB = PORTB & ~(1 << PB0);
-	_delay_loop_1(4);
-	PORTB = PORTB & ~(1 << PB5);
-	_delay_loop_1(8);
+	PORTC = PORTC & ~(1 << PC7);
+	_delay_loop_1(100);
 }
 
 void debug_mode()
 {
-	PORTB &= ~(1 << PB2);
-	_delay_loop_1(4);
 }
 
 void prepare_cpu_card()
 {
-	// Clear all signals
-	PORTB &= ~(1 << PB0) & ~(1 << PB1) & ~(1 << PB2) & ~(1 << PB5);
+	// // Clear all signals
+	PORTC &= ~(1 << PC5) & ~(1 << PC6) & ~(1 << PC7);
 	// Set control pins as outputs
-	DDRB |= (1 << PB0) | (1 << PB1) | (1 << PB2) | (1 << PB5);
+	DDRC |= (1 << PC5) | (1 << PC6) | (1 << PC7);
 }
 
 void loop() 

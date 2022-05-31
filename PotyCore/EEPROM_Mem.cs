@@ -47,8 +47,6 @@ namespace PotyCore
 
             List<byte> items = new List<byte>();
 
-            sendChallenge();
-
             while (j < n) 
             {
                 int length;
@@ -80,8 +78,6 @@ namespace PotyCore
             int rest_of_packets = count % MAX_PACKAGE_SIZE;
             int j = offset;
             int k = 0;
-
-            sendChallenge();
 
             while (j < count + offset) 
             {
@@ -118,7 +114,7 @@ namespace PotyCore
             commandBuffer[2] = addressh;
             commandBuffer[3] = offsetl;
             commandBuffer[4] = offseth;
-
+            sendChallenge();
             for (int i = 0; i < commandBuffer.Length; i++)
             {
                 SerialPort.Write(commandBuffer, i, 1);
@@ -153,6 +149,8 @@ namespace PotyCore
             commandBuffer[2] = addressh;
             commandBuffer[3] = offsetl;
             commandBuffer[4] = offseth;
+
+            sendChallenge();
 
             for (int i = 0; i < buffer.Length; i++)
             {

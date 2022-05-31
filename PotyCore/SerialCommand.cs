@@ -25,6 +25,16 @@ namespace PotyCore
             commandBuffer = new byte[MAX_PACKAGE_SIZE + 5];
         }
 
+        private void sendChallenge()
+        {
+            byte[] challengeArray = new byte[] { 241, 33, 78, 91 };
+            for (int i = 0; i < challengeArray.Length; i++)
+            {
+                SerialPort.Write(challengeArray, i, 1);
+                Thread.Sleep(1);
+            }
+        }
+
         public byte[] Read(int offset, int count, byte mcCommand)
         {
             int number_of_packets = count / MAX_PACKAGE_SIZE;
@@ -102,6 +112,8 @@ namespace PotyCore
             commandBuffer[3] = offsetl;
             commandBuffer[4] = offseth;
 
+            sendChallenge();
+
             for (int i = 0; i < commandBuffer.Length; i++)
             {
                 SerialPort.Write(commandBuffer, i, 1);
@@ -136,6 +148,8 @@ namespace PotyCore
             commandBuffer[2] = addressh;
             commandBuffer[3] = offsetl;
             commandBuffer[4] = offseth;
+
+            sendChallenge();
 
             for (int i = 0; i < buffer.Length; i++)
             {

@@ -114,9 +114,9 @@
                 <!--<xctk:SingleUpDown Grid.Column="0" Value="1" Increment="1"/>
                 <ComboBox Grid.Column="1" ItemsSource="{Binding MemSizes}" />-->
                 <!--<ScrollBar Grid.Column="2" Width="Auto" Scroll="ScrollBar_Scroll"/>-->
-                <Button IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="6" Content="Debug" Click="DebugRequestButtonEvent" />
-                <Button IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="7" Content="Program" Click="ProgramRequestButtonEvent" />
-                <Button IsEnabled="{Binding IsOpenButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="8" Content="Run" Click="RunRequestButtonEvent" />
+                <Button IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="6" Content="Debug" Click="DebugRequestButtonEvent" />
+                <Button IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="7" Content="Program" Click="ProgramRequestButtonEvent" />
+                <Button IsEnabled="{Binding IsWriteButtonEnabled, Mode = TwoWay}" Margin="1,1,1,1" Grid.Column="8" Content="Run" Click="RunRequestButtonEvent" />
             </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
