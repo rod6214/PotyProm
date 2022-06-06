@@ -15,9 +15,13 @@ IO_MEM_t io_mem;
  * @brief Set the address low as input object
  * When it works with a register to address low address 
  */
+// static void _send_to_low_register(char addressl);
+static void _send_to_registers(int address, int bits);
 
 void set_address_low_as_input() 
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+		return;
 	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
 	{
 		PORTC = 0;
@@ -33,6 +37,8 @@ void set_address_low_as_input()
 
 void set_address_high_as_input()
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+		return;
 	PORTA = 0;
 	_delay_loop_1(2);
 	DDRA = 0;
@@ -41,6 +47,14 @@ void set_address_high_as_input()
 
 void set_data_as_input()
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+	{
+		PORTA = 0;
+		_delay_loop_1(1);
+		DDRA = 255;
+		_delay_loop_1(1);	
+		return;
+	}
 	PORTD = PORTD & (~252);
 	_delay_loop_1(1);
 	PORTB = PORTB & (~24);
@@ -53,6 +67,8 @@ void set_data_as_input()
 
 void set_address_low_as_output()
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+		return;
 	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
 	{
 		PORTC = 0;
@@ -68,6 +84,8 @@ void set_address_low_as_output()
 
 void set_address_high_as_output()
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+		return;
 	PORTA = 0;
 	_delay_loop_1(2);
 	DDRA = 255;
@@ -76,6 +94,15 @@ void set_address_high_as_output()
 
 void set_data_as_output()
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+	{
+		PORTA = 0;
+		_delay_loop_1(1);
+		DDRA = 255;
+		_delay_loop_1(1);
+		return;
+	}
+
 	PORTD = PORTD & (~252);
 	_delay_loop_1(1);
 	PORTB = PORTB & (~24);
@@ -88,6 +115,8 @@ void set_data_as_output()
 
 void set_address_low(char addressl) 
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+		return;
 	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
 	{
 		__asm__ volatile (
@@ -101,47 +130,63 @@ void set_address_low(char addressl)
 	}
 	else if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
 	{
-		char data = addressl;
-
-		// PC0: OUTPUT ENABLE
-		// PC1: LATCH CLOCK
-		// PC2: SERIAL INPUT DATA A
-		// PC3: SHIFT CLOCK
-		// PC4: RESET
-		PORTC &= ~(1 << PC4);
-		_delay_loop_1(1);
-		PORTC |= (1 << PC4);
-		_delay_loop_1(1);
-
-		for(int i = 0; i < 8; i++, data >>= 1) 
-		{
-			if ((data & 1) == 1) 
-			{
-				PORTC |= (1 << PC2);
-			}
-			else 
-			{
-				PORTC &= ~(1 << PC2);
-			}
-			_delay_loop_1(1);
-			PORTC |= (1 << PC3);
-			_delay_loop_1(1);
-			PORTC &= ~(1 << PC3);
-			_delay_loop_1(1);
-		}
-
-		_delay_loop_1(1);
-		PORTC |= (1 << PC1);
-		_delay_loop_1(1);
-		PORTC &= ~(1 << PC1);
-		_delay_loop_1(1);
-
-		_delay_us(1);
+		_send_to_registers(addressl, _8_BITS);
 	}
+}
+
+static void _send_to_registers(int address, int bits) 
+{
+	int data = address;
+
+	// PC0: OUTPUT ENABLE
+	// PC1: LATCH CLOCK
+	// PC2: SERIAL INPUT DATA A
+	// PC3: SHIFT CLOCK
+	// PC4: RESET
+	PORTC &= ~(1 << PC4);
+	_delay_loop_1(1);
+	PORTC |= (1 << PC4);
+	_delay_loop_1(1);
+
+	for(int i = 0; i < bits; i++, data >>= 1) 
+	{
+		if ((data & 1) == 1) 
+		{
+			PORTC |= (1 << PC2);
+		}
+		else 
+		{
+			PORTC &= ~(1 << PC2);
+		}
+		_delay_loop_1(1);
+		PORTC |= (1 << PC3);
+		_delay_loop_1(1);
+		PORTC &= ~(1 << PC3);
+		_delay_loop_1(1);
+	}
+
+	_delay_loop_1(1);
+	PORTC |= (1 << PC1);
+	_delay_loop_1(1);
+	PORTC &= ~(1 << PC1);
+	_delay_loop_1(1);
+
+	_delay_us(1);
+}
+
+// static void _send_to_low_register(char addressl) 
+// {
+
+// }
+int get_mode() 
+{
+	return io_mem.mode;
 }
 
 void set_address_high(char addressh)
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
+		return;
 	__asm__ volatile (
 	"out %1, %0" "\n\t"
 	"nop " "\n\t"
@@ -160,6 +205,11 @@ void reset_ctrl()
 
 char get_data() 
 {
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
+	{
+		return PINA;
+	}
+
 	char datah = 0;
 	char datal = 0;
 	datah = PIND & 252;
@@ -169,10 +219,17 @@ char get_data()
 
 void set_data(char data) 
 {
-	char resetOldDataD = PORTD & (~252);
-	char resetOldDataB = PORTB & (~24); 
-	PORTD = resetOldDataD | (data & 252);
-	PORTB = resetOldDataB | ((data & 3) << 3);
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
+	{
+		PORTA = data;
+	}
+	else 
+	{
+		char resetOldDataD = PORTD & (~252);
+		char resetOldDataB = PORTB & (~24); 
+		PORTD = resetOldDataD | (data & 252);
+		PORTB = resetOldDataB | ((data & 3) << 3);
+	}
 	_delay_loop_1(20);
 }
 	
@@ -221,25 +278,54 @@ void init_ctrl_mem(int mode)
 	DDRB = DDRB | ((1 << DDB0) | (1 << DDB1) | (1 << DDB2));
 	_delay_loop_1(20);
 
-	if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	if (io_mem.mode == MEM_ADDR_LOW_REGISTER || io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
 	{
 		// PC0: OUTPUT ENABLE
 		// PC1: LATCH CLOCK
 		// PC2: SERIAL INPUT DATA A
 		// PC3: SHIFT CLOCK
 		// PC4: RESET
+		PORTC |= (1 << PC0); 
+		_delay_loop_1(1);
+		PORTC &= ~(1 << PC4); 
+		_delay_loop_1(1);
 		DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4);
-		PORTC |= (1 << PC0) | (1 << PC4); 
-		PORTC |=  (1 << PC4); 
+		_delay_loop_1(100);
+		PORTC |=  (1 << PC4);
+		_delay_loop_1(100);
 		// PORTC &= ~(1 << PC1) & ~(1 << PC2) & ~(1 << PC3);
 	}
+}
+
+void set_address_as_input() 
+{
+	PORTC |= (1 << PC0);
+	_delay_loop_1(1);
+}
+
+void set_address_as_output() 
+{
+	PORTC &= ~(1 << PC0);
+	_delay_loop_1(1);
+}
+
+void set_address(int address) 
+{
+	_send_to_registers(address, _16_BITS);
 }
 
 void deactivate_ports()
 {
 	_delay_loop_1(20);
-	set_address_high_as_input();
-	set_address_low_as_input();
+	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
+	{
+		set_address_as_input();
+	}
+	else 
+	{
+		set_address_high_as_input();
+		set_address_low_as_input();
+	}
 	_delay_loop_1(20);
 	set_data_as_input();
 	_delay_loop_1(20);

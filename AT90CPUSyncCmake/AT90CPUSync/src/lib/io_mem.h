@@ -44,14 +44,21 @@
 #define USART_RX_vect _VECTOR(11)
 #define MEM_ADDR_LOW_PORTC 7
 #define MEM_ADDR_LOW_REGISTER 10
+#define MEM_ADDR_WITH_REGISTERS 11
+#define _8_BITS 8
+#define _16_BITS 16
 
 typedef struct _IO_MEM 
 {
     int mode;
 } IO_MEM_t;
 
+extern int get_mode();
 extern void set_address_low(char addressl);
 extern void set_address_high(char addressh);
+extern void set_address_as_input();
+extern void set_address_as_output();
+extern void set_address(int address);
 extern void set_address_high_as_input();
 extern void set_address_low_as_input();
 extern void set_data_as_input();

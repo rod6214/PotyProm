@@ -15,17 +15,23 @@ static EEPROM_t eeprom;
 
 char read_mem(int address)
 {
-	char addressl = LOW_BYTE(address);
-	char addressh = HIGH_BYTE(address);
-	set_address_low(addressl);
-	set_address_high(addressh);
-	// _delay_us(5);
+	int mode = get_mode();
+	if (mode == MEM_ADDR_WITH_REGISTERS)
+	{
+		set_address(address);
+	}
+	else 
+	{
+		char addressl = LOW_BYTE(address);
+		char addressh = HIGH_BYTE(address);
+		set_address_low(addressl);
+		set_address_high(addressh);
+	}
+	
 	_delay_loop_1(5);
 	set_chip_enable(TRUE);
-	// _delay_us(5);
 	_delay_loop_1(5);
 	set_output_enable(TRUE);
-	// _delay_us(5);
 	_delay_loop_1(5);
 	char data = 0;
 	int i = 0;
@@ -33,24 +39,30 @@ char read_mem(int address)
 	{
 		data = get_data();
 		i++;
-		// _delay_us(1);
 		_delay_loop_1(5);
 	}
 	set_chip_enable(FALSE);
-	// _delay_us(5);
 	_delay_loop_1(5);
 	set_output_enable(FALSE);
-	// _delay_us(5);
 	_delay_loop_1(5);
 	return data;
 }
 
 void write_mem(int address, char data)
 {
-	char addressl = LOW_BYTE(address);
-	char addressh = HIGH_BYTE(address);
-	set_address_low(addressl);
-	set_address_high(addressh);
+	int mode = get_mode();
+	if (mode == MEM_ADDR_WITH_REGISTERS)
+	{
+		set_address(address);
+	}
+	else 
+	{
+		char addressl = LOW_BYTE(address);
+		char addressh = HIGH_BYTE(address);
+		set_address_low(addressl);
+		set_address_high(addressh);
+	}
+	
 	_delay_ms(5);
 	set_write_enable(TRUE);
 	_delay_ms(1);
@@ -64,8 +76,17 @@ void write_mem(int address, char data)
 void prepare_for_read()
 {
 	_delay_loop_1(20);
-	set_address_high_as_output();
-	set_address_low_as_output();
+	int mode = get_mode();
+	if (mode == MEM_ADDR_WITH_REGISTERS)
+	{
+		set_address_as_output();
+	}
+	else 
+	{
+		set_address_high_as_output();
+		set_address_low_as_output();
+	}
+	
 	_delay_loop_1(20);
 	set_data_as_input();
 	_delay_loop_1(20);
@@ -74,8 +95,16 @@ void prepare_for_read()
 void prepare_for_write()
 {
 	_delay_loop_1(20);
-	set_address_high_as_output();
-	set_address_low_as_output();
+	int mode = get_mode();
+	if (mode == MEM_ADDR_WITH_REGISTERS)
+	{
+		set_address_as_output();
+	}
+	else 
+	{
+		set_address_high_as_output();
+		set_address_low_as_output();
+	}
 	_delay_loop_1(20);
 	set_data_as_output();
 	_delay_loop_1(20);

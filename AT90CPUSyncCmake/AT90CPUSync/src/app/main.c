@@ -60,7 +60,8 @@ void config()
 {
 	usart_start();
 	// // Use a shift register as low address bits
-	init_ctrl_mem(MEM_ADDR_LOW_REGISTER);
+	init_ctrl_mem(MEM_ADDR_WITH_REGISTERS);
+	// init_ctrl_mem(MEM_ADDR_LOW_REGISTER);
 	// init_ctrl_mem(MEM_ADDR_LOW_PORTC);
 	prepare_cpu_card();
 	_delay_loop_1(100);
@@ -68,6 +69,8 @@ void config()
 	execute_proc = FALSE;
 	start_system();
 	sei();
+	// set_address_as_output();
+	// set_address(30869);
 }
 
 void start_system()
