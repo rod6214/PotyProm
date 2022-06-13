@@ -10,5 +10,6 @@ namespace PotyCore.Services
     {
         Task RequestRun();
         Task RequestProgram();
+        Task RequestDebug();
     }
 }

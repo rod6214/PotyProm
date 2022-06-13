@@ -416,8 +416,9 @@ namespace PotyProm
             //});
         }
 
-        private void DebugRequestButtonEvent(object sender, RoutedEventArgs e)
+        private async void DebugRequestButtonEvent(object sender, RoutedEventArgs e)
         {
+            await cpuCard.RequestDebug();
         }
 
         private async void ProgramRequestButtonEvent(object sender, RoutedEventArgs e)

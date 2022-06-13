@@ -26,7 +26,7 @@ char start_tokens[] = {241, 33, 78, 91};
 
 void start_system();
 void start_program();
-void debug_mode();
+void debug_mode(int active);
 void prepare_cpu_card();
 
 ISR(USART_TX_vect)
@@ -78,12 +78,15 @@ void start_system()
 	// PC5 RESET
 	// PC6 NMI
 	// PC7 CPU BUFFER
+	// PD7 DEBUG SIGNAL MODE
 	_delay_loop_1(4);
 	PORTC = PORTC | (1 << PC5);
 	_delay_loop_1(4);
 	PORTC = PORTC | (1 << PC6);
 	_delay_loop_1(8);
 	PORTC = PORTC | (1 << PC7);
+	_delay_loop_1(8);
+	PORTD = PORTD | (1 << PD7);
 	_delay_loop_1(8);
 	isModeProgramming = FALSE;
 }
@@ -97,16 +100,28 @@ void start_program()
 	isModeProgramming = TRUE;
 }
 
-void debug_mode()
+void debug_mode(int active)
 {
+	if (active) 
+	{
+		PORTD = PORTD & ~(1 << PD7);
+	}
+	else 
+	{
+		PORTD = PORTD | (1 << PD7);
+	}
+	
+	_delay_loop_1(8);
 }
 
 void prepare_cpu_card()
 {
 	// // Clear all signals
 	PORTC &= ~(1 << PC5) & ~(1 << PC6) & ~(1 << PC7);
+	PORTD &= ~(1 << PD7);
 	// Set control pins as outputs
 	DDRC |= (1 << PC5) | (1 << PC6) | (1 << PC7);
+	DDRD |= (1 << PD7);
 }
 
 void loop() 
@@ -124,6 +139,7 @@ void loop()
 		
 		if (command == WRITE_MEMORY && isModeProgramming)
 		{
+			debug_mode(TRUE);
 			reset_ctrl();
 			prepare_for_write();
 			_delay_loop_1(100);
@@ -143,6 +159,7 @@ void loop()
 		}
 		else if (command == READ_MEMORY && isModeProgramming)
 		{
+			debug_mode(TRUE);
 			reset_ctrl();
 			prepare_for_read();
 			_delay_loop_1(5);
@@ -161,17 +178,22 @@ void loop()
 		}
 		else if (command == PROGRAM_MODE) 
 		{
+			debug_mode(TRUE);
 			start_program();
 			usart_send(ACK);
 			wait_host();
 		}
-		// else if (command == DEBUG_MODE) 
-		// {
-		// 	// TODO: Make this option selectable, now this is activated by default
-		// }
+		else if (command == DEBUG_MODE) 
+		{
+			// TODO: Make this option selectable, now this is activated by default
+			debug_mode(TRUE);
+			usart_send(ACK);
+			wait_host();
+		}
 		else if (command == RUN_MODE) 
 		{
 			// TODO: Add logic for run mode, it is momentarily deactivated
+			debug_mode(FALSE);
 			start_system();
 			usart_send(ACK);
 			wait_host();

@@ -25,5 +25,11 @@ namespace PotyCore.Services
             byte[] payload = new byte[1];
             await serialCommand.WriteAsync(payload, 0, SerialConstants.PROGRAM_MODE);
         }
+
+        public async Task RequestDebug()
+        {
+            byte[] payload = new byte[1];
+            await serialCommand.WriteAsync(payload, 0, SerialConstants.DEBUG_MODE);
+        }
     }
 }
