@@ -52,9 +52,6 @@ namespace PotyCore
             {
                 for (int i = 1, j = 0; i < line.Length; i++) 
                 {
-                    if (i % n == 0)
-                        continue;
-
                     bytes[x * n + j++] = byte.Parse(line[i], System.Globalization.NumberStyles.HexNumber);
                 }
 
