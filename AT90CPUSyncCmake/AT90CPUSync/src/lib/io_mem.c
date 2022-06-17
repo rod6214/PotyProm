@@ -51,7 +51,7 @@ void set_data_as_input()
 	{
 		PORTA = 0;
 		_delay_loop_1(1);
-		DDRA = 255;
+		DDRA = 0;
 		_delay_loop_1(1);	
 		return;
 	}
