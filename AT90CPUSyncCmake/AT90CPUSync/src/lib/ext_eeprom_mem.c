@@ -76,35 +76,12 @@ void write_mem(int address, char data)
 void prepare_for_read()
 {
 	_delay_loop_1(20);
-	int mode = get_mode();
-	if (mode == MEM_ADDR_WITH_REGISTERS)
-	{
-		set_address_as_output();
-	}
-	else 
-	{
-		set_address_high_as_output();
-		set_address_low_as_output();
-	}
-	
-	_delay_loop_1(20);
 	set_data_as_input();
 	_delay_loop_1(20);
 }
 
 void prepare_for_write()
 {
-	_delay_loop_1(20);
-	int mode = get_mode();
-	if (mode == MEM_ADDR_WITH_REGISTERS)
-	{
-		set_address_as_output();
-	}
-	else 
-	{
-		set_address_high_as_output();
-		set_address_low_as_output();
-	}
 	_delay_loop_1(20);
 	set_data_as_output();
 	_delay_loop_1(20);
