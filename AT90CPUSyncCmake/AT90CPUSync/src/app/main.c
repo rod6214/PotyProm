@@ -27,6 +27,7 @@ char start_tokens[] = {241, 33, 78, 91};
 void start_system();
 void start_program();
 void debug_mode(int active);
+void program_mode(int active);
 void prepare_cpu_card();
 
 ISR(USART_TX_vect)
@@ -78,6 +79,7 @@ void start_system()
 	// PC5 RESET
 	// PC6 NMI
 	// PC7 CPU BUFFER
+	// PD6 PROGRAM SIGNAL MODE
 	// PD7 DEBUG SIGNAL MODE
 	_delay_loop_1(4);
 	PORTC = PORTC | (1 << PC5);
@@ -87,6 +89,8 @@ void start_system()
 	PORTC = PORTC | (1 << PC7);
 	_delay_loop_1(8);
 	PORTD = PORTD | (1 << PD7);
+	_delay_loop_1(8);
+	PORTD = PORTD | (1 << PD6);
 	_delay_loop_1(8);
 	isModeProgramming = FALSE;
 }
@@ -114,14 +118,28 @@ void debug_mode(int active)
 	_delay_loop_1(8);
 }
 
+void program_mode(int active)
+{
+	if (active) 
+	{
+		PORTD = PORTD & ~(1 << PD6);
+	}
+	else 
+	{
+		PORTD = PORTD | (1 << PD6);
+	}
+	
+	_delay_loop_1(8);
+}
+
 void prepare_cpu_card()
 {
 	// // Clear all signals
 	PORTC &= ~(1 << PC5) & ~(1 << PC6) & ~(1 << PC7);
-	PORTD &= ~(1 << PD7);
+	PORTD &= ~(1 << PD7) & ~(1 << PD6);
 	// Set control pins as outputs
 	DDRC |= (1 << PC5) | (1 << PC6) | (1 << PC7);
-	DDRD |= (1 << PD7);
+	DDRD |= (1 << PD7) | (1 << PD6);
 }
 
 void loop() 
@@ -139,7 +157,6 @@ void loop()
 		
 		if (command == WRITE_MEMORY && isModeProgramming)
 		{
-			debug_mode(TRUE);
 			reset_ctrl();
 			prepare_for_write();
 			_delay_loop_1(100);
@@ -159,7 +176,6 @@ void loop()
 		}
 		else if (command == READ_MEMORY && isModeProgramming)
 		{
-			debug_mode(TRUE);
 			reset_ctrl();
 			prepare_for_read();
 			_delay_loop_1(5);
@@ -179,7 +195,8 @@ void loop()
 		else if (command == PROGRAM_MODE) 
 		{
 			set_address_as_output();
-			debug_mode(TRUE);
+			program_mode(TRUE);
+			debug_mode(FALSE);
 			start_program();
 			usart_send(ACK);
 			wait_host();
@@ -189,6 +206,7 @@ void loop()
 			// TODO: Make this option selectable, now this is activated by default
 			set_address_as_input();
 			debug_mode(TRUE);
+			program_mode(FALSE);
 			usart_send(ACK);
 			wait_host();
 		}
@@ -197,6 +215,7 @@ void loop()
 			// TODO: Add logic for run mode, it is momentarily deactivated
 			set_address_as_input();
 			debug_mode(FALSE);
+			program_mode(FALSE);
 			start_system();
 			usart_send(ACK);
 			wait_host();
