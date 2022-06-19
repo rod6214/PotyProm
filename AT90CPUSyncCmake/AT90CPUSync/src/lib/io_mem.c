@@ -143,10 +143,14 @@ static void _send_to_registers(int address, int bits)
 	// PC2: SERIAL INPUT DATA A
 	// PC3: SHIFT CLOCK
 	// PC4: RESET
-	PORTC &= ~(1 << PC4);
-	_delay_loop_1(1);
-	PORTC |= (1 << PC4);
-	_delay_loop_1(1);
+	if (address == 0) 
+	{
+		PORTC &= ~(1 << PC4);
+		_delay_loop_1(1);
+		PORTC |= (1 << PC4);
+		_delay_loop_1(1);
+		return;
+	}
 
 	for(int i = 0; i < bits; i++, data >>= 1) 
 	{
@@ -316,6 +320,12 @@ void set_address(int address)
 
 void deactivate_ports()
 {
+	deactivate_port_address();
+	deactivate_port_data();
+}
+
+void deactivate_port_address() 
+{
 	_delay_loop_1(20);
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
 	{
@@ -327,7 +337,10 @@ void deactivate_ports()
 		set_address_low_as_input();
 	}
 	_delay_loop_1(20);
+}
+
+void deactivate_port_data() 
+{
 	set_data_as_input();
 	_delay_loop_1(20);
 }
-

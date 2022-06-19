@@ -275,10 +275,11 @@ namespace PotyProm
             {
                 memory.SerialCommand.SerialPort.Open();
                 statusLabel.Content = "Serial port connected.";
-                mainWindowViewModel.IsReadButtonEnabled = true;
-                mainWindowViewModel.IsWriteButtonEnabled = true;
+                //mainWindowViewModel.IsReadButtonEnabled = true;
+                //mainWindowViewModel.IsWriteButtonEnabled = true;
                 mainWindowViewModel.IsOpenButtonEnabled = false;
                 mainWindowViewModel.IsCloseButtonEnabled = true;
+                //runApp().Wait();
             }
             catch
             {
@@ -309,10 +310,16 @@ namespace PotyProm
                 return;
             }
 
+            var debugState = mainWindowViewModel.IsDebugButtonEnabled;
+            var programState = mainWindowViewModel.IsProgramButtonEnabled;
+            var runState = mainWindowViewModel.IsRunButtonEnabled;
+
             serialPortCommand = SerialPortCommand.READ_MEMORY;
             mainWindowViewModel.IsReadButtonEnabled = false;
             mainWindowViewModel.IsWriteButtonEnabled = false;
             mainWindowViewModel.IsCloseButtonEnabled = false;
+
+            
 
             Trace.WriteLine("Reading memory.");
             mainWindowViewModel.StatusMessage = "Reading memory.";
@@ -324,11 +331,18 @@ namespace PotyProm
             mainWindowViewModel.IsWriteButtonEnabled = true;
             mainWindowViewModel.IsCloseButtonEnabled = true;
             mainWindowViewModel.StatusMessage = "Memory read.";
+
+            mainWindowViewModel.IsDebugButtonEnabled = debugState;
+            mainWindowViewModel.IsProgramButtonEnabled = programState;
+            mainWindowViewModel.IsRunButtonEnabled = runState;
         }
 
         private async void WritePortButtonEvent(object sender, RoutedEventArgs e)
         {
             var offset = mainWindowViewModel.Offset;
+            var debugState = mainWindowViewModel.IsDebugButtonEnabled;
+            var programState = mainWindowViewModel.IsProgramButtonEnabled;
+            var runState = mainWindowViewModel.IsRunButtonEnabled;
 
             if (lines == null) 
             {
@@ -356,6 +370,10 @@ namespace PotyProm
             mainWindowViewModel.IsWriteButtonEnabled = true;
             mainWindowViewModel.IsCloseButtonEnabled = true;
             mainWindowViewModel.StatusMessage = "Memory written.";
+
+            mainWindowViewModel.IsDebugButtonEnabled = debugState;
+            mainWindowViewModel.IsProgramButtonEnabled = programState;
+            mainWindowViewModel.IsRunButtonEnabled = runState;
         }
 
         private void ClosePortButtonEvent(object sender, RoutedEventArgs e)
@@ -419,16 +437,25 @@ namespace PotyProm
         private async void DebugRequestButtonEvent(object sender, RoutedEventArgs e)
         {
             await cpuCard.RequestDebug();
+            mainWindowViewModel.IsDebugButtonEnabled = false;
+            mainWindowViewModel.IsProgramButtonEnabled = true;
+            mainWindowViewModel.IsRunButtonEnabled = true;
         }
 
         private async void ProgramRequestButtonEvent(object sender, RoutedEventArgs e)
         {
             await cpuCard.RequestProgram();
+            mainWindowViewModel.IsProgramButtonEnabled = false;
+            mainWindowViewModel.IsDebugButtonEnabled = true;
+            mainWindowViewModel.IsRunButtonEnabled = true;
         }
 
         private async void RunRequestButtonEvent(object sender, RoutedEventArgs e)
         {
             await cpuCard.RequestRun();
+            mainWindowViewModel.IsRunButtonEnabled = false;
+            mainWindowViewModel.IsDebugButtonEnabled = true;
+            mainWindowViewModel.IsProgramButtonEnabled = true;
         }
     }
 }

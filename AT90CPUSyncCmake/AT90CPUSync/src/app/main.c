@@ -178,6 +178,7 @@ void loop()
 		}
 		else if (command == PROGRAM_MODE) 
 		{
+			set_address_as_output();
 			debug_mode(TRUE);
 			start_program();
 			usart_send(ACK);
@@ -186,6 +187,7 @@ void loop()
 		else if (command == DEBUG_MODE) 
 		{
 			// TODO: Make this option selectable, now this is activated by default
+			set_address_as_input();
 			debug_mode(TRUE);
 			usart_send(ACK);
 			wait_host();
@@ -193,6 +195,7 @@ void loop()
 		else if (command == RUN_MODE) 
 		{
 			// TODO: Add logic for run mode, it is momentarily deactivated
+			set_address_as_input();
 			debug_mode(FALSE);
 			start_system();
 			usart_send(ACK);
@@ -208,7 +211,8 @@ void loop()
 		_idx = 0;
 		execute_proc = FALSE;
 		starting_sequence = 0;
-		deactivate_ports();
+		// deactivate_ports();
+		deactivate_port_data();
 	}
 }
 

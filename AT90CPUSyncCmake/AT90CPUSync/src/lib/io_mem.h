@@ -74,5 +74,6 @@ extern void init_ctrl_mem(int mode);
 extern void set_chip_enable(int value);
 extern void set_output_enable(int value);
 extern void set_write_enable(int value);
-
+extern void deactivate_port_address();
+extern void deactivate_port_data();
 #endif /* IO_MEM_H_ */

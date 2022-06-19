@@ -21,6 +21,14 @@ namespace PotyProm
         private string selectedSize;
         private double progess;
         private bool isComportConfigured;
+        private bool isProgramButtonEnabled;
+        private bool isDebugButtonEnabled;
+        private bool isRunButtonEnabled;
+
+        public MainWindowViewModel() 
+        {
+            this.PropertyChanged += PropertyChangedEvent;
+        }
 
         public string[] MemSizes
         {
@@ -99,6 +107,12 @@ namespace PotyProm
                 if (value != isCloseButtonEnabled)
                 {
                     isCloseButtonEnabled = value;
+                    if (!value)
+                    {
+                        IsRunButtonEnabled = false;
+                        IsProgramButtonEnabled = false;
+                        IsDebugButtonEnabled = false;
+                    }
                     OnPropertyChanged(nameof(IsCloseButtonEnabled));
                 }
             }
@@ -111,6 +125,12 @@ namespace PotyProm
                 if (value != isOpenButtonEnabled)
                 {
                     isOpenButtonEnabled = value;
+                    if (!value) 
+                    {
+                        IsRunButtonEnabled = true;
+                        IsProgramButtonEnabled = true;
+                        IsDebugButtonEnabled = true;
+                    }
                     OnPropertyChanged(nameof(IsOpenButtonEnabled));
                 }
             }
@@ -141,7 +161,92 @@ namespace PotyProm
                 }
             }
         }
-
         
+        public bool IsProgramButtonEnabled
+        {
+            get { return isProgramButtonEnabled; }
+            set
+            {
+                if (value != isProgramButtonEnabled)
+                {
+                    isProgramButtonEnabled = value;
+                    if (!value) 
+                    {
+                        IsReadButtonEnabled = true;
+                        IsWriteButtonEnabled = true;
+                    }
+                    OnPropertyChanged(nameof(IsProgramButtonEnabled));
+                }
+            }
+        }
+
+        public bool IsDebugButtonEnabled
+        {
+            get { return isDebugButtonEnabled; }
+            set
+            {
+                if (value != isDebugButtonEnabled)
+                {
+                    isDebugButtonEnabled = value;
+                    if (!value) 
+                    {
+                        IsReadButtonEnabled = false;
+                        IsWriteButtonEnabled = false;
+                    }
+                    OnPropertyChanged(nameof(IsDebugButtonEnabled));
+                }
+            }
+        }
+
+        public bool IsRunButtonEnabled
+        {
+            get { return isRunButtonEnabled; }
+            set
+            {
+                if (value != isRunButtonEnabled)
+                {
+                    isRunButtonEnabled = value;
+                    if (!value) 
+                    {
+                        IsReadButtonEnabled = false;
+                        IsWriteButtonEnabled = false;
+                    }
+                    OnPropertyChanged(nameof(IsRunButtonEnabled));
+                }
+            }
+        }
+
+        private void PropertyChangedEvent(object sender, PropertyChangedEventArgs e) 
+        {
+            //if (e.PropertyName == nameof(IsProgramButtonEnabled))
+            //{
+            //    if (IsProgramButtonEnabled)
+            //    {
+            //        IsWriteButtonEnabled = true;
+            //        IsReadButtonEnabled = true;
+            //    }
+            //    else
+            //    {
+            //        IsWriteButtonEnabled = false;
+            //        IsReadButtonEnabled = false;
+            //    }
+            //}
+            //else if (e.PropertyName == nameof(IsRunButtonEnabled))
+            //{
+            //    if (IsRunButtonEnabled)
+            //    {
+            //        IsProgramButtonEnabled = false;
+            //        IsDebugButtonEnabled = false;
+            //    }
+            //}
+            //else if (e.PropertyName == nameof(IsDebugButtonEnabled))
+            //{
+            //    if (IsDebugButtonEnabled)
+            //    {
+            //        IsProgramButtonEnabled = false;
+            //        IsRunButtonEnabled = false;
+            //    }
+            //}
+        }
     }
 }
