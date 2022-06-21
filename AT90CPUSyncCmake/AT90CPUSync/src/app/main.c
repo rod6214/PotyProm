@@ -90,8 +90,6 @@ void start_system()
 	_delay_loop_1(8);
 	PORTD = PORTD | (1 << PD7);
 	_delay_loop_1(8);
-	PORTD = PORTD | (1 << PD6);
-	_delay_loop_1(8);
 	isModeProgramming = FALSE;
 }
 
@@ -122,11 +120,11 @@ void program_mode(int active)
 {
 	if (active) 
 	{
-		PORTD = PORTD & ~(1 << PD6);
+		PORTD = PORTD | (1 << PD6);
 	}
 	else 
 	{
-		PORTD = PORTD | (1 << PD6);
+		PORTD = PORTD & ~(1 << PD6);
 	}
 	
 	_delay_loop_1(8);
