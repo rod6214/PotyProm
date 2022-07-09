@@ -194,7 +194,7 @@ void loop()
 		{
 			set_address_as_output();
 			program_mode(TRUE);
-			debug_mode(FALSE);
+			debug_mode(TRUE);
 			start_program();
 			usart_send(ACK);
 			wait_host();
@@ -206,6 +206,7 @@ void loop()
 			debug_mode(TRUE);
 			program_mode(FALSE);
 			usart_send(ACK);
+			start_system();
 			wait_host();
 		}
 		else if (command == RUN_MODE) 
