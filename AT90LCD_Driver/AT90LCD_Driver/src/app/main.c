@@ -8,9 +8,13 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "io_mem.h"
+#include "lcd.h"
 
 void config() 
-{}
+{
+	LCDInit(TRUE);
+}
 
 void loop() 
 {}

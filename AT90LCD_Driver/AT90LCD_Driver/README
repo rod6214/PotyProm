@@ -1,5 +1,5 @@
 https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
 https://github.com/mkleemann/cmake-avr
-cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\AT90CPUSyncCmake\AT90CPUSync\avr-toolchain.cmake -B C:\Develop\RomProgrammer\AT90CPUSyncCmake\AT90CPUSync\build -S C:\Develop\RomProgrammer\AT90CPUSyncCmake\AT90CPUSync
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\AT90LCD_Driver\AT90LCD_Driver\avr-toolchain.cmake -B C:\Develop\RomProgrammer\AT90LCD_Driver\AT90LCD_Driver\build -S C:\Develop\RomProgrammer\AT90LCD_Driver\AT90LCD_Driver
 avrdude -c USBasp -p 8535 -u -U flash:w:OpenProgrammer.hex:i
 https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
