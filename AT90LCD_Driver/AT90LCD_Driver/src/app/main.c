@@ -13,7 +13,17 @@
 
 void config() 
 {
-	LCDInit(TRUE);
+	LCDConsoleInit(LCD_SERIAL_MODE);
+	consoleWriteCommand(LCD_WRITE, 'Q');
+	consoleWriteCommand(LCD_WRITE, 'u');
+	consoleWriteCommand(LCD_WRITE, 'e');
+	consoleWriteCommand(LCD_WRITE, ' ');
+	consoleWriteCommand(LCD_WRITE, 'h');
+	consoleWriteCommand(LCD_WRITE, 'a');
+	consoleWriteCommand(LCD_WRITE, 'c');
+	consoleWriteCommand(LCD_WRITE, 'e');
+	consoleWriteCommand(LCD_WRITE, 's');
+	consoleWriteCommand(LCD_WRITE, '?');
 }
 
 void loop() 

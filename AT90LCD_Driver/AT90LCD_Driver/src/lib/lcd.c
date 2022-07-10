@@ -9,9 +9,9 @@
 #include <util/delay.h>
 #include "lcd.h"
 
+static void initPorts(int serialMode);
 
-void LCDInit (int serialMode) {
-
+static void initPorts(int serialMode) {
     DDRB |= (1 << CS_PIN);
     DDRB |= (1 << CLK_PIN);
     DDRB |= (1 << DATA_PIN);
@@ -21,7 +21,7 @@ void LCDInit (int serialMode) {
     PORTB &= ~(1 << CS_PIN);
     PORTB &= ~(1 << CLK_PIN);
     PORTB &= ~(1 << DATA_PIN);
-    if (serialMode)
+    if (serialMode & LCD_SERIAL_MODE)
     {
         PORTB &= ~(1 << PSB_PIN);
     }
@@ -29,6 +29,11 @@ void LCDInit (int serialMode) {
     {
         PORTB |= (1 << PSB_PIN);
     }
+}
+
+void LCDConsoleInit(int serialMode) {
+    initPorts(serialMode);
+    initPorts(serialMode);
 
 	_delay_loop_1(50);
 
@@ -39,33 +44,70 @@ void LCDInit (int serialMode) {
     reset_lcd();
 	
 	// Clear and sync LCD
-	writeCommand(0x00, 0x01);
-	
+    LCD_clearDisplay();
+	// consoleWriteCommand(LCD_COMMAND, 0x01);
 	// Set pointer or reset AC (Address Counter)
-	writeCommand(0x00, 0x02);
-	
-	// // Turn display on
-	writeCommand(0x00, 0x08);
-	
-	// // Set eight bits mode
-	writeCommand(0x00, 0x30);
-	
-	// // Set extended
-	writeCommand(0x00, 0x34);
+	consoleWriteCommand(LCD_COMMAND, 2);
+	// Turn display on
+	consoleWriteCommand(LCD_COMMAND, 12);
+	// Set eight bits mode
+	consoleWriteCommand(LCD_COMMAND, 48);
+}
 
-	// // Set graphics mode
-	writeCommand(0x00, 0x36);
+void consoleWriteCommand(char control, char instruction) {
+    writeCommand(control, instruction);
+    _delay_us(200);
+}
+
+void LCD_clearDisplay() {
+    writeCommand(LCD_COMMAND, 0x01);
+    _delay_ms(2);
+}
+
+void LCDGraphicsInit(int serialMode) {
+
+    initPorts(serialMode);
+
+	_delay_loop_1(50);
+
+    // Activate LCD
+    chip_select(1);
+
+    // Reset LCD
+    reset_lcd();
 	
-	clearGraphicsLCD();
-	
-	// Set vertical
-	writeCommand(0x00, 0x80 | 0);
-	// Set horizontal
-	writeCommand(0x00, 0x80 | 0);
-	// Set data byte MSB
-	writeCommand(0x01, 0xFF);
-	// Set data byte LSB
-	writeCommand(0x01, 0xFF);
+	// Clear and sync LCD
+    LCD_clearDisplay();
+	// writeCommand(LCD_COMMAND, 0x01);
+	// Set pointer or reset AC (Address Counter)
+	writeCommand(LCD_COMMAND, 0x02);
+	// Turn display on
+	writeCommand(LCD_COMMAND, 0x08);
+	// Set eight bits mode
+	writeCommand(LCD_COMMAND, 0x30);
+    // Set extended
+    writeCommand(0x00, 0x34);
+    // Set graphics mode
+    writeCommand(0x00, 0x36);
+	// if (serialMode) 
+    // {
+    //     // // Set extended
+    //     writeCommand(0x00, 0x34);
+
+    //     // // Set graphics mode
+    //     writeCommand(0x00, 0x36);
+        
+    //     clearGraphicsLCD();
+        
+    //     // Set vertical
+    //     writeCommand(0x00, 0x80 | 0);
+    //     // Set horizontal
+    //     writeCommand(0x00, 0x80 | 0);
+    //     // Set data byte MSB
+    //     writeCommand(0x01, 0xFF);
+    //     // Set data byte LSB
+    //     writeCommand(0x01, 0xFF);
+    // }
 
 }
 
@@ -87,17 +129,14 @@ void clearGraphicsLCD() {
 	}
 }
 
-void drawPointLCD() {}
-	
-void drawImageLCD() {}
-
 void writeCommand(char control, char instruction) {
 	int data = ((((int)(0xF0 & instruction)) << 8) | ((0x0F & instruction) << 4));
 	dataToSerial(((int)(0xF8 | (control << 1))), data);
 }
 
-void dataToSerial(int numberH, int numberL) {
+char dataToSerial(int numberH, int numberL) {
 	int counter = 0;
+
     while(counter < 8) {
         int temp = (numberH & (1 << 7));
         if (temp == (1 << 7)) {
@@ -106,6 +145,7 @@ void dataToSerial(int numberH, int numberL) {
         else {
             PORTB &= ~(1 << DATA_PIN);
         }
+
         PORTB = PORTB | (1 << CLK_PIN);
 		_delay_us(5);
         PORTB = PORTB & ~(1 << CLK_PIN);
@@ -115,6 +155,25 @@ void dataToSerial(int numberH, int numberL) {
 	}
 
     counter = 0;
+
+    // if (numberH & 4) {
+    //     int inputData = 0;
+    //     DDRB &= ~(1 << DATA_PIN);
+    //     _delay_loop_1(50);
+    //     while(counter < 16) {
+    //         inputData = inputData >> 1;
+    //         PORTB |= (1 << CLK_PIN);
+    //         _delay_us(5);
+    //         PORTB &= ~(1 << CLK_PIN);
+    //         _delay_us(5);
+    //         if (PINB1) {
+    //             inputData |= 128;
+    //         }
+    //         counter++;
+    //     }
+    //     DDRB |= (1 << DATA_PIN);
+    //     return ((char)(0xF000 & inputData) >> 8) | ((char)(0xF0 & inputData) >> 4);
+    // }
 
 	while(counter < 16) {
         int temp = (numberL & (1 << 15));
@@ -131,6 +190,8 @@ void dataToSerial(int numberH, int numberL) {
 		numberL = numberL << 1;
 		counter++;
 	}
+
+    return 0;
 }
 
 void reset_lcd() {

@@ -32,10 +32,12 @@
 #define CLK_PIN PINB0 // Clock signal
 #define PSB_PIN PINB3 // 1: Parallel bus mode, 0: Serial mode
 #define LCD_RESET_PIN PINB4 // Reset all the screen
-
-// #define csPort(x) digitalWrite(CS_PIN, x)
-// #define dataPort(x) digitalWrite(DATA_PIN, x)
-// #define clkPort(x) digitalWrite(CLK_PIN, x)
+#define LCD_RS 1
+#define LCD_RW 2
+#define LCD_READ (LCD_RW | LCD_RS)
+#define LCD_WRITE (LCD_RS)
+#define LCD_COMMAND 0
+#define LCD_SERIAL_MODE 1
 
 #define DISPLAY_ON 12
 #define DISPLAY_OFF 8
@@ -50,11 +52,14 @@
 #define set_Vertical(x) (GRAPHIC_ADDR_COMMAND | (127 & x))
 #define set_Horizontal(x) (GRAPHIC_ADDR_COMMAND | (X_LIM & x))
 
-void dataToSerial(int numberH, int numberL);
+char dataToSerial(int numberH, int numberL);
 void writeCommand(char control, char instruction);
-void LCDInit (int serialMode);
+void consoleWriteCommand(char control, char instruction);
+void LCDGraphicsInit(int serialMode);
+void LCDConsoleInit(int serialMode);
 void clearGraphicsLCD(void);
 void reset_lcd();
 void chip_select(int value);
+void LCD_clearDisplay();
 
 #endif /* PSERIAL_H_ */
