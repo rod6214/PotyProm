@@ -16,7 +16,7 @@ namespace PotyProm
         private bool isCloseButtonEnabled;
         private bool isOpenButtonEnabled;
         private string statusMessage;
-        private readonly string[] memSizes = new string[] { "16", "32", "64", "256", "512", "1024", "2048", "4096", "8192", "16384", "32768", "65536" };
+        private readonly string[] memSizes = new string[] { "16", "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192", "16384", "32768", "65536" };
         private int offset;
         private string selectedSize;
         private double progess;

@@ -364,7 +364,24 @@ namespace PotyProm
             mainWindowViewModel.IsCloseButtonEnabled = false;
 
             byte[] bytes = gridMap.GetBytes(numColumns, lines);
-            await writeMemoryAsync(bytes, offset);
+            int selectedSize = string.IsNullOrEmpty(mainWindowViewModel.SelectedSize) ? 
+                0 : int.Parse(mainWindowViewModel.SelectedSize);
+            
+            if (!string.IsNullOrEmpty(mainWindowViewModel.SelectedSize) && (selectedSize != bytes.Length)) 
+            {
+                int realSize;
+                if (selectedSize > bytes.Length)
+                    realSize = bytes.Length;
+                else
+                    realSize = selectedSize;
+                byte[] newDim = new byte[realSize];
+                Array.Copy(bytes, offset, newDim, 0, selectedSize);
+                await writeMemoryAsync(newDim, offset);
+            }
+            else 
+            {
+                await writeMemoryAsync(bytes, offset);
+            }
 
             mainWindowViewModel.IsReadButtonEnabled = true;
             mainWindowViewModel.IsWriteButtonEnabled = true;
@@ -406,10 +423,6 @@ namespace PotyProm
             {
                 Trace.TraceError(ex.Message);
             }
-            //var bytes = await Task.Run(() => {
-            //    var result = memory.Read(offset, size);
-            //    return result;
-            //});
 
             return bytes;
         }
@@ -424,14 +437,6 @@ namespace PotyProm
             {
                 Trace.TraceError(ex.Message);
             }
-            //await Task.Run(() => {
-
-            //    memory.Write(buffer, offset, buffer.Length);
-
-            //    Trace.WriteLine("Writing memory.");
-            //    mainWindowViewModel.StatusMessage = "Writing memory.";
-            //    serialPortCommand = SerialPortCommand.NONE;
-            //});
         }
 
         private async void DebugRequestButtonEvent(object sender, RoutedEventArgs e)
