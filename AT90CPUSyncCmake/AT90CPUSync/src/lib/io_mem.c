@@ -22,7 +22,8 @@ void set_address_low_as_input()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 		return;
-	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
+	if (io_mem.mode == MEM_ADDR_LOW_PORTC ||
+		io_mem.mode == NULL) 
 	{
 		PORTC = 0;
 		_delay_loop_1(2);
@@ -69,7 +70,8 @@ void set_address_low_as_output()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 		return;
-	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
+	if (io_mem.mode == MEM_ADDR_LOW_PORTC ||
+		io_mem.mode == NULL) 
 	{
 		PORTC = 0;
 		_delay_loop_1(2);
@@ -117,7 +119,8 @@ void set_address_low(char addressl)
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 		return;
-	if (io_mem.mode == MEM_ADDR_LOW_PORTC) 
+	if (io_mem.mode == MEM_ADDR_LOW_PORTC || 
+		io_mem.mode == NULL) 
 	{
 		__asm__ volatile (
 		"out %1, %0" "\n\t"
@@ -271,6 +274,9 @@ void init_ctrl_mem(int mode)
 	deactivate_ports();
 	reset_ctrl();
 	_delay_loop_1(20);
+	// PB0: CHIP ENABLE
+	// PB1: OUTPUT ENABLE
+	// PB2: WRITE ENABLE
 	DDRB = DDRB | ((1 << DDB0) | (1 << DDB1) | (1 << DDB2));
 	_delay_loop_1(20);
 
@@ -295,13 +301,30 @@ void init_ctrl_mem(int mode)
 
 void set_address_as_input() 
 {
-	PORTC |= (1 << PC0);
+	if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	{
+		PORTC |= (1 << PC0);
+	}
+	else 
+	{
+		set_address_high_as_input();
+		set_address_low_as_input();
+	}
 	_delay_loop_1(1);
 }
 
 void set_address_as_output() 
 {
-	PORTC &= ~(1 << PC0);
+	if (io_mem.mode == MEM_ADDR_LOW_REGISTER) 
+	{
+		PORTC &= ~(1 << PC0);
+	}
+	else 
+	{
+		set_address_high_as_output();
+		set_address_low_as_output();
+	}
+	
 	_delay_loop_1(1);
 }
 

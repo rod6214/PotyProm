@@ -13,6 +13,8 @@
 #include "ext_eeprom_mem.h"
 
 #define MAX_MEMORY 64
+#define MODE_ONLY_PROGRAMMER 78
+
 char _buffer[MAX_MEMORY + 5];
 int _idx = 0;
 int command = 0;
@@ -21,6 +23,8 @@ int execute_proc = FALSE;
 int starting_sequence = 0;
 int isModeProgramming = FALSE;
 char start_tokens[] = {241, 33, 78, 91};
+
+int circuitMode = NULL;
 
 #define wait_host() while(!data_sent); data_sent=FALSE
 
@@ -59,9 +63,12 @@ ISR(USART_RX_vect)
 
 void config()
 {
+	circuitMode = MODE_ONLY_PROGRAMMER;
+	int controlMode = circuitMode != MODE_ONLY_PROGRAMMER ? 
+	MEM_ADDR_WITH_REGISTERS : NULL;
 	usart_start();
 	// // Use a shift register as low address bits
-	init_ctrl_mem(MEM_ADDR_WITH_REGISTERS);
+	init_ctrl_mem(controlMode);
 	// init_ctrl_mem(MEM_ADDR_LOW_REGISTER);
 	// init_ctrl_mem(MEM_ADDR_LOW_PORTC);
 	prepare_cpu_card();
@@ -76,34 +83,42 @@ void config()
 
 void start_system()
 {
-	// PC5 RESET
-	// PC6 NMI
-	// PC7 CPU BUFFER
-	// PD6 PROGRAM SIGNAL MODE
-	// PD7 DEBUG SIGNAL MODE
-	_delay_loop_1(4);
-	PORTC = PORTC | (1 << PC5);
-	_delay_loop_1(4);
-	PORTC = PORTC | (1 << PC6);
-	_delay_loop_1(8);
-	PORTC = PORTC | (1 << PC7);
-	_delay_loop_1(8);
-	PORTD = PORTD | (1 << PD7);
-	_delay_loop_1(8);
+	if (circuitMode != MODE_ONLY_PROGRAMMER) 
+	{
+		// PC5 RESET
+		// PC6 NMI
+		// PC7 CPU BUFFER
+		// PD6 PROGRAM SIGNAL MODE
+		// PD7 DEBUG SIGNAL MODE
+		_delay_loop_1(4);
+		PORTC = PORTC | (1 << PC5);
+		_delay_loop_1(4);
+		PORTC = PORTC | (1 << PC6);
+		_delay_loop_1(8);
+		PORTC = PORTC | (1 << PC7);
+		_delay_loop_1(8);
+		PORTD = PORTD | (1 << PD7);
+		_delay_loop_1(8);
+	}
 	isModeProgramming = FALSE;
 }
 
 void start_program()
 {
-	PORTC = PORTC & ~(1 << PC5);
-	_delay_loop_1(4);
-	PORTC = PORTC & ~(1 << PC7);
-	_delay_loop_1(100);
+	if (circuitMode != MODE_ONLY_PROGRAMMER) 
+	{
+		PORTC = PORTC & ~(1 << PC5);
+		_delay_loop_1(4);
+		PORTC = PORTC & ~(1 << PC7);
+		_delay_loop_1(100);
+	}
 	isModeProgramming = TRUE;
 }
 
 void debug_mode(int active)
 {
+	if (circuitMode == MODE_ONLY_PROGRAMMER)
+		return;
 	if (active) 
 	{
 		PORTD = PORTD & ~(1 << PD7);
@@ -118,6 +133,8 @@ void debug_mode(int active)
 
 void program_mode(int active)
 {
+	if (circuitMode == MODE_ONLY_PROGRAMMER)
+		return;
 	if (active) 
 	{
 		PORTD = PORTD | (1 << PD6);
@@ -132,12 +149,15 @@ void program_mode(int active)
 
 void prepare_cpu_card()
 {
-	// // Clear all signals
-	PORTC &= ~(1 << PC5) & ~(1 << PC6) & ~(1 << PC7);
-	PORTD &= ~(1 << PD7) & ~(1 << PD6);
-	// Set control pins as outputs
-	DDRC |= (1 << PC5) | (1 << PC6) | (1 << PC7);
-	DDRD |= (1 << PD7) | (1 << PD6);
+	if (circuitMode != MODE_ONLY_PROGRAMMER) 
+	{
+		// // Clear all signals
+		PORTC &= ~(1 << PC5) & ~(1 << PC6) & ~(1 << PC7);
+		PORTD &= ~(1 << PD7) & ~(1 << PD6);
+		// Set control pins as outputs
+		DDRC |= (1 << PC5) | (1 << PC6) | (1 << PC7);
+		DDRD |= (1 << PD7) | (1 << PD6);
+	}
 }
 
 void loop() 
@@ -201,7 +221,6 @@ void loop()
 		}
 		else if (command == DEBUG_MODE) 
 		{
-			// TODO: Make this option selectable, now this is activated by default
 			set_address_as_input();
 			debug_mode(TRUE);
 			program_mode(FALSE);
@@ -211,7 +230,6 @@ void loop()
 		}
 		else if (command == RUN_MODE) 
 		{
-			// TODO: Add logic for run mode, it is momentarily deactivated
 			set_address_as_input();
 			debug_mode(FALSE);
 			program_mode(FALSE);

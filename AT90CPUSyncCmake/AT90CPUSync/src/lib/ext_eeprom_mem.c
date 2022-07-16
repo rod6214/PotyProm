@@ -27,7 +27,6 @@ char read_mem(int address)
 		set_address_low(addressl);
 		set_address_high(addressh);
 	}
-	
 	_delay_loop_1(5);
 	set_chip_enable(TRUE);
 	_delay_loop_1(5);
