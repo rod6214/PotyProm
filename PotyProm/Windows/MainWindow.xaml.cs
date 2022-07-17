@@ -260,7 +260,7 @@ namespace PotyProm
 
         private void DataMemory_SerialSent(object sender, PackageSentEventArgs args) 
         {
-            var progress = (double)args.AccumulatedBytes / args.ExpectedBytes * 100;
+            var progress = ((double)args.AccumulatedBytes - mainWindowViewModel.Offset) / args.ExpectedBytes * 100;
             mainWindowViewModel.Progess = progress;
         }
 
@@ -375,7 +375,11 @@ namespace PotyProm
                 else
                     realSize = selectedSize;
                 byte[] newDim = new byte[realSize];
-                Array.Copy(bytes, offset, newDim, 0, selectedSize);
+                Array.Copy(bytes, 0, newDim, 0, selectedSize);
+                //for(int i = 0; i < realSize; i++) 
+                //{
+                //    newDim[i] = bytes[i];
+                //}
                 await writeMemoryAsync(newDim, offset);
             }
             else 

@@ -41,34 +41,32 @@ namespace PotyCore
         {
             int number_of_packets = count / MAX_PACKAGE_SIZE;
             int rest_of_packets = count % MAX_PACKAGE_SIZE;
-            int n = count < MAX_PACKAGE_SIZE ? 1 : rest_of_packets > 0 ? number_of_packets + 1 : number_of_packets;
-            int j = 0;
+            int j = offset;
+            int k = 0;
+            byte[] buffer = new byte[count];
 
-            List<byte> items = new List<byte>();
-            
-            while (j < n) 
+            while (j < count + offset)
             {
-                int length;
-                byte[] bytes;
-
-                if (rest_of_packets > 0 && (j + 1) == n)
+                int packageLength;
+                if (k < number_of_packets && count >= MAX_PACKAGE_SIZE)
                 {
-                    length = rest_of_packets;
+                    packageLength = MAX_PACKAGE_SIZE;
                 }
                 else
                 {
-                    length = MAX_PACKAGE_SIZE;
+                    packageLength = rest_of_packets;
                 }
 
-                if (count < MAX_PACKAGE_SIZE)
-                    bytes = read(j + offset, count, mcCommand);
-                else
-                    bytes = read(j * MAX_PACKAGE_SIZE + offset, length, mcCommand);
-                items.AddRange(bytes);
-                PackageSentEvent?.Invoke(this, new PackageSentEventArgs(length, items.Count, count));
-                j++;
+                byte[] result = read(j, packageLength, mcCommand);
+                for (int i = 0; j < (count + offset) && i < MAX_PACKAGE_SIZE; i++, j++)
+                {
+                    buffer[j - offset] = result[i];
+                }
+
+                PackageSentEvent?.Invoke(this, new PackageSentEventArgs(packageLength, j, count));
+                k++;
             }
-            return items.ToArray();
+            return buffer;
         }
 
         public void Write(byte[] buffer, int offset, int count, byte mcCommand)

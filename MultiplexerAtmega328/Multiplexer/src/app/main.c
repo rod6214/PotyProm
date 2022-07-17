@@ -34,39 +34,55 @@ int circuitMode = NULL;
 // void program_mode(int active);
 // void prepare_cpu_card();
 
-ISR(USART_TX_vect)
+ISR(PCINT0_vect)
 {
 	cli();
-	// data_sent = TRUE;
-	sei();
-}
+	char input = (PINB & 6) >> 1;
+	char input2 = (PINC & 3);
+	char output = PORTD;
 
-ISR(USART_RX_vect)
-{
-	cli();
-	// char data = usart_receive();
-	// if (starting_sequence > 3) 
-	// {
-	// 	_buffer[_idx] = data;
-	// 	_idx++;
-	// }
-	// else if (start_tokens[starting_sequence] == data) 
-	// {
-	// 	starting_sequence++;
-	// }
-	// else 
-	// {
-	// 	starting_sequence = 0;
-	// }
+	if (input == 0) {
+		output &= ~(7);
+		output |= 6;
+	}
+	else if (input == 1) {
+		output &= ~(7);
+		output |= 5;
+	}
+	else if (input == 2) {
+		output &= ~(7);
+		output |= 3;
+	}
+
+	output |= 8;
+
+	if (input2 == 0) {
+		output &= ~(8);
+	}
+	
+	PORTD = output;
 	sei();
 }
 
 void config()
 {
-	DDRB = 255;
+	SPCR = (1 << MSTR);
+	TCCR1A = 0;
+	// TCCR1B = 0;
+	// TCCR1C = 0;
+	// TCCR0A = 0;
+	// TCCR0B = 0;
+	DDRB = 0;
+	DDRC = 0;
+	DDRD = 255;
+	PORTD = 7;
 	PORTB = 0;
 	_delay_loop_1(1);
-	SPCR = (1 << MSTR);
+	
+	
+	PCMSK0 = (1 << PCINT0);
+	sei();
+	PCICR = (1 << PCIE0);
 	// circuitMode = MODE_ONLY_PROGRAMMER;
 	// int controlMode = circuitMode != MODE_ONLY_PROGRAMMER ? 
 	// MEM_ADDR_WITH_REGISTERS : NULL;
@@ -166,7 +182,7 @@ void config()
 
 void loop() 
 {
-	PORTB++;
+	// PORTB++;
 	// if (_idx >= 64)
 	// {
 	// 	usart_send(ACK);
