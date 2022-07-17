@@ -4,7 +4,7 @@
  * Created: 5/1/2022 2:29:07 PM
  *  Author: Nelson
  */ 
-# define F_CPU 1000000UL
+# define F_CPU 4000000UL
 #include <avr/io.h>
 #include <util/delay.h>
 #include "io_mem.h"

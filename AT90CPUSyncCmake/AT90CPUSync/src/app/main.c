@@ -4,7 +4,7 @@
  * Created: 5/1/2022 12:31:53 PM
  * Author : Nelson
  */ 
-#define F_CPU 1000000UL
+#define F_CPU 4000000UL
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -185,9 +185,10 @@ void loop()
 			{
 				char data = _buffer[i + 5];
 				write_mem(i + pEeprom->offset, data);
-				_delay_ms(10);
+				
 			}
 			
+			_delay_ms(10);
 			reset_ctrl();
 			usart_send(ACK);
 			wait_host();
