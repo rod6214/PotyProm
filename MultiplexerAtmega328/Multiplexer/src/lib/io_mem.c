@@ -4,7 +4,7 @@
  * Created: 5/1/2022 2:29:07 PM
  *  Author: Nelson
  */ 
-# define F_CPU 4000000UL
+# define F_CPU 16000000UL
 #include <avr/io.h>
 #include <util/delay.h>
 #include "io_mem.h"
@@ -40,21 +40,25 @@ void set_address_high_as_input()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 		return;
+	#ifdef __AVR_AT90S8535__
 	PORTA = 0;
 	_delay_loop_1(2);
 	DDRA = 0;
 	_delay_loop_1(2);
+	#endif
 }
 
 void set_data_as_input()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 	{
+		#ifdef __AVR_AT90S8535__
 		PORTA = 0;
 		_delay_loop_1(1);
 		DDRA = 0;
 		_delay_loop_1(1);	
 		return;
+		#endif
 	}
 	PORTD = PORTD & (~252);
 	_delay_loop_1(1);
@@ -88,21 +92,25 @@ void set_address_high_as_output()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 		return;
+	#ifdef __AVR_AT90S8535__
 	PORTA = 0;
 	_delay_loop_1(2);
 	DDRA = 255;
 	_delay_loop_1(2);
+	#endif
 }
 
 void set_data_as_output()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS)
 	{
+		#ifdef __AVR_AT90S8535__
 		PORTA = 0;
 		_delay_loop_1(1);
 		DDRA = 255;
 		_delay_loop_1(1);
 		return;
+		#endif
 	}
 
 	PORTD = PORTD & (~252);
@@ -206,7 +214,9 @@ char get_data()
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
 	{
+		#ifdef __AVR_AT90S8535__
 		return PINA;
+		#endif
 	}
 
 	char datah = 0;
@@ -220,7 +230,9 @@ void set_data(char data)
 {
 	if (io_mem.mode == MEM_ADDR_WITH_REGISTERS) 
 	{
+		#ifdef __AVR_AT90S8535__
 		PORTA = data;
+		#endif
 	}
 	else 
 	{

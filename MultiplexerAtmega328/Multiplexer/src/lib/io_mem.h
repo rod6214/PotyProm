@@ -40,8 +40,10 @@
 #define LOW_OFFSET_STEP 5
 #define DATA_STEP 6
 #define WRITE_MEMORY_EXEC 7
+#ifdef __AVR_AT90S8535__
 #define USART_TX_vect _VECTOR(13)
 #define USART_RX_vect _VECTOR(11)
+#endif
 #define MEM_ADDR_LOW_PORTC 7
 #define MEM_ADDR_LOW_REGISTER 10
 #define MEM_ADDR_WITH_REGISTERS 11

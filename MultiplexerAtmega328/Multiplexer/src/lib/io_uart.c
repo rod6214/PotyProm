@@ -16,6 +16,7 @@
 
 void usart_start()
 {
+	#ifdef __AVR_AT90S8535__
 	/************************************************************************/
 	/*   UBRR0 = fosc/(16*BAUD) - 1                                         */
 	/************************************************************************/
@@ -25,17 +26,22 @@ void usart_start()
 	// UBRRL = 25;
 	// UBRR = 25;
 	UBRR = 12;
+	#endif
 	_delay_loop_1(1);
 }
 
 void usart_send(char data)
 {
+	#ifdef __AVR_AT90S8535__
 	// UCSRB = UCSRB | (1 << TXB8);
 	UCR = UCR | (1 << TXB8);
 	UDR = data;
+	#endif
 }
 
 char usart_receive()
 {
+	#ifdef __AVR_AT90S8535__
 	return UDR;
+	#endif
 }
