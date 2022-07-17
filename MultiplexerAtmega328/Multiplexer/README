@@ -1,0 +1,6 @@
+https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
+https://github.com/mkleemann/cmake-avr
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\MultiplexerAtmega328\Multiplexer\avr-toolchain.cmake -B C:\Develop\RomProgrammer\MultiplexerAtmega328\Multiplexer\build -S C:\Develop\RomProgrammer\MultiplexerAtmega328\Multiplexer
+avrdude -c USBasp -p 8535 -u -U flash:w:OpenProgrammer.hex:i
+avrdude -c USBasp -p 8535 -u -U flash:r:IOpenProgrammer.hex:i
+https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
