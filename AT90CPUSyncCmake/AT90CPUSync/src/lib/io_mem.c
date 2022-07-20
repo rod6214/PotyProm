@@ -234,14 +234,14 @@ void set_data(char data)
 	
 void set_chip_enable(int value)
 {
-	if (!value) 
-	{
-		PORTB = PORTB | ((1 << PB0));
-	}
-	else 
-	{
-		PORTB = PORTB & (~(1 << PB0));
-	}
+	// if (!value) 
+	// {
+	// 	PORTB = PORTB | ((1 << PB0));
+	// }
+	// else 
+	// {
+	// 	PORTB = PORTB & (~(1 << PB0));
+	// }
 }
 
 void set_output_enable(int value) 

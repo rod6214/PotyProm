@@ -60,17 +60,19 @@ void write_mem(int address, char data)
 
 void prepare_for_read()
 {
+	set_chip_enable(TRUE);
 	_delay_loop_1(20);
 	set_data_as_input();
 	_delay_loop_1(20);
-	set_chip_enable(TRUE);
 	set_output_enable(TRUE);
+	_delay_loop_1(20);
 }
 
 void prepare_for_write()
 {
-	set_data_as_output();
 	set_chip_enable(TRUE);
+	_delay_loop_1(20);
+	set_data_as_output();
 	_delay_loop_1(20);
 	set_output_enable(FALSE);
 	_delay_loop_1(20);

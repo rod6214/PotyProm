@@ -29,7 +29,7 @@ int circuitMode = NULL;
 #define wait_host() while(!data_sent); data_sent=FALSE
 
 void start_system();
-void start_program();
+void start_program_memory();
 void debug_mode(int active);
 void program_mode(int active);
 void prepare_cpu_card();
@@ -100,10 +100,25 @@ void start_system()
 		PORTD = PORTD | (1 << PD7);
 		_delay_loop_1(8);
 	}
+	else 
+	{
+		PORTB &= ~(1 << PB6) & ~(1 << PB7) & ~(1 << PB0);
+		// INIT START SEQUENCE
+		// PB6 HALT
+		// PB7 RESET
+		// PB0 NMI
+		_delay_loop_1(8);
+		PORTB = PORTB | (1 << PB6);
+		_delay_loop_1(4);
+		PORTB = PORTB | (1 << PB7);
+		_delay_loop_1(4);
+		PORTB = PORTB | (1 << PB0);
+		_delay_loop_1(4);
+	}
 	isModeProgramming = FALSE;
 }
 
-void start_program()
+void start_program_memory()
 {
 	if (circuitMode != MODE_ONLY_PROGRAMMER) 
 	{
@@ -112,13 +127,25 @@ void start_program()
 		PORTC = PORTC & ~(1 << PC7);
 		_delay_loop_1(100);
 	}
+	else 
+	{
+		// RESET
+		PORTB = PORTB & ~(1 << PB7);
+		_delay_loop_1(8);
+	}
 	isModeProgramming = TRUE;
 }
 
 void debug_mode(int active)
 {
 	if (circuitMode == MODE_ONLY_PROGRAMMER)
+	{
+		// ACTIVATE HALT
+		PORTB = PORTB & ~(1 << PB6);
+		PORTB = PORTB | (1 << PB7);
 		return;
+	}
+
 	if (active) 
 	{
 		PORTD = PORTD & ~(1 << PD7);
@@ -134,7 +161,13 @@ void debug_mode(int active)
 void program_mode(int active)
 {
 	if (circuitMode == MODE_ONLY_PROGRAMMER)
+	{
+		// ACTIVATE HALT
+		PORTB = PORTB & ~(1 << PB6);
+		PORTB = PORTB & ~(1 << PB7);
 		return;
+	}
+
 	if (active) 
 	{
 		PORTD = PORTD | (1 << PD6);
@@ -157,6 +190,15 @@ void prepare_cpu_card()
 		// Set control pins as outputs
 		DDRC |= (1 << PC5) | (1 << PC6) | (1 << PC7);
 		DDRD |= (1 << PD7) | (1 << PD6);
+	}
+	else 
+	{
+		// PB7 RESET
+		// PB6 HALT
+		SPCR = 4;
+		_delay_loop_1(4);
+		PORTB &= ~(1 << PB6) & ~(1 << PB7);
+		DDRB |= (1 << DDB6) | (1 << DDB7);
 	}
 }
 
@@ -215,8 +257,8 @@ void loop()
 		{
 			set_address_as_output();
 			program_mode(TRUE);
-			debug_mode(TRUE);
-			start_program();
+			// debug_mode(TRUE);
+			start_program_memory();
 			usart_send(ACK);
 			wait_host();
 		}
@@ -224,16 +266,16 @@ void loop()
 		{
 			set_address_as_input();
 			debug_mode(TRUE);
-			program_mode(FALSE);
+			// program_mode(FALSE);
 			usart_send(ACK);
-			start_system();
+			// start_system();
 			wait_host();
 		}
 		else if (command == RUN_MODE) 
 		{
 			set_address_as_input();
-			debug_mode(FALSE);
-			program_mode(FALSE);
+			// debug_mode(FALSE);
+			// program_mode(FALSE);
 			start_system();
 			usart_send(ACK);
 			wait_host();
