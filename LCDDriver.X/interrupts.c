@@ -2,11 +2,19 @@
 #include <xc.h>
 #include "global.h"
 #include "lcd.h"
-#define CLEAR_DISPLAY 13
-#define INPUT_DATA 17
+//#define CLEAR_DISPLAY 13
+// #define INPUT_DATA 17
 
 int pointer = 0;
+int execute_proc = FALSE;
 char lcdBuffer[16];
+int starting_sequence = 0;
+char _buffer[MAX_MEMORY + 5];
+char start_tokens[] = {241, 33, 78, 91};
+// char start_tokens[] = {01, 02, 03, 04};
+int bytes;
+char command;
+#define PACKAGE_SIZE 3
 
 void __interrupt(high_priority) high_isr(void)
 {
@@ -30,15 +38,37 @@ void __interrupt(high_priority) high_isr(void)
     if (bit5) {
         data |= (1 << _PORTB_RB5_POSITION);
     }
+//    consoleWriteCommand(LCD_WRITE, 'T');
+    if (starting_sequence > 3) 
+	{
+		_buffer[pointer] = data;
+		pointer++;
+        if (pointer == PACKAGE_SIZE) 
+        {
+            execute_proc = TRUE;
+        }
+	}
+	else if (start_tokens[starting_sequence] == data) 
+	{
+		starting_sequence++;
+	}
+	else 
+	{
+		starting_sequence = 0;
+	}
     
-    if (pointer == 0) {
-        LCD_clearDisplay();
-    }
     
-    if (pointer < 16) {
-        lcdBuffer[pointer] = data;
-        pointer++;
-    }
+    
+//    if (pointer == 0) {
+//        LCD_clearDisplay();
+//    }
+    
+//    consoleWriteCommand(LCD_WRITE, 'T');
+    
+//    if (pointer < 16) {
+//        lcdBuffer[pointer] = data;
+//        pointer++;
+//    }
 //    if (data & 17) {
 //        PORTA |= (1 << _PORTA_RA2_POSITION);
 //    } 

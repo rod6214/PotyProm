@@ -47,11 +47,11 @@ void LCDConsoleInit(int16_t serialMode) {
     LCD_clearDisplay();
 	// consoleWriteCommand(LCD_COMMAND, 0x01);
 	// Set pointer or reset AC (Address Counter)
-	consoleWriteCommand(LCD_COMMAND, 2);
+	consoleWriteCommand(LCD_COMMAND, RETURN_HOME);
 	// Turn display on
-	consoleWriteCommand(LCD_COMMAND, 12);
+	consoleWriteCommand(LCD_COMMAND, DISPLAY_ON);
 	// Set eight bits mode
-	consoleWriteCommand(LCD_COMMAND, 48);
+	consoleWriteCommand(LCD_COMMAND, SET_EIGHT_BIT);
 }
 
 void consoleWriteCommand(char control, char instruction) {
@@ -129,10 +129,83 @@ void clearGraphicsLCD() {
 	}
 }
 
+void setAddress(char address) {
+    writeCommand(LCD_COMMAND, 128 | (127 & address));
+    __delay_us(100);
+}
+
 void writeCommand(char _control, char instruction) {
 	int16_t data = ((((int16_t)(0xF0 & instruction)) << 8) | ((0x0F & instruction) << 4));
 	dataToSerial(((int16_t)(0xF8 | (_control << 1))), data);
+//    dataToSerial16(((int16_t)(0xF8 | (_control << 1))), 0, data);
 }
+
+void writeCommand16(char command, int data) 
+{
+    char highPart = (char)(data >> 8);
+    char lowPart = (char)(0xff & data);
+    int16_t dataH = ((((int16_t)(0xF0 & highPart)) << 8) | ((0x0F & highPart) << 4));
+    int16_t dataL = ((((int16_t)(0xF0 & lowPart)) << 8) | ((0x0F & lowPart) << 4));
+//    dataToSerial16(((int16_t)(0xF8 | (command << 1))), dataH, dataL);
+}
+
+//void dataToSerial16(int16_t command, int16_t numberH, int16_t numberL) 
+//{
+//    int16_t counter = 0;
+//
+//    while(counter < 8) {
+//        int16_t temp = (command & (1 << 7));
+//        if (temp == (1 << 7)) {
+//            PORTB |= (1 << DATA_PIN);
+//        }
+//        else {
+//            PORTB &= ~(1 << DATA_PIN);
+//        }
+//
+//        PORTB = PORTB | (1 << CLK_PIN);
+//		__delay_us(5);
+//        PORTB = PORTB & ~(1 << CLK_PIN);
+//		__delay_us(5);
+//		command = command << 1;
+//		counter++;
+//	}
+//
+//    counter = 0;
+//    
+//    while(counter < 16) {
+//        int16_t temp = (numberH & (1 << 15));
+//        if (temp == (1 << 15)) {
+//            PORTB |= (1 << DATA_PIN);
+//        }
+//        else {
+//            PORTB &= ~(1 << DATA_PIN);
+//        }
+//        PORTB = PORTB | (1 << CLK_PIN);
+//		__delay_us(5);
+//        PORTB = PORTB & ~(1 << CLK_PIN);
+//		__delay_us(5);
+//		numberH = numberH << 1;
+//		counter++;
+//	}
+//    
+//    counter = 0;
+//    
+//    while(counter < 16) {
+//        int16_t temp = (numberL & (1 << 15));
+//        if (temp == (1 << 15)) {
+//            PORTB |= (1 << DATA_PIN);
+//        }
+//        else {
+//            PORTB &= ~(1 << DATA_PIN);
+//        }
+//        PORTB = PORTB | (1 << CLK_PIN);
+//		__delay_us(5);
+//        PORTB = PORTB & ~(1 << CLK_PIN);
+//		__delay_us(5);
+//		numberL = numberL << 1;
+//		counter++;
+//	}
+//}
 
 char dataToSerial(int16_t numberH, int16_t numberL) {
 	int16_t counter = 0;
@@ -196,9 +269,9 @@ char dataToSerial(int16_t numberH, int16_t numberL) {
 
 void reset_lcd() {
     PORTB &= ~(1 << LCD_RESET_PIN);
-    __delay_us(2);
+    __delay_us(200);
     PORTB |= (1 << LCD_RESET_PIN);
-    __delay_us(2);
+    __delay_us(200);
 }
 
 void chip_select(int16_t value) {

@@ -37,7 +37,13 @@ extern "C" {
 #define BITS_4 0
 #define EXTENDED 1
 #define GDISPLAY 1
+#ifndef FALSE
+#define FALSE 0
+#endif
 
+#ifndef TRUE
+#define TRUE 1
+#endif
 #define _PARALLEL_ false
 #define _SERIAL_ true
 
@@ -52,11 +58,15 @@ extern "C" {
 #define LCD_WRITE (LCD_RS)
 #define LCD_COMMAND 0
 #define LCD_SERIAL_MODE 1
-
+#define LCD_RESET 78
 #define DISPLAY_ON 12
-#define DISPLAY_OFF 8
-#define SHOW_CURSOR 2
-#define SHOW_BLINK 1
+//#define DISPLAY_OFF 8
+#define SET_EIGHT_BIT 32
+#define SET_ADDRESS 32
+//#define SHOW_CURSOR 2
+#define RETURN_HOME 2
+//#define SHOW_BLINK 1
+#define CLEAR_DISPLAY 65
 #define C_EON 4
 #define C_RS 1
 #define C_CLEAR 0
@@ -68,15 +78,23 @@ extern "C" {
 
 extern char lcdBuffer[];
 extern int pointer;
+extern int starting_sequence;
+extern int execute_proc;
+extern int bytes;
+extern char command;
+extern char _buffer[];
 char dataToSerial(int16_t numberH, int16_t numberL);
-void writeCommand(char control, char instruction);
-void consoleWriteCommand(char control, char instruction);
+void writeCommand(char command, char instruction);
+void consoleWriteCommand(char command, char instruction);
 void LCDGraphicsInit(int16_t serialMode);
 void LCDConsoleInit(int16_t serialMode);
 void clearGraphicsLCD(void);
 void reset_lcd();
 void chip_select(int16_t value);
 void LCD_clearDisplay();
+void setAddress(char address);
+void dataToSerial16(int16_t command, int16_t numberH, int16_t numberL);
+void writeCommand16(char command, int data);
 
 #endif /* PSERIAL_H_ */
 
