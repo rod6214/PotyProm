@@ -17,3 +17,9 @@ add_avr_library(
    io_uart.c
    io_uart.h
 )
+
+add_avr_library(
+   lcd_driver
+   lcd_driver.c
+   lcd_driver.h
+)

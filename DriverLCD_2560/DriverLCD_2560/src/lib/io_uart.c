@@ -20,22 +20,22 @@ void usart_start()
 	/*   UBRR0 = fosc/(16*BAUD) - 1                                         */
 	/************************************************************************/
 	// UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE) | (1 << TXCIE) | (1 << UCSZ2);
-	UCR = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE) | (1 << TXCIE) | (1 << CHR9);
+	// UCR = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE) | (1 << TXCIE) | (1 << CHR9);
 	_delay_loop_1(1);
 	// UBRRL = 25;
 	// UBRR = 25;
-	UBRR = 12;
+	// UBRR = 12;
 	_delay_loop_1(1);
 }
 
 void usart_send(char data)
 {
 	// UCSRB = UCSRB | (1 << TXB8);
-	UCR = UCR | (1 << TXB8);
-	UDR = data;
+	// UCR = UCR | (1 << TXB8);
+	// UDR = data;
 }
 
 char usart_receive()
 {
-	return UDR;
+	// return UDR;
 }

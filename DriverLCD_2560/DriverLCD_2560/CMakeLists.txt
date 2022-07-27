@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(AVR_MCU at90s8535)
+set(AVR_MCU atmega2560)
 
 project(LCD_Driver)
 
@@ -22,6 +22,6 @@ add_definitions("-MP")
 add_definitions("-MF")
 add_definitions("-std=gnu99")
 
-set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/AT90CPUSyncCmake/AT90CPUSync/src")
+set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/DriverLCD_2560/DriverLCD_2560/src")
 
 add_subdirectory(src)

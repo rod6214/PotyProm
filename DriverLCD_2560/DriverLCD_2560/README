@@ -1,0 +1,5 @@
+https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
+https://github.com/mkleemann/cmake-avr
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\DriverLCD_2560\DriverLCD_2560\avr-toolchain.cmake -B C:\Develop\RomProgrammer\DriverLCD_2560\DriverLCD_2560\build -S C:\Develop\RomProgrammer\DriverLCD_2560\DriverLCD_2560
+avrdude -c USBasp -p 8535 -u -U flash:w:LCD_Driver.hex:i
+https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
