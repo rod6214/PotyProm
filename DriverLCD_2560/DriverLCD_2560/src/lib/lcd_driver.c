@@ -5,7 +5,6 @@
  *  Author: Nelson
  */ 
 
-// #define _XTAL_FREQ 48000000
 #define F_CPU 16000000UL
 #include <util/delay.h>
 #include "global.h"
@@ -14,28 +13,28 @@
 void initPorts(int16_t serialMode);
 
 void initPorts(int16_t serialMode) {
-    // TRISB &= ~(1 << CS_PIN);
-    // TRISB &= ~(1 << CLK_PIN);
-    // TRISB &= ~(1 << DATA_PIN);
-    // TRISB &= ~(1 << LCD_RESET_PIN);
-    // TRISB &= ~(1 << PSB_PIN);
+    TRIS_CONTROL |= (1 << CS_PIN);
+    TRIS_CONTROL |= (1 << CLK_PIN);
+    TRIS_CONTROL |= (1 << DATA_PIN);
+    TRIS_CONTROL |= (1 << LCD_RESET_PIN);
+    TRIS_CONTROL |= (1 << PSB_PIN);
 
-    PORTB &= ~(1 << CS_PIN);
-    PORTB &= ~(1 << CLK_PIN);
-    PORTB &= ~(1 << DATA_PIN);
+    PORT_CONTROL &= ~(1 << CS_PIN);
+    PORT_CONTROL &= ~(1 << CLK_PIN);
+    PORT_CONTROL &= ~(1 << DATA_PIN);
     if (serialMode & LCD_SERIAL_MODE)
     {
-        PORTB &= ~(1 << PSB_PIN);
+        PORT_CONTROL &= ~(1 << PSB_PIN);
     }
     else
     {
-        PORTB |= (1 << PSB_PIN);
+        PORT_CONTROL |= (1 << PSB_PIN);
     }
 }
 
 void LCDConsoleInit(int16_t serialMode) {
     initPorts(serialMode);
-    initPorts(serialMode);
+    // initPorts(serialMode);
 
 	_delay_loop_1(50);
     
@@ -140,75 +139,7 @@ void setAddress(char address) {
 void writeCommand(char _control, char instruction) {
 	int16_t data = ((((int16_t)(0xF0 & instruction)) << 8) | ((0x0F & instruction) << 4));
 	dataToSerial(((int16_t)(0xF8 | (_control << 1))), data);
-//    dataToSerial16(((int16_t)(0xF8 | (_control << 1))), 0, data);
 }
-
-void writeCommand16(char command, int data) 
-{
-    // char highPart = (char)(data >> 8);
-    // char lowPart = (char)(0xff & data);
-    // int16_t dataH = ((((int16_t)(0xF0 & highPart)) << 8) | ((0x0F & highPart) << 4));
-    // int16_t dataL = ((((int16_t)(0xF0 & lowPart)) << 8) | ((0x0F & lowPart) << 4));
-//    dataToSerial16(((int16_t)(0xF8 | (command << 1))), dataH, dataL);
-}
-
-//void dataToSerial16(int16_t command, int16_t numberH, int16_t numberL) 
-//{
-//    int16_t counter = 0;
-//
-//    while(counter < 8) {
-//        int16_t temp = (command & (1 << 7));
-//        if (temp == (1 << 7)) {
-//            PORTB |= (1 << DATA_PIN);
-//        }
-//        else {
-//            PORTB &= ~(1 << DATA_PIN);
-//        }
-//
-//        PORTB = PORTB | (1 << CLK_PIN);
-//		__delay_us(5);
-//        PORTB = PORTB & ~(1 << CLK_PIN);
-//		__delay_us(5);
-//		command = command << 1;
-//		counter++;
-//	}
-//
-//    counter = 0;
-//    
-//    while(counter < 16) {
-//        int16_t temp = (numberH & (1 << 15));
-//        if (temp == (1 << 15)) {
-//            PORTB |= (1 << DATA_PIN);
-//        }
-//        else {
-//            PORTB &= ~(1 << DATA_PIN);
-//        }
-//        PORTB = PORTB | (1 << CLK_PIN);
-//		__delay_us(5);
-//        PORTB = PORTB & ~(1 << CLK_PIN);
-//		__delay_us(5);
-//		numberH = numberH << 1;
-//		counter++;
-//	}
-//    
-//    counter = 0;
-//    
-//    while(counter < 16) {
-//        int16_t temp = (numberL & (1 << 15));
-//        if (temp == (1 << 15)) {
-//            PORTB |= (1 << DATA_PIN);
-//        }
-//        else {
-//            PORTB &= ~(1 << DATA_PIN);
-//        }
-//        PORTB = PORTB | (1 << CLK_PIN);
-//		__delay_us(5);
-//        PORTB = PORTB & ~(1 << CLK_PIN);
-//		__delay_us(5);
-//		numberL = numberL << 1;
-//		counter++;
-//	}
-//}
 
 char dataToSerial(int16_t numberH, int16_t numberL) {
 	int16_t counter = 0;
@@ -216,15 +147,15 @@ char dataToSerial(int16_t numberH, int16_t numberL) {
     while(counter < 8) {
         int16_t temp = (numberH & (1 << 7));
         if (temp == (1 << 7)) {
-            PORTB |= (1 << DATA_PIN);
+            PORT_CONTROL |= (1 << DATA_PIN);
         }
         else {
-            PORTB &= ~(1 << DATA_PIN);
+            PORT_CONTROL &= ~(1 << DATA_PIN);
         }
 
-        PORTB = PORTB | (1 << CLK_PIN);
+        PORT_CONTROL |= (1 << CLK_PIN);
 		_delay_us(5);
-        PORTB = PORTB & ~(1 << CLK_PIN);
+        PORT_CONTROL &= ~(1 << CLK_PIN);
 		_delay_us(5);
 		numberH = numberH << 1;
 		counter++;
@@ -254,14 +185,14 @@ char dataToSerial(int16_t numberH, int16_t numberL) {
 	while(counter < 16) {
         int16_t temp = (numberL & (1 << 15));
         if (temp == (1 << 15)) {
-            PORTB |= (1 << DATA_PIN);
+            PORT_CONTROL |= (1 << DATA_PIN);
         }
         else {
-            PORTB &= ~(1 << DATA_PIN);
+            PORT_CONTROL &= ~(1 << DATA_PIN);
         }
-        PORTB = PORTB | (1 << CLK_PIN);
+        PORT_CONTROL = PORT_CONTROL | (1 << CLK_PIN);
 		_delay_us(5);
-        PORTB = PORTB & ~(1 << CLK_PIN);
+        PORT_CONTROL = PORT_CONTROL & ~(1 << CLK_PIN);
 		_delay_us(5);
 		numberL = numberL << 1;
 		counter++;
@@ -271,18 +202,18 @@ char dataToSerial(int16_t numberH, int16_t numberL) {
 }
 
 void reset_lcd() {
-    PORTB &= ~(1 << LCD_RESET_PIN);
+    PORT_CONTROL &= ~(1 << LCD_RESET_PIN);
     _delay_us(200);
-    PORTB |= (1 << LCD_RESET_PIN);
+    PORT_CONTROL |= (1 << LCD_RESET_PIN);
     _delay_us(200);
 }
 
 void chip_select(int16_t value) {
     if (value) {
-        PORTB |= (1 << CS_PIN);
+        PORT_CONTROL |= (1 << CS_PIN);
     }
     else {
-        PORTB &= ~(1 << CS_PIN);
+        PORT_CONTROL &= ~(1 << CS_PIN);
     }
 }
 

@@ -38,6 +38,9 @@ extern "C" {
 #define _PARALLEL_ false
 #define _SERIAL_ true
 
+#define PORT_CONTROL PORTF
+#define TRIS_CONTROL DDRF
+
 #define CS_PIN PF0 // Chip select signal
 #define DATA_PIN PF1 //  Data signal
 #define CLK_PIN PF2 // Clock signal
@@ -67,7 +70,7 @@ extern "C" {
 #define set_Vertical(x) (GRAPHIC_ADDR_COMMAND | (127 & x))
 #define set_Horizontal(x) (GRAPHIC_ADDR_COMMAND | (X_LIM & x))
 
-extern char lcdBuffer[];
+// extern char lcdBuffer[];
 extern int pointer;
 extern int starting_sequence;
 extern int execute_proc;

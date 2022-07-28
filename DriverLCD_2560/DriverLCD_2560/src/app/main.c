@@ -8,27 +8,92 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-// #include "io_mem.h"
-#include "io_uart.h"
-#include "ext_eeprom_mem.h"
+#include "global.h"
+#include "lcd_driver.h"
 
-#define MAX_MEMORY 64
-#define MODE_ONLY_PROGRAMMER 78
+void reset_lcd_sequence() 
+{
+    pointer = 0;
+    starting_sequence = 0;
+}
 
 void config()
-{}
+{
+	INPUT_PORT = 0;
+	INPUT_TRIS = 0;
+	EICRA = (1 << ISC01) | (1 << ISC00);
+	EIMSK = (1 << INT0);
+	LCDConsoleInit(LCD_SERIAL_MODE);
+  _delay_loop_1(200);
+	// consoleWriteCommand(LCD_WRITE, 'T');
+	sei();
+}
 
 void loop() 
 {
+	if (!execute_proc) 
+	{
+			return;
+	}
+
+	command = _buffer[0];
+	bytes = _buffer[1];
+
+	int dataReceived = pointer - 2;
+			
+	if (dataReceived == bytes) 
+	{
+		switch(command) 
+		{
+			case LCD_WRITE:
+			{
+					for(int i = 0; i < bytes; i++) 
+					{
+							consoleWriteCommand(LCD_WRITE, _buffer[i + 2]);
+					}
+			}
+			break;
+			case RETURN_HOME:
+			{
+					consoleWriteCommand(LCD_COMMAND, RETURN_HOME);
+			}
+			break;
+			case CLEAR_DISPLAY:
+			{
+					consoleWriteCommand(LCD_COMMAND, CLEAR_DISPLAY);
+			}
+			break;
+			case SET_ADDRESS:
+			{
+					consoleWriteCommand(LCD_COMMAND, SET_ADDRESS);
+			}
+			break;
+			case DISPLAY_ON:
+			{
+					consoleWriteCommand(LCD_COMMAND, DISPLAY_ON);
+			}
+			break;
+			case LCD_RESET:
+			{
+					reset_lcd();
+			}
+			break;
+			default:
+			{
+					reset_lcd_sequence();
+			}
+			break;
+		}
+	}
 }
 
 int main(void)
 {
 	config();
-    /* Replace with your application code */
-    while (1) 
-    {
+		/* Replace with your application code */
+		while (1) 
+		{
 		loop();
-    }
+		}
 }
 

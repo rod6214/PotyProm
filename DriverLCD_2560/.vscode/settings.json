@@ -11,6 +11,7 @@
         "io8535.h": "c",
         "io_mem.h": "c",
         "ext_eeprom_mem.h": "c",
-        "lcd_driver.h": "c"
+        "lcd_driver.h": "c",
+        "global.h": "c"
     }
 }
