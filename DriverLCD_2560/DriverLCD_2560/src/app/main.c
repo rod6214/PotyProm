@@ -85,6 +85,10 @@ void loop()
 			break;
 		}
 	}
+
+	pointer = 0;
+	starting_sequence = 0;
+	execute_proc = FALSE;
 }
 
 int main(void)

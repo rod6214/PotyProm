@@ -13,7 +13,11 @@ char _buffer[MAX_MEMORY + 5];
 char command;
 int bytes;
 char start_tokens[] = {241, 33, 78, 91};
-
+/*
+COMMAND
+BYTES
+DATA[]
+*/
 ISR(INT0_vect)
 {
 	cli();
@@ -33,8 +37,9 @@ ISR(INT0_vect)
 	}
 	else 
 	{
-		starting_sequence = 0;
+		starting_sequence = 0;   
 	}
+    resetFlag();
     // consoleWriteCommand(LCD_WRITE, 'T');
 	sei();
 }

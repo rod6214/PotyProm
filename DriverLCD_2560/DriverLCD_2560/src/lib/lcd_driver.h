@@ -46,6 +46,7 @@ extern "C" {
 #define CLK_PIN PF2 // Clock signal
 #define PSB_PIN PF3 // 1: Parallel bus mode, 0: Serial mode
 #define LCD_RESET_PIN PF4 // Reset all the screen
+#define INT_RESET_PIN PF5 // Reset all the screen
 #define LCD_RS 1
 #define LCD_RW 2
 #define LCD_READ (LCD_RW | LCD_RS)
@@ -70,25 +71,25 @@ extern "C" {
 #define set_Vertical(x) (GRAPHIC_ADDR_COMMAND | (127 & x))
 #define set_Horizontal(x) (GRAPHIC_ADDR_COMMAND | (X_LIM & x))
 
-// extern char lcdBuffer[];
 extern int pointer;
 extern int starting_sequence;
 extern int execute_proc;
 extern int bytes;
 extern char command;
 extern char _buffer[];
-char dataToSerial(int16_t numberH, int16_t numberL);
-void writeCommand(char command, char instruction);
-void consoleWriteCommand(char command, char instruction);
-void LCDGraphicsInit(int16_t serialMode);
-void LCDConsoleInit(int16_t serialMode);
-void clearGraphicsLCD(void);
-void reset_lcd();
-void chip_select(int16_t value);
-void LCD_clearDisplay();
-void setAddress(char address);
-void dataToSerial16(int16_t command, int16_t numberH, int16_t numberL);
-void writeCommand16(char command, int data);
+extern char dataToSerial(int16_t numberH, int16_t numberL);
+extern void writeCommand(char command, char instruction);
+extern void consoleWriteCommand(char command, char instruction);
+extern void LCDGraphicsInit(int16_t serialMode);
+extern void LCDConsoleInit(int16_t serialMode);
+extern void clearGraphicsLCD(void);
+extern void reset_lcd();
+extern void chip_select(int16_t value);
+extern void LCD_clearDisplay();
+extern void setAddress(char address);
+extern void dataToSerial16(int16_t command, int16_t numberH, int16_t numberL);
+extern void writeCommand16(char command, int data);
+extern void resetFlag();
 
 #endif /* PSERIAL_H_ */
 

@@ -12,16 +12,24 @@
 
 void initPorts(int16_t serialMode);
 
+void resetFlag() {
+    PORT_CONTROL |= (1 << INT_RESET_PIN);
+    _delay_loop_1(50);
+    PORT_CONTROL &= ~(1 << INT_RESET_PIN);
+    _delay_loop_1(2);
+}
+
 void initPorts(int16_t serialMode) {
     TRIS_CONTROL |= (1 << CS_PIN);
     TRIS_CONTROL |= (1 << CLK_PIN);
     TRIS_CONTROL |= (1 << DATA_PIN);
     TRIS_CONTROL |= (1 << LCD_RESET_PIN);
     TRIS_CONTROL |= (1 << PSB_PIN);
-
+    TRIS_CONTROL |= (1 << INT_RESET_PIN);
     PORT_CONTROL &= ~(1 << CS_PIN);
     PORT_CONTROL &= ~(1 << CLK_PIN);
     PORT_CONTROL &= ~(1 << DATA_PIN);
+    PORT_CONTROL &= ~(1 << INT_RESET_PIN);
     if (serialMode & LCD_SERIAL_MODE)
     {
         PORT_CONTROL &= ~(1 << PSB_PIN);
