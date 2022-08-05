@@ -375,7 +375,7 @@ namespace PotyProm
                 else
                     realSize = selectedSize;
                 byte[] newDim = new byte[realSize];
-                Array.Copy(bytes, 0, newDim, 0, selectedSize);
+                Array.Copy(bytes, offset, newDim, 0, selectedSize);
                 //for(int i = 0; i < realSize; i++) 
                 //{
                 //    newDim[i] = bytes[i];

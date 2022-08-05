@@ -60,12 +60,12 @@ void loop()
 			break;
 			case CLEAR_DISPLAY:
 			{
-					consoleWriteCommand(LCD_COMMAND, CLEAR_DISPLAY);
+					consoleWriteCommand(LCD_COMMAND, 1);
 			}
 			break;
 			case SET_ADDRESS:
 			{
-					consoleWriteCommand(LCD_COMMAND, SET_ADDRESS);
+				setAddress(_buffer[2]);
 			}
 			break;
 			case DISPLAY_ON:

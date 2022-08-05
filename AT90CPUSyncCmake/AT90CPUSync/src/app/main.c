@@ -130,7 +130,7 @@ void start_program_memory()
 	else 
 	{
 		// RESET
-		PORTB = PORTB & ~(1 << PB7);
+		// PORTB = PORTB & ~(1 << PB7);
 		_delay_loop_1(8);
 	}
 	isModeProgramming = TRUE;
@@ -142,6 +142,7 @@ void debug_mode(int active)
 	{
 		// ACTIVATE HALT
 		PORTB = PORTB & ~(1 << PB6);
+		_delay_loop_1(4);
 		PORTB = PORTB | (1 << PB7);
 		return;
 	}
@@ -160,11 +161,17 @@ void debug_mode(int active)
 
 void program_mode(int active)
 {
+	/**
+	 * @brief Construct a new if object
+	 * PB6: HALT
+	 * PB7: RESET
+	 */
 	if (circuitMode == MODE_ONLY_PROGRAMMER)
 	{
 		// ACTIVATE HALT
-		PORTB = PORTB & ~(1 << PB6);
-		PORTB = PORTB & ~(1 << PB7);
+		PORTB &= ~(1 << PB6);
+		_delay_ms(5);
+		PORTB &= ~(1 << PB7);
 		return;
 	}
 
@@ -255,10 +262,10 @@ void loop()
 		}
 		else if (command == PROGRAM_MODE) 
 		{
-			set_address_as_output();
 			program_mode(TRUE);
 			// debug_mode(TRUE);
 			start_program_memory();
+			set_address_as_output();
 			usart_send(ACK);
 			wait_host();
 		}
