@@ -1,0 +1,313 @@
+    .ORG $0000
+test        .DB 0
+command     .DB 241, 33, 78, 91, 00, 00
+msg         .DB "Value: ", 0, 0, 0, 0, 0
+count       .DB 0
+digits      .DB 0, 0, 0
+BIN         .DB $ff, $00
+_command_t          .DB 0
+;---------------------------------------------
+_ptr_temp     .DB 0, 0
+;---------------------------------------------
+; use litle endian to decode 16bit numbers
+LCD_RESET         .equ 78
+LCD_WRITE         .equ 01
+SET_ADDRESS       .equ 32
+CLEAR_DISPLAY     .equ 65
+OUTPUT            .equ $4000
+
+    .ORG $0200
+reset:
+    JMP main
+main:
+    LDX #$FF
+    TXS
+testLCD:  
+    INC BIN
+    BNE continue
+    INC BIN+1
+continue:
+    ;
+    ;delay(value);
+    LDA #$0f
+    PHA
+    LDA #$00
+    PHA
+    JSR _counter
+    ;
+    ; BINBCD16(value);
+    LDA BIN
+    PHA
+    LDA BIN + 1
+    PHA
+    JSR BINBCD16
+    PLA
+    STA digits+0
+    PLA
+    STA digits+1
+    PLA
+    STA digits+2
+    ;
+    ;convert_toDisplay(value);
+    LDA digits+2
+    PHA
+    LDA digits+1
+    PHA
+    LDA digits+0
+    PHA
+    JSR convert_toDisplay
+    PLA
+    STA msg+11
+    PLA
+    STA msg+10
+    PLA
+    STA msg+9
+    PLA
+    STA msg+8
+    PLA
+    STA msg+7
+    ;
+    ;write_console(#msg, 1, CLEAR_DISPLAY);
+    LDA #_command_t ; pointer byte lsb
+    PHA
+    LDA #0 ; pointer byte msb
+    PHA
+    LDA #1 ; bytes to send
+    PHA
+    LDA #SET_ADDRESS ; command
+    PHA
+    JSR _console
+    ;
+    ;delay(value);
+    LDA #$05
+    PHA
+    LDA #$00
+    PHA
+    JSR _counter
+    ;
+    ;write_console(#msg, 10, LCD_WRITE);
+    LDA #msg ; pointer byte lsb
+    PHA
+    LDA #0  ; pointer byte msb
+    PHA
+    LDA #12 ; bytes to send
+    PHA
+    LDA #LCD_WRITE ; command
+    PHA
+    JSR _console
+    ;
+    JMP testLCD
+loop:
+    JMP loop
+    NOP
+;void write_console(int* b, int8_t bytes, int8_t command){
+;-----------------------------
+_console_command    .DB 0
+_console_bytes      .DB 0
+_console_int_temp   .DB 0, 0
+;-----------------------------
+_console:
+    PLA
+    STA _console_int_temp+1
+    PLA
+    STA _console_int_temp+0
+    PLA
+    STA _console_command  ; save working mode in memory
+    PLA
+    STA _console_bytes  ; save bytes in memory
+    PLA
+    STA _ptr_temp+1    ; save pointer msb
+    PLA
+    STA _ptr_temp+0    ; save pointer lsb
+    LDA _console_bytes  ; load bytes in acum
+    STA command+5     ; load command + 5 memory position with bytes needed to transmit
+    LDA _console_command    ; load working mode
+    STA command+4          ; store command value command + 4
+    LDX #0              ; clear index X
+_console_challenge:
+    LDA command, X
+    STA OUTPUT
+    INX
+    CPX #6
+    BNE _console_challenge
+    LDY #0              ; clear index X
+_console_loop:
+    LDA (_ptr_temp), Y   ; load value of the pointer
+    STA OUTPUT              ; write value in the screen
+    INY                     ; increment index Y
+    CPY _console_bytes
+    BNE _console_loop
+    LDA _console_int_temp+0
+    PHA
+    LDA _console_int_temp+1
+    PHA
+    RTS
+;}
+;void delay(int value){
+;-----------------------------
+CX  .DB $00, $00, $00, $00
+CX1 .DB $0f 
+CX2 .DB $f0
+_counter_int_temp   .DB 0, 0
+;-----------------------------
+_counter:
+    PLA
+    STA _counter_int_temp+1
+    PLA
+    STA _counter_int_temp+0
+    PLA
+    STA CX2
+    PLA
+    STA CX1
+    LDA CX2
+    STA CX+2
+c2:
+    LDA CX1
+    STA CX+3
+c1:
+    NOP
+    DEC CX+3   ; Decrement position 1 by 1
+    BNE c1      ; Skip if 0
+    
+    DEC CX+2   ; Decrement position 2
+    BNE c2      ; Skip if 0
+   
+    LDA _counter_int_temp+0
+    PHA
+    LDA _counter_int_temp+1
+    PHA
+    RTS         ; Return
+;}
+;long BINBCD16(int value){
+;-----------------------------
+BINBCD16_BCD .DB 0, 0, 0
+BINBCD16_BIN .DB 0, 0
+BINBCD16_int_temp   .DB 0, 0
+;-----------------------------
+BINBCD16:
+    LDX #0
+BINBCD16_reset:
+    LDA #0
+    STA BINBCD16_BCD,X
+    INX
+    CPX #3
+    BNE BINBCD16_reset
+    ;-----------------------------------------
+    PLA
+    STA BINBCD16_int_temp+1
+    PLA
+    STA BINBCD16_int_temp
+    ;-------------process params--------------
+    PLA
+    STA BINBCD16_BIN+1
+    PLA
+    STA BINBCD16_BIN
+    ;-----------------------------------------
+    SED		; Switch to decimal mode
+    CLC
+    LDA #0		; Ensure the result is clear
+    STA BINBCD16_BCD+0
+    STA BINBCD16_BCD+1
+    STA BINBCD16_BCD+2
+    LDX #16		; The number of source bits
+BINBCD16_CNVBIT:		
+    ASL BINBCD16_BIN+0	; Shift out one bit
+    ROL BINBCD16_BIN+1
+    LDA BINBCD16_BCD+0	; And add into result
+    ADC BINBCD16_BCD+0
+    STA BINBCD16_BCD+0
+    LDA BINBCD16_BCD+1	; propagating any carry
+    ADC BINBCD16_BCD+1
+    STA BINBCD16_BCD+1
+    LDA BINBCD16_BCD+2	; ... thru whole result
+    ADC BINBCD16_BCD+2
+    STA BINBCD16_BCD+2
+    DEX		; And repeat for next bit
+    BNE BINBCD16_CNVBIT
+    CLD		; Back to binary
+    ;------------process result---------------
+    LDA BINBCD16_BCD
+    PHA
+    LDA BINBCD16_BCD+1
+    PHA
+    LDA BINBCD16_BCD+2
+    PHA
+    ;-----------------------------------------
+    LDA BINBCD16_int_temp
+    PHA
+    LDA BINBCD16_int_temp+1
+    PHA
+    ;-----------------------------------------
+    RTS		; All Done.
+;}
+;char* convert_toDisplay(long value){
+;------------------------------------
+_toDisplay_long_value   .DB 0, 0, 0
+_toDisplay_long_result  .DB 1, 1, 1, 1, 1
+toDisplay_int_temp   .DB 0, 0
+;------------------------------------
+convert_toDisplay:
+    PLA
+    STA toDisplay_int_temp+1
+    PLA
+    STA toDisplay_int_temp+0
+    ;-------------process params--------------
+    PLA
+    STA _toDisplay_long_value+0 ; msb
+    PLA
+    STA _toDisplay_long_value+1
+    PLA
+    STA _toDisplay_long_value+2 ; lsb
+    ;----------------------------------------
+    LDA #15
+    AND _toDisplay_long_value+2
+    STA _toDisplay_long_result+4
+    LDA #15
+    AND _toDisplay_long_value+1
+    STA _toDisplay_long_result+2
+    
+    LDA _toDisplay_long_value+2
+    STA _toDisplay_long_result+3
+    LDA _toDisplay_long_value+1
+    STA _toDisplay_long_result+1
+    LDA _toDisplay_long_value+0
+    STA _toDisplay_long_result+0
+    LDX #4
+_toDisplay_ror:
+    CLC
+    ROR _toDisplay_long_result+1
+    CLC
+    ROR _toDisplay_long_result+3
+    DEX
+    BNE _toDisplay_ror
+    LDX #0
+ _toDisplay_ajust:
+    LDA #48
+    CLC
+    ADC _toDisplay_long_result,X
+    STA _toDisplay_long_result,X
+    INX
+    CPX #5
+    BNE _toDisplay_ajust
+    ;----------------------------------------
+    LDA _toDisplay_long_result+0
+    PHA
+    LDA _toDisplay_long_result+1
+    PHA
+    LDA _toDisplay_long_result+2
+    PHA
+    LDA _toDisplay_long_result+3
+    PHA
+    LDA _toDisplay_long_result+4
+    PHA
+    ;----------------------------------------
+    LDA toDisplay_int_temp+0
+    PHA
+    LDA toDisplay_int_temp+1
+    PHA
+    ;----------------------------------------
+    RTS
+;}
+    .ORG $fffc
+    .WORD reset
+    NOP

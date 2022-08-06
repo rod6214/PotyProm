@@ -1,0 +1,127 @@
+    .ORG $0000
+    JMP main
+
+command     .DB 241, 33, 78, 91, 00, 00
+msg         .DB "Todo bien?"
+
+LCD_RESET       .equ 78
+LCD_WRITE       .equ 01
+CLEAR_DISPLAY   .equ 65
+OUTPUT          .equ $4000
+
+main:
+    LDX #$0FF
+    TXS
+testLCD:
+    ;write_console(#msg, 1, CLEAR_DISPLAY);
+    LDA #msg ; pointer byte lsb
+    PHA
+    LDA #0 ; pointer byte msb
+    PHA
+    LDA #1 ; bytes to send
+    PHA
+    LDA #CLEAR_DISPLAY ; command
+    PHA
+    JSR _console
+    ;
+    ;delay(value);
+    LDA #$05
+    PHA
+    LDA #$00
+    PHA
+    JSR _counter
+    ;write_console(#msg, 10, LCD_WRITE);
+    LDA #msg ; pointer byte lsb
+    PHA
+    LDA #0  ; pointer byte msb
+    PHA
+    LDA #10 ; bytes to send
+    PHA
+    LDA #LCD_WRITE ; command
+    PHA
+    JSR _console
+    ;
+loop:
+    JMP loop
+    NOP
+;void write_console(int* b, int8_t bytes, int8_t command){
+;-----------------------------
+_console_command    .DB 0
+_console_bytes      .DB 0
+_console_ptr        .DB 0,0
+_console_temp1      .DB 0
+_console_temp2      .DB 0
+;-----------------------------
+_console:
+    PLA
+    STA _console_temp1
+    PLA
+    STA _console_temp2
+    PLA
+    STA _console_command  ; save working mode in memory
+    PLA
+    STA _console_bytes  ; save bytes in memory
+    PLA
+    PLA
+    STA _console_ptr    ; save pointer
+    LDA _console_bytes  ; load bytes in acum
+    LDX #5              ; start index X with 5, this is the bytes position in command space
+    STA command, X      ; load command + 5 memory position with bytes needed to transmit
+    LDA _console_command    ; load working mode
+    LDX #4                  ; prepare index X to target command position in memory
+    STA command, X          ; store command value command + 4
+    LDX #0              ; clear index X
+_console_challenge:
+    LDA command, X
+    STA OUTPUT
+    INX
+    CPX #6
+    BNE _console_challenge
+    LDY #0              ; clear index X
+_console_loop:
+    LDA (_console_ptr), Y   ; load value of the pointer
+    STA OUTPUT              ; write value in the screen
+    INY                     ; increment index Y
+    CPY _console_bytes
+    BNE _console_loop
+    LDA _console_temp2
+    PHA
+    LDA _console_temp1
+    PHA
+    RTS
+;}
+;-----------------------------
+CX  .DB $00, $00, $00, $00
+CX1 .DB $0f 
+CX2 .DB $f0
+_counter_int_temp .DB 0, 0
+;-----------------------------
+;void delay(int value){
+_counter:
+    PLA
+    STA _counter_int_temp + 1
+    PLA
+    STA _counter_int_temp
+    PLA
+    STA CX2
+    PLA
+    STA CX1
+    LDA CX2
+    STA CX + 2
+c2:
+    LDA CX1
+    STA CX + 3
+c1:
+    DEC CX + 3   ; Decrement position 1 by 1
+    BNE c1      ; Skip if 0
+    
+    DEC CX + 2   ; Decrement position 2
+    BNE c2      ; Skip if 0
+    LDA _counter_int_temp
+    PHA
+    LDA _counter_int_temp + 1
+    PHA
+    RTS         ; Return
+;}
+    .ORG $fffc
+    .word main

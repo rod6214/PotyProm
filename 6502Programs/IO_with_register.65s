@@ -1,0 +1,14 @@
+    .ORG $0000
+    JMP main
+numbers .DB $44, $02, $00, $00, $00
+OUTPUT .equ $4000
+    
+main:
+    LDX #$01
+    LDA numbers,X
+    STA OUTPUT
+loop:
+    JMP loop
+    NOP
+    .ORG $fffc
+        .word main

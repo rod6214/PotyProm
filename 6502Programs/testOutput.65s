@@ -1,0 +1,13 @@
+    .ORG $0000
+    JMP main
+
+OUTPUT .equ $4000
+    
+main:
+    LDA #$9
+    STA OUTPUT
+loop:
+    JMP loop
+    NOP
+    .ORG $fffc
+        .word main

@@ -1,0 +1,18 @@
+    .ORG $0000
+    JMP main
+numbers .DB "HOLA MUNDO, CPU."
+OUTPUT .equ $4000
+    
+main:
+    LDX #$00
+testLCD:
+    LDA numbers,X
+    STA OUTPUT
+    INX
+    CPX #$10
+    BNE testLCD
+loop:
+    JMP loop
+    NOP
+    .ORG $fffc
+        .word main

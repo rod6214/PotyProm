@@ -1,0 +1,20 @@
+    .ORG $0000
+    JMP reset
+
+message .DB "Hello World!!!"
+
+reset:
+    NOP
+    LDX #0
+counter:
+    LDA message, X
+    STA $40, X
+    INX
+    CPX #14
+    BNE counter
+    NOP
+loop:
+    JMP loop
+    NOP
+    .ORG $fffc
+        .word reset
