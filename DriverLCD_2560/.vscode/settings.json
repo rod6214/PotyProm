@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "io.h": "c",
+        "test.h": "c",
+        "delay.h": "c",
+        "interrupt.h": "c",
+        "startup.h": "c",
+        "io_uart.h": "c",
+        "serial.h": "c",
+        "external_int.h": "c",
+        "io8535.h": "c",
+        "io_mem.h": "c",
+        "ext_eeprom_mem.h": "c",
+        "lcd_driver.h": "c",
+        "global.h": "c"
+    }
+}

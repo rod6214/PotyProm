@@ -1,0 +1,26 @@
+    .ORG 0
+test    .DB $E
+result  .DB 0
+    .ORG $0200
+VAR .DB $01, $5
+
+main:
+    NOP
+    NOP
+    LDX #7
+    SED
+convert:
+    ASL test
+    LDA result
+    ADC result
+    STA result
+    DEX
+    BNE convert
+    CLD
+    NOP
+loop:
+    JMP loop
+    .ORG $fffc
+    .WORD main
+    NOP
+    

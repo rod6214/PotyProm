@@ -1,0 +1,9 @@
+OUTPUT .equ $40
+
+    .ORG $0000
+pepe    .DB 32
+main:
+    LDA pepe
+    NOP
+    .ORG $fffc
+        .word main

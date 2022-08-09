@@ -1,0 +1,40 @@
+    .ORG $0000
+    JMP main
+    
+lowCount    .DB $ff
+hightCount  .DB $ff
+CX          .DB $00, $00, $00, $00
+CX1         .DB $ff
+CX2         .DB $1f
+OUTPUT .equ $4000
+    
+main:
+incrementer:
+    LDX #$3         ; Load position 3 in X
+    LDA CX, X       ; Load acumulator
+    STA OUTPUT
+    JSR _counter    ; Call counter subroutine
+    LDX #$3         ; Load position 3 in X
+    INC CX, X
+    JMP incrementer ; Repeat operation
+_counter:
+    LDX #$1     ; Load position 1 in X
+    LDA CX2
+    STA CX, X
+c2:
+    LDX #$0     ; Load position 0 in X
+    LDA CX1
+    STA CX, X
+c1:
+    DEC CX, X   ; Decrement position 1 by 1
+    BNE c1      ; Skip if 0
+    
+    LDX #$1     ; Load position 1 in X
+    DEC CX, X   ; Decrement position 2
+    BNE c2      ; Skip if 0
+    RTS         ; Return
+loop:
+    JMP loop
+    NOP
+    .ORG $fffc
+        .word main

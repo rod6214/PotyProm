@@ -11,7 +11,7 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-
+#define MAX_MEMORY 64
 #define eint0() (INTCONbits.INT0E=1)
 #define dint0() (INTCONbits.INT0E=0)
 #define clearInt0F() (INTCONbits.INT0F=0)

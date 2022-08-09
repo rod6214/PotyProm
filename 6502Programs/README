@@ -1,0 +1,2 @@
+vasm6502_oldstyle -Fbin -dotdir example65.s
+hexdump -C a.out

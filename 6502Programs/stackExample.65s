@@ -1,0 +1,25 @@
+    .ORG $0000
+    JMP main
+numbers .DB $00, $00, $00, $00, $00
+main:
+    LDX #$ff 
+    TXS
+    LDY #$0
+counter:
+    LDA #$55    ; Load acumulator with 55h
+    PHA         ; Push data to stack
+    INY         ; Increment index Y
+    CPY #$5     ; Compare Y == 05h
+    BNE counter ; Skip if Z=0 (It occurs when comparison is equal).
+    LDY #$0     ; Reset index Y
+copy:
+    PLA             ; Pull data from stack 
+    STA numbers, Y  ; Store in memory
+    INY             ; Increment index Y
+    CPY #$5         ; Compare Y == 05h
+    BNE copy        ; Skip if Z=0 (It occurs when comparison is equal).
+loop:
+    JMP loop
+    NOP
+    .ORG $fffc
+        .word main

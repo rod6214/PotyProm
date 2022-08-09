@@ -1,0 +1,16 @@
+    .ORG 0
+test    .DB 22
+    .ORG $0200
+VAR .DB $01, $5
+
+main:
+    NOP
+    NOP
+    ; DEC VAR+1
+    NOP
+loop:
+    JMP loop
+    .ORG $fffc
+    .WORD main
+    NOP
+    
