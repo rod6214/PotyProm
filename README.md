@@ -22,6 +22,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 ### Product Scheme 1
-![Product Scheme 1](/Images/Schematic_RetroComputerV2_2022-08-16/CPU_card.png?raw=true "Product Scheme 1")
+![Product Scheme 1](https://github.com/rod6214/PotyProm/blob/main/blob/main/Images/Schematic_RetroComputerV2_2022-08-16/CPU_card.png?raw=true "Product Scheme 1")
 ### Product Scheme 2
-![Product Scheme 2](/Images/Schematic_RetroComputerV2_2022-08-16/Control.png?raw=true "Product Scheme 2")
+![Product Scheme 2](https://github.com/rod6214/PotyProm/blob/main/blob/main/Images/Schematic_RetroComputerV2_2022-08-16/Control.png?raw=true "Product Scheme 2")
