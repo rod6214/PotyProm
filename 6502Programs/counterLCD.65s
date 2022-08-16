@@ -4,7 +4,7 @@ command     .DB 241, 33, 78, 91, 00, 00
 msg         .DB "Value: ", 0, 0, 0, 0, 0
 count       .DB 0
 digits      .DB 0, 0, 0
-BIN         .DB $ff, $00
+BIN         .DB $00, $00
 _command_t          .DB 0
 ;---------------------------------------------
 _ptr_temp     .DB 0, 0
