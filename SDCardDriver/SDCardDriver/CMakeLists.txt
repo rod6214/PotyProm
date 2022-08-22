@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(AVR_MCU at90s8535)
+set(AVR_MCU ATmega328P)
 
-project(OpenProgrammer)
+project(SDCard_Driver)
 
 add_definitions("-fpack-struct")
 add_definitions("-fshort-enums")
@@ -22,6 +22,6 @@ add_definitions("-MP")
 add_definitions("-MF")
 add_definitions("-std=gnu99")
 
-set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/AT90CPUSyncCmake/AT90CPUSync/src")
+set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/SDCardDriver/SDCardDriver/src")
 
 add_subdirectory(src)
