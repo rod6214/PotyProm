@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 set(AVR_MCU ATmega328P)
 
-project(SDCard_Driver)
+project(SDCardDriver)
 
 add_definitions("-fpack-struct")
 add_definitions("-fshort-enums")
