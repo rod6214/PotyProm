@@ -8,82 +8,85 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
-// pin definitions
-#define DDR_SPI         DDRB
-#define PORT_SPI        PORTB
-#define CS              PINB2
-#define MOSI            PINB3
-#define MISO            PINB4
-#define SCK             PINB5
-
-// macros
-#define CS_ENABLE()     PORT_SPI &= ~(1 << CS)
-#define CS_DISABLE()    PORT_SPI |= (1 << CS)
-
-uint8_t SPI_transfer(uint8_t data);
-void SPI_init();
-void SD_powerUpSeq();
-void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc);
-
-void SPI_init()
-{
-    // set CS, MOSI and SCK to output
-    DDR_SPI |= (1 << CS) | (1 << MOSI) | (1 << SCK);
-
-    // enable pull up resistor in MISO
-    DDR_SPI |= (1 << MISO);
-
-    // enable SPI, set as master, and clock to fosc/128
-    SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR1) | (1 << SPR0);
-}
-
-uint8_t SPI_transfer(uint8_t data)
-{
-    // load data into register
-    SPDR = data;
-
-    // Wait for transmission complete
-    while(!(SPSR & (1 << SPIF)));
-
-    // return SPDR
-    return SPDR;
-}
-
-void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc)
-{
-    // transmit command to sd card
-    SPI_transfer(cmd|0x40);
-
-    // transmit argument
-    SPI_transfer((uint8_t)(arg >> 24));
-    SPI_transfer((uint8_t)(arg >> 16));
-    SPI_transfer((uint8_t)(arg >> 8));
-    SPI_transfer((uint8_t)(arg));
-
-    // transmit crc
-    SPI_transfer(crc|0x01);
-}
-
-void SD_powerUpSeq()
-{
-    // make sure card is deselected
-    CS_DISABLE();
-
-    // give SD card time to power up
-    _delay_ms(1);
-
-    // send 80 clock cycles to synchronize
-    for(uint8_t i = 0; i < 10; i++)
-        SPI_transfer(0xFF);
-
-    // deselect SD card
-    CS_DISABLE();
-    SPI_transfer(0xFF);
-}
+#include "CRC.h"
+#include "spi.h"
+#include "sdcard.h"
 
 void config()
 {
+    DDRD = 255;
+    _delay_loop_1(20);
+    PORTD = 0;
+    _delay_loop_1(20);
+    // array to hold responses
+    uint8_t res[5], buf[512], token;
+    uint32_t addr = 0x00000000;
+
+    // initialize UART
+    // UART_init();
+
+    // initialize SPI
+    SPI_init(SPI_MASTER | SPI_FOSC_128 | SPI_MODE_0);
+
+    // initialize sd card
+    if(SD_init() != SD_SUCCESS)
+    {
+        PORTD = 0x80;
+        // UART_pputs("Error initializaing SD CARD\r\n");
+    }
+    else
+    {
+        // UART_pputs("SD Card initialized\r\n");
+
+        // read sector 0
+        // UART_pputs("\r\nReading sector: 0x");
+        // UART_puthex8((uint8_t)(addr >> 24));
+        // UART_puthex8((uint8_t)(addr >> 16));
+        // UART_puthex8((uint8_t)(addr >> 8));
+        // UART_puthex8((uint8_t)addr);
+        res[0] = SD_readSingleBlock(addr, buf, &token);
+        // UART_pputs("\r\nResponse:\r\n");
+        // SD_printR1(res[0]);
+
+        // if no error, print buffer
+        if ((res[0] == 0x00) && (token == SD_START_TOKEN))
+            PORTD = 1;
+        // if((res[0] == 0x00) && (token == SD_START_TOKEN))
+        //     SD_printBuf(buf);
+        // else if error token received, print
+        else if(!(token & 0xF0))
+        {
+            PORTD = 81;
+            // UART_pputs("Error token:\r\n");
+            // SD_printDataErrToken(token);
+        }
+
+        // update address to 0x00000100
+        addr = 0x00000100;
+
+        // fill buffer with 0x55
+        for(uint16_t i = 0; i < 512; i++) buf[i] = 0x55;
+
+        // UART_pputs("Writing 0x55 to sector: 0x");
+        // UART_puthex8((uint8_t)(addr >> 24));
+        // UART_puthex8((uint8_t)(addr >> 16));
+        // UART_puthex8((uint8_t)(addr >> 8));
+        // UART_puthex8((uint8_t)addr);
+
+        // write data to sector
+        res[0] = SD_writeSingleBlock(addr, buf, &token);
+
+        // UART_pputs("\r\nResponse:\r\n");
+        // SD_printR1(res[0]);
+
+        // if no errors writing
+        if(res[0] == 0x00)
+        {
+            if(token == SD_DATA_ACCEPTED)
+                PORTD = 2;
+                // UART_pputs("Write successful\r\n");
+        }
+    }
 }
 
 void loop() 

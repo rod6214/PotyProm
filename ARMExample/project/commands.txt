@@ -1,0 +1,2 @@
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE="{CMAKE_CURRENT_SOURCE_DIR}/toolchain-arm-none-eabi.cmake" -B "{CMAKE_CURRENT_SOURCE_DIR}/build" -S "{CMAKE_CURRENT_SOURCE_DIR}"
+cmake -DCMAKE_TOOLCHAIN_FILE="./toolchain-arm-none-eabi.cmake" -B "./build" -S "./"

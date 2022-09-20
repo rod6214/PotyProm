@@ -9,7 +9,7 @@
 
 extern char CRCFn(char*);
 
-char crtTable[8] = {0x51,0,0,0,0,0,0,0};
+char crtTable[5] = {0x11, 0x00, 0x00, 0x09, 0x00};
 
 int main(void)
 {
