@@ -6,6 +6,8 @@
  *  Author: Nelson
  */ 
  .text
- .global _start2
- _start2:
-	mov r0, r1
+ .global system_call
+ system_call:
+	push {r3, lr}
+	nop
+	pop {r3, pc}

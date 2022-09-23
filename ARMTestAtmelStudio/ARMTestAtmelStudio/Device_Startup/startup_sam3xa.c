@@ -55,7 +55,7 @@ void HardFault_Handler  ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void MemManage_Handler  ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void BusFault_Handler   ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void UsageFault_Handler ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SVC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+//void SVC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void DebugMon_Handler   ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void PendSV_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void SysTick_Handler    ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
@@ -250,35 +250,37 @@ const DeviceVectors exception_table = {
         .pfnCAN1_Handler   = (void*) CAN1_Handler    /* 44 CAN Controller 1 */
 };
 
+void SVC_Handler(void) {}
+
 /**
  * \brief This is the code that gets called on processor reset.
  * To initialize the device, and call the main() routine.
  */
 void Reset_Handler(void)
 {
-        uint32_t *pSrc, *pDest;
+        //uint32_t *pSrc, *pDest;
 
         /* Initialize the relocate segment */
-        pSrc = &_etext;
-        pDest = &_srelocate;
-
-        if (pSrc != pDest) {
-                for (; pDest < &_erelocate;) {
-                        *pDest++ = *pSrc++;
-                }
-        }
+        //pSrc = &_etext;
+        //pDest = &_srelocate;
+//
+        //if (pSrc != pDest) {
+                //for (; pDest < &_erelocate;) {
+                        //*pDest++ = *pSrc++;
+                //}
+        //}
 
         /* Clear the zero segment */
-        for (pDest = &_szero; pDest < &_ezero;) {
-                *pDest++ = 0;
-        }
+        //for (pDest = &_szero; pDest < &_ezero;) {
+                //*pDest++ = 0;
+        //}
 
         /* Set the vector table base address */
-        pSrc = (uint32_t *) & _sfixed;
-        SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
+        //pSrc = (uint32_t *) & _sfixed;
+        //SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
 
         /* Initialize the C library */
-        __libc_init_array();
+        //__libc_init_array();
 
         /* Branch to main function */
         main();

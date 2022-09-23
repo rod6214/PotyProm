@@ -39,8 +39,8 @@ SEARCH_DIR(.)
 MEMORY
 {
   /* boot (rx)  : ORIGIN=0x00000000, LENGTH = 0x00080000 */
-  flash (rwx)  : ORIGIN = 0x00080000, LENGTH = 0x00080000
-  ram (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00018000
+  flash (rx)  : ORIGIN = 0x08000000, LENGTH = 0x000FFFFF
+  ram (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00000FFF
 }
 
 /* The stack size used by the application. NOTE: you need to adjust according to your application. */

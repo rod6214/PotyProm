@@ -7,13 +7,16 @@
 
 
 #include "sam.h"
+//#include <sys/signal.h>
 
+extern void system_call();
 
 int main(void)
 {
     /* Initialize the SAM system */
-    SystemInit();
-
+    //SystemInit();
+	
+	system_call();
     /* Replace with your application code */
     while (1) 
     {
