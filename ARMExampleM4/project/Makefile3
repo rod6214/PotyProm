@@ -1,10 +1,9 @@
+assembler=as
 ARM_GCC=arm-none-eabi-gcc
 ARM_OBJDUMP=arm-none-eabi-objdump
 ARM_OBJCOPY=arm-none-eabi-objcopy
 
 TARGET = template
-SO_TARGET = so_template
-SO_LINKER_SCRIPT = so.ld
 LINKER_SCRIPT = main.ld
 LINKER_FOLDER = ./linker
 
@@ -28,14 +27,7 @@ LDFLAGS += -Wl,-Map=./build/$(TARGET).map #generate map file
 LDFLAGS += -T$(LINKER_SCRIPT)
 LDFLAGS += -L$(LINKER_FOLDER)
 
-SO_LDFLAGS += -march=armv7e-m # processor setup
-SO_LDFLAGS += -nostartfiles # no start files are used
-SO_LDFLAGS += --specs=nosys.specs
-SO_LDFLAGS += -Wl,-Map=./build/$(SO_TARGET).map #generate map file
-SO_LDFLAGS += -T$(SO_LINKER_SCRIPT)
-SO_LDFLAGS += -L$(LINKER_FOLDER)
-
-bin_so: bin list_so
+bin_so: list list_so
 	$(ARM_OBJCOPY) -O binary "./build/so.elf" "./build/so.bin"
 
 bin: list
@@ -44,14 +36,14 @@ bin: list
 list: clean build.dir link
 	$(ARM_OBJDUMP) -h -S "./build/output.elf" > "./build/output.lss"
 
-list_so: list link_so
+list_so: list
 	$(ARM_OBJDUMP) -h -S "./build/so.elf" > "./build/so.lss"
 
 link: test.o
 	$(ARM_GCC) $(LDFLAGS) -o "./build/output.elf" ./build/test.o 
 
-link_so: so.o
-	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/so.elf" ./build/so.o 
+link_so: test.o
+	$(ARM_GCC) $(LDFLAGS) -o "./build/so.elf" ./build/so.o 
 
 test.o:
 	$(ARM_GCC) $(CFLAGS) -c -o "./build/test.o" "./src/test.s"
@@ -63,4 +55,5 @@ build.dir:
 	mkdir build
 
 clean:
+	# @rm -R build
 	rmdir /s /q build
