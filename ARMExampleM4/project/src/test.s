@@ -1,60 +1,13 @@
-    .cpu cortex-m4
-    .thumb
+	.thumb
+	.syntax unified
 
-    .text
-    .section .vectors
-    .align      2
-    .globl      __exception_table
-
-__exception_table:
-    .word 0x20001000
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .word Reset_Handler
-    .fill 0x3c, 0x01, 0 
-Reset_Handler:
+    .section .text
+    .word __StackTop
+    .word _start +1
+    
+_start:
     nop
 __looping:
+    nop
+    nop
     b __looping
