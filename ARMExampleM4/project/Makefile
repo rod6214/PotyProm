@@ -7,6 +7,8 @@ SO_TARGET = so_template
 SO_LINKER_SCRIPT = so.ld
 LINKER_SCRIPT = main.ld
 LINKER_FOLDER = ./linker
+ASM_SRC = "./src/bios.s ./src/so.s"
+INCLUDES = -I./src/*.h
 
 CFLAGS += -mcpu=cortex-m3 -mthumb # processor setup
 CFLAGS += -O0 # optimization is off
@@ -21,43 +23,53 @@ CFLAGS += -fsingle-precision-constant
 CFLAGS += -fomit-frame-pointer # do not use fp if not needed
 CFLAGS += -ffunction-sections -fdata-sections
 
-LDFLAGS += -march=armv7e-m # processor setup
+LDFLAGS += -mcpu=cortex-m3 -mthumb
+# LDFLAGS += -march=armv7e-m # processor setup
 LDFLAGS += -nostartfiles # no start files are used
 LDFLAGS += --specs=nosys.specs
 LDFLAGS += -Wl,-Map=./build/$(TARGET).map #generate map file
 LDFLAGS += -T$(LINKER_SCRIPT)
 LDFLAGS += -L$(LINKER_FOLDER)
 
-SO_LDFLAGS += -march=armv7e-m # processor setup
+SO_LDFLAGS += -mcpu=cortex-m3 -mthumb
+# SO_LDFLAGS += -march=armv7e-m # processor setup
 SO_LDFLAGS += -nostartfiles # no start files are used
 SO_LDFLAGS += --specs=nosys.specs
 SO_LDFLAGS += -Wl,-Map=./build/$(SO_TARGET).map #generate map file
 SO_LDFLAGS += -T$(SO_LINKER_SCRIPT)
 SO_LDFLAGS += -L$(LINKER_FOLDER)
 
-bin_so: bin list_so
-	$(ARM_OBJCOPY) -O binary "./build/so.elf" "./build/so.bin"
+build: main.bin bios.bin bios.lss main.lss
 
-bin: list
-	$(ARM_OBJCOPY) -O binary "./build/output.elf" "./build/output.bin"
+main.bin: main.elf
+	$(ARM_OBJCOPY) -O binary "./build/main.elf" "./build/"$@
 
-list: clean build.dir link
-	$(ARM_OBJDUMP) -h -S "./build/output.elf" > "./build/output.lss"
+bios.bin: bios.elf
+	$(ARM_OBJCOPY) -O binary "./build/bios.elf" "./build/"$@
 
-list_so: list link_so
-	$(ARM_OBJDUMP) -h -S "./build/so.elf" > "./build/so.lss"
+bios.lss: bios.elf
+	$(ARM_OBJDUMP) -h -S "./build/bios.elf" > "./build/"$@
 
-link: test.o
-	$(ARM_GCC) $(LDFLAGS) -o "./build/output.elf" ./build/test.o 
+main.lss: main.elf
+	$(ARM_OBJDUMP) -h -S "./build/main.elf" > "./build/"$@
 
-link_so: so.o
-	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/so.elf" ./build/so.o 
+main.elf: so.o interrupts.o main.o
+	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/so.o ./build/main.o ./build/interrupts.o 
 
-test.o:
-	$(ARM_GCC) $(CFLAGS) -c -o "./build/test.o" "./src/test.s"
+bios.elf: bios.o
+	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/bios.o
+
+main.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/main.c
+
+bios.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/bios.s
 
 so.o:
-	$(ARM_GCC) $(CFLAGS) -c -o "./build/so.o" "./src/so.s"
+	$(ARM_GCC) $(CFLAGS) -c -o "./build/"$@ ./src/so.s
+
+interrupts.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/interrupts.c
 
 build.dir:
 	mkdir build

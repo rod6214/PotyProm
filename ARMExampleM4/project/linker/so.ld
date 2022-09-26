@@ -14,6 +14,14 @@ SECTIONS {
         . = ALIGN(4);
         *(.text*)           /* Program code */
         *(.so_start*)
+        *(.so_fn*)
         __so_etext = .;
     }
+
+    .data (NOLOAD) : {
+		. = ALIGN(8);
+		__data_start__ = .;
+		*(.data*)      /* Read-write initialized data */
+		__data_end__ = .;
+	}
 }
