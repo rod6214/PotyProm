@@ -7,10 +7,11 @@
 .equ CKGR_PLLAR, 0x400E0628
 .equ PLL_CFG, 0x200E3802
 .equ PMC_MCKR, 0x400E0630
+.equ VTOR_SYSTEM, 0xE000ED08
 
-
-    .section .text
-    .word __StackTop
+    @ .section .text
+    .section .vectors
+    .word _estack
     .word _start +1
     .word _start +1
     .word _start +1
@@ -25,14 +26,16 @@
     
 _start:
     bl __clock+1            @ Call Clock configuration subroutine
-    ldr r3, =#0x20000005    @ Load entry point address
+    svc 0                   @ Call syscall for configuring new vector table
+    ldr r3, =#0x200000f5    @ Load entry point address
     bx r3                   @ Goto the entry point
 __looping:
     b __looping
 __syscall:
     push {lr}
-    ldr r3, =#0x2000002d
-    blx r3
+    ldr r3, =VTOR_SYSTEM
+    ldr r2, =#0x20000000
+    str r2, [r3]
     pop {pc}
 __clock:
     push {lr}

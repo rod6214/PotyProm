@@ -30,6 +30,8 @@ LDFLAGS += --specs=nosys.specs
 LDFLAGS += -Wl,-Map=./build/$(TARGET).map #generate map file
 LDFLAGS += -T$(LINKER_SCRIPT)
 LDFLAGS += -L$(LINKER_FOLDER)
+# LDFLAGS += --with-mode=thumb
+LDFLAGS += -Wl,--gc-sections
 
 SO_LDFLAGS += -mcpu=cortex-m3 -mthumb
 # SO_LDFLAGS += -march=armv7e-m # processor setup
@@ -38,23 +40,25 @@ SO_LDFLAGS += --specs=nosys.specs
 SO_LDFLAGS += -Wl,-Map=./build/$(SO_TARGET).map #generate map file
 SO_LDFLAGS += -T$(SO_LINKER_SCRIPT)
 SO_LDFLAGS += -L$(LINKER_FOLDER)
+# SO_LDFLAGS += --with-mode=thumb
+SO_LDFLAGS += -Wl,--gc-sections
 
-build: main.bin bios.bin bios.lss main.lss
+build: clean build.dir bios.bin main.bin
 
-main.bin: main.elf
+main.bin: main.elf main.lss
 	$(ARM_OBJCOPY) -O binary "./build/main.elf" "./build/"$@
 
-bios.bin: bios.elf
+bios.bin: bios.elf bios.lss
 	$(ARM_OBJCOPY) -O binary "./build/bios.elf" "./build/"$@
 
-bios.lss: bios.elf
+bios.lss:
 	$(ARM_OBJDUMP) -h -S "./build/bios.elf" > "./build/"$@
 
-main.lss: main.elf
+main.lss:
 	$(ARM_OBJDUMP) -h -S "./build/main.elf" > "./build/"$@
 
-main.elf: so.o interrupts.o main.o
-	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/so.o ./build/main.o ./build/interrupts.o 
+main.elf: gpio.o interrupts.o main.o
+	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o 
 
 bios.elf: bios.o
 	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/bios.o
@@ -65,11 +69,14 @@ main.o:
 bios.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/bios.s
 
-so.o:
-	$(ARM_GCC) $(CFLAGS) -c -o "./build/"$@ ./src/so.s
+# so.o:
+# 	$(ARM_GCC) $(CFLAGS) -c -o "./build/"$@ ./src/so.s
 
 interrupts.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/interrupts.c
+
+gpio.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/gpio.c
 
 build.dir:
 	mkdir build

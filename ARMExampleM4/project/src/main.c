@@ -1,20 +1,58 @@
 #include "so.h"
+#include "gpio.h"
 
-int __START__ main() {
-    volatile unsigned int* PIO_PER_B_t = ___AT(PIO_PER_B);
-    volatile unsigned int* PIO_OER_B_t = ___AT(PIO_OER_B);
-    volatile unsigned int* PMC_PCER0_t = ___AT(PMC_PCER0);
-    volatile unsigned int* PIO_CODR_B_t = ___AT(PIO_CODR_B);
-    volatile unsigned int* PIO_SODR_B_t = ___AT(PIO_SODR_B);
+extern unsigned int _estack;
+extern unsigned int _sfixed;
 
-    *PIO_PER_B_t = P27;
-    *PIO_OER_B_t = P27;
-    *PMC_PCER0_t = PIOB_ID;
+int main();
+void Reset_Handler(void);
+void SVC_Handler(int);
+
+__attribute__ ((section(".entry")))
+void entry_point() 
+{
+    main();
+}
+
+__attribute__ ((section(".vectors")))
+const DeviceVectors exception_table = {
+    .pvStack = (void*) (&_estack),
+    .pfnReset_Handler = Reset_Handler,
+    .pfnSVC_Handler = SVC_Handler
+};
+
+void ___syscall(int code) 
+{
+    asm("mov r0, %0"::"r"(code));
+    asm("svc 1");
+}
+
+void Reset_Handler() 
+{
+    // portB_as_output(P27);
     
-    __syscall(2);
-    while(1){
-        *PIO_CODR_B_t = P27;
-        *PIO_SODR_B_t = P27;
-    }
+}
+
+void SVC_Handler(int code) 
+{
+    asm("nop");
+    // if (code == 2)
+    //     set_HIGH_portB(P27);
+    // if (code == 3)
+    //     set_LOW_portB(P27);
+}
+
+// void syscall_test() {
+//     set_HIGH_portB(P27);
+// }
+
+int main() {
+    // Subs_t subs;
+    // subs.code = 1;
+    // add_syscall_subscriber(subs);
+    ___syscall(2);
+    ___syscall(3);
+    while(1) {}
     return 0;
 }
+
