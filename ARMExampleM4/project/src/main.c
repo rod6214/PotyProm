@@ -29,22 +29,17 @@ void ___syscall(int code)
 
 void Reset_Handler() 
 {
-    // portB_as_output(P27);
+    portB_as_output(P27);
     
 }
 
 void SVC_Handler(int code) 
 {
-    asm("nop");
-    // if (code == 2)
-    //     set_HIGH_portB(P27);
-    // if (code == 3)
-    //     set_LOW_portB(P27);
+    if (code == 2)
+        set_HIGH_portB(P27);
+    if (code == 3)
+        set_LOW_portB(P27);
 }
-
-// void syscall_test() {
-//     set_HIGH_portB(P27);
-// }
 
 int main() {
     // Subs_t subs;
