@@ -1,21 +1,29 @@
 #include "so.h"
 #include "gpio.h"
 
-#define MAX_SYSCALL 20
+#define MAX_SYSCALL 32
 Subs_t __mem[MAX_SYSCALL];
 int idx = 0;
 
-static void reorder_syscalls();
+static void reorder();
+static void invoke(int code);
 
 void Reset_Handler() 
 {}
 
 void SysTick_Handler() 
-{}
+{
+    invoke(SYSTICK_ID);
+}
 
 void SVC_Handler(int code) 
 {
-    if (idx > 20)
+    invoke(code);
+}
+
+static void invoke(int code) 
+{
+    if (idx > MAX_SYSCALL)
         return;
     for (int i = 0; i < MAX_SYSCALL; i++) 
     {
@@ -28,23 +36,23 @@ void SVC_Handler(int code)
     }
 }
 
-void reset_syscall_list() 
+void reset_list() 
 {
     idx = 0;
 }
 
-void add_syscall_subscriber(Subs_t subscriber)
+void add_subscriber(Subs_t subscriber)
 {
     if (subscriber.code == 0 ||
         subscriber.callback == NULL)
         return;
-    reorder_syscalls();
+    reorder();
     __mem[idx].code = subscriber.code;
     __mem[idx].callback = subscriber.callback;
     idx++;
 }
 
-void remove_syscall_subscriber(Subs_t subscriber)
+void remove_subscriber(Subs_t subscriber)
 {
     if (subscriber.callback == NULL)
         return;
@@ -63,7 +71,7 @@ void remove_syscall_subscriber(Subs_t subscriber)
     idx--;
 }
 
-static void reorder_syscalls() 
+static void reorder() 
 {
     for (int i = 0; i < MAX_SYSCALL && idx > 0; i++)
     {

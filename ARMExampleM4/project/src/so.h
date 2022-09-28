@@ -184,15 +184,23 @@ SubscribeCallback callback;
 } Subs_t;
 
 extern void ___syscall(int code);
-extern void add_syscall_subscriber(Subs_t subscriber);
-extern void remove_syscall_subscriber(Subs_t subscriber);
+extern void add_subscriber(Subs_t subscriber);
+extern void remove_subscriber(Subs_t subscriber);
 extern void Reset_Handler(void);
-extern void SVC_Handler(int);
-extern void SysTick_Handler(void);
-extern void reset_syscall_list();
+extern void SVC_Handler(int code);
+extern void SysTick_Handler();
+extern void reset_list();
 
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
+
+typedef struct SysTick 
+{
+    __IOM uint32_t CTRL;
+    __IOM uint32_t LOAD;
+    __IOM uint32_t VAL;
+    __IOM uint32_t CALIB;
+} SysTick_t;
 
 typedef struct
 {
@@ -220,6 +228,7 @@ typedef struct
 } SCB_Type;
 
 #define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
+#define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
 
 #define USGFAULTENA (1 << 18)
 #define BUSFAULTENA (1 << 17)
@@ -235,6 +244,9 @@ typedef struct
 #define USGFAULTACT (1 << 3)
 #define BUSFAULTACT (1 << 2)
 #define MEMFAULTACT (1 << 1)
+
+#define SYSTICK_ID 10
+#define SYSCALL_ID 1
 
 #ifdef __cplusplus
 }
