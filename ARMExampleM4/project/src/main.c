@@ -22,7 +22,6 @@ void systick_hadler()
         state=1;
     }
     
-    SYSTICK->LOAD = 8999999;
     asm("nop");
 }
 
