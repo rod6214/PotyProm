@@ -180,11 +180,16 @@ typedef void (*SubscribeCallback)();
 
 typedef struct Subs {
 int code;
+SubscribeCallback callback;
 } Subs_t;
 
-extern void __syscall(int num);
+extern void ___syscall(int code);
 extern void add_syscall_subscriber(Subs_t subscriber);
 extern void remove_syscall_subscriber(Subs_t subscriber);
+extern void Reset_Handler(void);
+extern void SVC_Handler(int);
+extern void SysTick_Handler(void);
+extern void reset_syscall_list();
 
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
@@ -215,6 +220,21 @@ typedef struct
 } SCB_Type;
 
 #define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
+
+#define USGFAULTENA (1 << 18)
+#define BUSFAULTENA (1 << 17)
+#define MEMFAULTENA (1 << 16)
+#define SVCALLPENDED (1 << 15)
+#define BUSFAULTPENDED (1 << 14)
+#define MEMFAULTPENDED (1 << 13)
+#define USGFAULTPENDED (1 << 12)
+#define SYSTICKACT (1 << 11)
+#define PENDSVACT (1 << 10)
+#define MONITORACT (1 << 8)
+#define SVCALLACT (1 << 7)
+#define USGFAULTACT (1 << 3)
+#define BUSFAULTACT (1 << 2)
+#define MEMFAULTACT (1 << 1)
 
 #ifdef __cplusplus
 }

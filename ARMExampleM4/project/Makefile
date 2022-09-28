@@ -57,8 +57,8 @@ bios.lss:
 main.lss:
 	$(ARM_OBJDUMP) -h -S "./build/main.elf" > "./build/"$@
 
-main.elf: gpio.o interrupts.o main.o
-	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o 
+main.elf: gpio.o interrupts.o main.o startup.o
+	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o
 
 bios.elf: bios.o
 	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/bios.o
@@ -74,6 +74,9 @@ bios.o:
 
 interrupts.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/interrupts.c
+
+startup.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/startup.c
 
 gpio.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/gpio.c

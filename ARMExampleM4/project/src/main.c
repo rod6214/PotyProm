@@ -1,52 +1,37 @@
 #include "so.h"
 #include "gpio.h"
 
-extern unsigned int _estack;
-extern unsigned int _sfixed;
-
-int main();
-void Reset_Handler(void);
-void SVC_Handler(int);
-
-__attribute__ ((section(".entry")))
-void entry_point() 
+void test_callback() 
 {
-    main();
+    asm("nop");
 }
 
-__attribute__ ((section(".vectors")))
-const DeviceVectors exception_table = {
-    .pvStack = (void*) (&_estack),
-    .pfnReset_Handler = Reset_Handler,
-    .pfnSVC_Handler = SVC_Handler
-};
-
-void ___syscall(int code) 
+void test_callback2() 
 {
-    asm("mov r0, %0"::"r"(code));
-    asm("svc 1");
+    asm("nop");
 }
 
-void Reset_Handler() 
+void test_callback3() 
 {
-    portB_as_output(P27);
-    
-}
-
-void SVC_Handler(int code) 
-{
-    if (code == 2)
-        set_HIGH_portB(P27);
-    if (code == 3)
-        set_LOW_portB(P27);
+    asm("nop");
 }
 
 int main() {
-    // Subs_t subs;
-    // subs.code = 1;
-    // add_syscall_subscriber(subs);
+    Subs_t subs = {1, test_callback};
+    Subs_t subs2 = {2, test_callback2};
+    Subs_t subs3 = {3, test_callback3};
+    Subs_t subs4 = {4, test_callback3};
+    reset_syscall_list();
+    add_syscall_subscriber(subs);
+    add_syscall_subscriber(subs2);
+    add_syscall_subscriber(subs3);
     ___syscall(2);
     ___syscall(3);
+    ___syscall(1);
+    remove_syscall_subscriber(subs2);
+    add_syscall_subscriber(subs4);
+    ___syscall(2);
+    ___syscall(4);
     while(1) {}
     return 0;
 }
