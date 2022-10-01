@@ -190,6 +190,7 @@ extern void Reset_Handler(void);
 extern void SVC_Handler(int code);
 extern void SysTick_Handler();
 extern void reset_list();
+extern void HardFault_Handler();
 
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;

@@ -23,7 +23,8 @@
     .word _start +1
     .word _start +1
     .word __syscall +1
-    
+_hardFault_Handler:
+    bl _hardFault_Handler+1
 _start:
     bl __clock+1            @ Call Clock configuration subroutine
     svc 0                   @ Call syscall for configuring new vector table

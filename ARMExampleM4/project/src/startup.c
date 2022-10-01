@@ -3,20 +3,21 @@
 
 extern unsigned int _estack;
 
-int main();
+// int main();
 
-__attribute__ ((section(".entry")))
-void entry_point() 
-{
-    main();
-}
+// __attribute__ ((section(".entry")))
+// void entry_point() 
+// {
+//     main();
+// }
 
 __attribute__ ((section(".vectors")))
 const DeviceVectors exception_table = {
     .pvStack = (void*) (&_estack),
     .pfnReset_Handler = Reset_Handler,
     .pfnSVC_Handler = SVC_Handler,
-    .pfnSysTick_Handler = SysTick_Handler
+    .pfnSysTick_Handler = SysTick_Handler,
+    .pfnHardFault_Handler = HardFault_Handler
 };
 
 void ___syscall(int code) 

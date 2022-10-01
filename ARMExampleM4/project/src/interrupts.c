@@ -7,9 +7,15 @@ int idx = 0;
 
 static void reorder();
 static void invoke(int code);
+extern int main();
+
+void HardFault_Handler() 
+{}
 
 void Reset_Handler() 
-{}
+{
+    main();
+}
 
 void SysTick_Handler() 
 {

@@ -10,7 +10,7 @@ LINKER_FOLDER = ./linker
 ASM_SRC = "./src/bios.s ./src/so.s"
 INCLUDES = -I./src/*.h
 
-CFLAGS += -mcpu=cortex-m3 -mthumb # processor setup
+CFLAGS += -mcpu=cortex-m4 -mthumb # processor setup
 CFLAGS += -O0 # optimization is off
 CFLAGS += -g2 # generate debug info
 CFLAGS += -fno-common
@@ -23,8 +23,8 @@ CFLAGS += -fsingle-precision-constant
 CFLAGS += -fomit-frame-pointer # do not use fp if not needed
 CFLAGS += -ffunction-sections -fdata-sections
 
-LDFLAGS += -mcpu=cortex-m3 -mthumb
-# LDFLAGS += -march=armv7e-m # processor setup
+LDFLAGS += -mcpu=cortex-m4 -mthumb
+LDFLAGS += -march=armv7e-m # processor setup
 LDFLAGS += -nostartfiles # no start files are used
 LDFLAGS += --specs=nosys.specs
 LDFLAGS += -Wl,-Map=./build/$(TARGET).map #generate map file
@@ -33,8 +33,8 @@ LDFLAGS += -L$(LINKER_FOLDER)
 # LDFLAGS += --with-mode=thumb
 LDFLAGS += -Wl,--gc-sections
 
-SO_LDFLAGS += -mcpu=cortex-m3 -mthumb
-# SO_LDFLAGS += -march=armv7e-m # processor setup
+SO_LDFLAGS += -mcpu=cortex-m4 -mthumb
+SO_LDFLAGS += -march=armv7e-m # processor setup
 SO_LDFLAGS += -nostartfiles # no start files are used
 SO_LDFLAGS += --specs=nosys.specs
 SO_LDFLAGS += -Wl,-Map=./build/$(SO_TARGET).map #generate map file
