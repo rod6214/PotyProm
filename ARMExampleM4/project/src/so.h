@@ -135,37 +135,7 @@ typedef struct _DeviceVectors
 #define P30 (1 << 30)
 #define P31 (1 << 31)
 
-#define PIO_PER_A (unsigned int)(0x400E0E00U)
-#define PIO_PER_B (unsigned int)(PIO_PER_A + 0x200)
-#define PIO_PER_C (unsigned int)(PIO_PER_B + 0x200)
-#define PIO_PER_D (unsigned int)(PIO_PER_C + 0x200)
-#define PIO_PER_E (unsigned int)(PIO_PER_D + 0x200)
-#define PIO_PER_F (unsigned int)(PIO_PER_E + 0x200)
-#define PIO_PDR_A (unsigned int)(0x400E0E04U)
-#define PIO_PDR_B (unsigned int)(PIO_PDR_A + 0x200)
-#define PIO_PDR_C (unsigned int)(PIO_PDR_B + 0x200)
-#define PIO_PDR_D (unsigned int)(PIO_PDR_C + 0x200)
-#define PIO_PDR_E (unsigned int)(PIO_PDR_D + 0x200)
-#define PIO_PDR_F (unsigned int)(PIO_PDR_E + 0x200)
-#define PIO_OER_A (unsigned int)(0x400E0E10U)
-#define PIO_OER_B (unsigned int)(PIO_OER_A + 0x200)
-#define PIO_OER_C (unsigned int)(PIO_OER_B + 0x200)
-#define PIO_OER_D (unsigned int)(PIO_OER_C + 0x200)
-#define PIO_OER_E (unsigned int)(PIO_OER_D + 0x200)
-#define PIO_OER_F (unsigned int)(PIO_OER_E + 0x200)
-#define PIO_SODR_A (unsigned int)(0x400E0E30U)
-#define PIO_SODR_B (unsigned int)(PIO_SODR_A + 0x200)
-#define PIO_SODR_C (unsigned int)(PIO_SODR_B + 0x200)
-#define PIO_SODR_D (unsigned int)(PIO_SODR_C + 0x200)
-#define PIO_SODR_E (unsigned int)(PIO_SODR_D + 0x200)
-#define PIO_SODR_F (unsigned int)(PIO_SODR_E + 0x200)
-#define PIO_CODR_A (unsigned int)(0x400E0E34U)
-#define PIO_CODR_B (unsigned int)(PIO_CODR_A + 0x200)
-#define PIO_CODR_C (unsigned int)(PIO_CODR_B + 0x200)
-#define PIO_CODR_D (unsigned int)(PIO_CODR_C + 0x200)
-#define PIO_CODR_E (unsigned int)(PIO_CODR_D + 0x200)
-#define PIO_CODR_F (unsigned int)(PIO_CODR_E + 0x200)
-#define PMC_PCER0 (unsigned int)(0x400E0610U)
+#define RCC_BASE 0x40023800UL
 
 #ifndef NULL
 #define NULL (void*)0
@@ -182,15 +152,6 @@ typedef struct Subs {
 int code;
 SubscribeCallback callback;
 } Subs_t;
-
-extern void ___syscall(int code);
-extern void add_subscriber(Subs_t subscriber);
-extern void remove_subscriber(Subs_t subscriber);
-extern void Reset_Handler(void);
-extern void SVC_Handler(int code);
-extern void SysTick_Handler();
-extern void reset_list();
-extern void HardFault_Handler();
 
 typedef unsigned int uint32_t;
 typedef unsigned char uint8_t;
@@ -230,24 +191,164 @@ typedef struct
 
 #define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
 #define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
+#define RCC ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
 
-#define USGFAULTENA (1 << 18)
-#define BUSFAULTENA (1 << 17)
-#define MEMFAULTENA (1 << 16)
-#define SVCALLPENDED (1 << 15)
-#define BUSFAULTPENDED (1 << 14)
-#define MEMFAULTPENDED (1 << 13)
-#define USGFAULTPENDED (1 << 12)
-#define SYSTICKACT (1 << 11)
-#define PENDSVACT (1 << 10)
-#define MONITORACT (1 << 8)
-#define SVCALLACT (1 << 7)
-#define USGFAULTACT (1 << 3)
-#define BUSFAULTACT (1 << 2)
-#define MEMFAULTACT (1 << 1)
+typedef struct 
+{
+    __IOM uint32_t CR;
+    __IOM uint32_t PLLCFGR;
+    __IOM uint32_t CFGR;
+    __IOM uint32_t CIR;
+    __IOM uint32_t AHB1RSTR;
+    __IOM uint32_t AHB2RSTR;
+    __IOM uint32_t AHB3RSTR;
+          uint32_t RESERVED0[1];
+    __IOM uint32_t APB1RSTR;
+    __IOM uint32_t APB2RSTR;
+          uint32_t RESERVED1[2];
+    __IOM uint32_t AHB1ENR;
+    __IOM uint32_t AHB2ENR;
+    __IOM uint32_t AHB3ENR;
+          uint32_t RESERVED2[1];
+    __IOM uint32_t APB1ENR;
+    __IOM uint32_t APB2ENR;
+          uint32_t RESERVED3[2];
+    __IOM uint32_t AHB1LPENR;
+    __IOM uint32_t AHB2LPENR;
+    __IOM uint32_t AHB3LPENR;
+          uint32_t RESERVED4[1];
+    __IOM uint32_t APB1LPENR;
+    __IOM uint32_t APB2LPENR;
+          uint32_t RESERVED5[2];
+    __IOM uint32_t BDCR;
+    __IOM uint32_t CSR;
+          uint32_t RESERVED6[2];
+    __IOM uint32_t SSCGR;
+    __IOM uint32_t PLLI2SCFGR;
+}
+RCC_t;
+
+#define SELECT_BIT(x) (1 << x)
+
+#define PLLSAIRDY      SELECT_BIT(29)
+#define PLLISAION      SELECT_BIT(28)
+#define PLLI2SRDY      SELECT_BIT(27)
+#define PLLI2SON       SELECT_BIT(26)
+#define PLLRDY         SELECT_BIT(25)
+#define PLLON          SELECT_BIT(24)
+#define CSSON          SELECT_BIT(19)
+#define HSEBYP         SELECT_BIT(18)
+#define HSERDY         SELECT_BIT(17)
+#define HSEON          SELECT_BIT(16)
+#define HSICAL7        SELECT_BIT(15)
+#define HSICAL6        SELECT_BIT(14)
+#define HSICAL5        SELECT_BIT(13)
+#define HSICAL4        SELECT_BIT(12)
+#define HSICAL3        SELECT_BIT(11)
+#define HSICAL2        SELECT_BIT(10)
+#define HSICAL1        SELECT_BIT(9)
+#define HSICAL0        SELECT_BIT(8)
+#define HSITRIM4       SELECT_BIT(7)
+#define HSITRIM3       SELECT_BIT(6)
+#define HSITRIM2       SELECT_BIT(5)
+#define HSITRIM1       SELECT_BIT(4)
+#define HSITRIM0       SELECT_BIT(3)
+#define HSIRDY         SELECT_BIT(1)
+#define HSION          SELECT_BIT(0)
+
+#define DACEN           SELECT_BIT(29)
+#define PWREN           SELECT_BIT(28)
+#define CAN2EN          SELECT_BIT(26)
+#define CAN1EN          SELECT_BIT(25)
+#define I2C3EN          SELECT_BIT(23)
+#define I2C2EN          SELECT_BIT(22)
+#define I2C1EN          SELECT_BIT(21)
+#define UART5EN         SELECT_BIT(20)
+#define UART4EN         SELECT_BIT(19)
+#define USART3EN        SELECT_BIT(18)
+#define USART2EN        SELECT_BIT(17)
+#define SPI3EN          SELECT_BIT(15)
+#define SPI2EN          SELECT_BIT(14)
+#define WWDGEN          SELECT_BIT(11)
+#define TIM14EN         SELECT_BIT(8)
+#define TIM13EN         SELECT_BIT(7)
+#define TIM12EN         SELECT_BIT(6)
+#define TIM7EN          SELECT_BIT(5)
+#define TIM6EN          SELECT_BIT(4)
+#define TIM5EN          SELECT_BIT(3)
+#define TIM4EN          SELECT_BIT(2)
+#define TIM3EN          SELECT_BIT(1)
+#define TIM2EN          SELECT_BIT(0)
+// 
+#define PLLQ3           SELECT_BIT(27)
+#define PLLQ2           SELECT_BIT(26)
+#define PLLQ1           SELECT_BIT(25)
+#define PLLQ0           SELECT_BIT(24)
+#define PLLSRC          SELECT_BIT(22)
+#define PLLP1           SELECT_BIT(17)
+#define PLLP0           SELECT_BIT(16)
+#define PLLN8           SELECT_BIT(14)
+#define PLLN7           SELECT_BIT(13)
+#define PLLN6           SELECT_BIT(12)
+#define PLLN5           SELECT_BIT(11)
+#define PLLN4           SELECT_BIT(10)
+#define PLLN3           SELECT_BIT(9)
+#define PLLN2           SELECT_BIT(8)
+#define PLLN1           SELECT_BIT(7)
+#define PLLN0           SELECT_BIT(6)
+#define PLLM5           SELECT_BIT(5)
+#define PLLM4           SELECT_BIT(4)
+#define PLLM3           SELECT_BIT(3)
+#define PLLM2           SELECT_BIT(2)
+#define PLLM1           SELECT_BIT(1)
+#define PLLM0           SELECT_BIT(0)
+// 
+#define MCO21           SELECT_BIT(31)
+#define MCO20           SELECT_BIT(30)
+#define MCO2PRE2        SELECT_BIT(29)
+#define MCO2PRE1        SELECT_BIT(28)
+#define MCO2PRE0        SELECT_BIT(27)
+#define MCO1PRE2        SELECT_BIT(26)
+#define MCO1PRE1        SELECT_BIT(25)
+#define MCO1PRE0        SELECT_BIT(24)
+#define I2SSRC          SELECT_BIT(23)
+#define MC011           SELECT_BIT(22)
+#define MCO10           SELECT_BIT(21)
+#define RTCPRE4         SELECT_BIT(20)
+#define RTCPRE3         SELECT_BIT(19)
+#define RTCPRE2         SELECT_BIT(18)
+#define RTCPRE1         SELECT_BIT(17)
+#define RTCPRE0         SELECT_BIT(16)
+#define PPRE22          SELECT_BIT(15)
+#define PPRE21          SELECT_BIT(14)
+#define PPRE20          SELECT_BIT(13)
+#define PPRE12          SELECT_BIT(12)
+#define PPRE11          SELECT_BIT(11)
+#define PPRE10          SELECT_BIT(10)
+#define HPRE3           SELECT_BIT(7)
+#define HPRE2           SELECT_BIT(6)
+#define HPRE1           SELECT_BIT(5)
+#define HPRE0           SELECT_BIT(4)
+#define SWS1            SELECT_BIT(3)
+#define SWS0            SELECT_BIT(2)
+#define SW1             SELECT_BIT(1)
+#define SW0             SELECT_BIT(0)
+
+extern void ___syscall(int code);
+extern void add_subscriber(Subs_t subscriber);
+extern void remove_subscriber(Subs_t subscriber);
+extern void Reset_Handler(void);
+extern void SVC_Handler(int code);
+extern void SysTick_Handler();
+extern void reset_list();
+extern void HardFault_Handler();
+extern void CLOCK_start_default(RCC_t* pclock);
 
 #define SYSTICK_ID 10
 #define SYSCALL_ID 1
+
+#define FALSE 0
+#define TRUE 1
 
 #ifdef __cplusplus
 }
