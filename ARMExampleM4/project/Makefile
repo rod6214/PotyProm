@@ -57,8 +57,8 @@ bios.lss:
 main.lss:
 	$(ARM_OBJDUMP) -h -S "./build/main.elf" > "./build/"$@
 
-main.elf: clock.o gpio.o interrupts.o main.o startup.o
-	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o ./build/clock.o
+main.elf: clock.o gpio.o interrupts.o main.o startup.o fmc.o
+	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o ./build/clock.o ./build/fmc.o
 
 bios.elf: bios.o
 	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/bios.o
@@ -71,6 +71,8 @@ bios.o:
 
 # so.o:
 # 	$(ARM_GCC) $(CFLAGS) -c -o "./build/"$@ ./src/so.s
+fmc.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/fmc.c
 
 clock.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/clock.c

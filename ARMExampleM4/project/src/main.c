@@ -32,17 +32,26 @@ void systick_hadler()
 int main() {
     state = 0;
     CLOCK_start_default(RCC);
-    Subs_t systickConfSubs = {SYSCALL_ID, systick_configuration};
-    Subs_t systickHadlerSubs = {SYSTICK_ID, systick_hadler};
+
+    // FMC_SDRAM_start_default(SDRAMC);
+
+    int* space = (int*)SDRAM_BASE;
+    int* pepe = (int*)0x20001000;
+    *space = 45;
+    // Subs_t systickConfSubs = {SYSCALL_ID, systick_configuration};
+    // Subs_t systickHadlerSubs = {SYSTICK_ID, systick_hadler};
     
-    // portB_as_output(P27);
-    reset_list();
-    add_subscriber(systickConfSubs);
-    add_subscriber(systickHadlerSubs);
+    // // portB_as_output(P27);
+    // reset_list();
+    // add_subscriber(systickConfSubs);
+    // add_subscriber(systickHadlerSubs);
     
-    ___syscall(1);
+    // ___syscall(1);
     
-    while(1) {}
+    while(1) {
+        (*space)++;
+        (*pepe) = (*space);
+    }
     return 0;
 }
 
