@@ -31,6 +31,12 @@ void systick_hadler()
 
 int main() {
     state = 0;
+
+    GPIO_t* gpio = GPIOC;
+
+    CLOCK_enable_GPIOC(RCC);
+    gpio->GPIOx_MODER = MODER9(2);
+    // gpio->GPIOx_AFRH = 0;
     CLOCK_start_default(RCC);
 
     // FMC_SDRAM_start_default(SDRAMC);
@@ -38,6 +44,7 @@ int main() {
     int* space = (int*)SDRAM_BASE;
     int* pepe = (int*)0x20001000;
     *space = 45;
+    // gpio->GPIOx_BSRR = (1 << 9);
     // Subs_t systickConfSubs = {SYSCALL_ID, systick_configuration};
     // Subs_t systickHadlerSubs = {SYSTICK_ID, systick_hadler};
     

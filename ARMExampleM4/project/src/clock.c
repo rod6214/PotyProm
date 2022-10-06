@@ -14,7 +14,9 @@ void CLOCK_start_default(RCC_t* pclock)
     pclock->PLLCFGR |= PLLQ2 | PLLSRC | PLLP(3) | PLLN(286) | PLLM(4);
     // pclock->CFGR = PPRE22 | PPRE12 | PPRE10;
     // HDCLK = SysClock / 2 at 84Mhz
-    pclock->CFGR |= HPRE3;
+    // pclock->CFGR |= HPRE3;
+    pclock->CFGR |= MCO2PRE(6);
+    pclock->CFGR &= ~HPRE(15);
     // Activate main PLL
     pclock->CR |= PLLON;
 
@@ -39,4 +41,9 @@ void CLOCK_enable_FMC(RCC_t* pclock)
 void CLOCK_reset_FMC(RCC_t* pclock) 
 {
     pclock->AHB3RSTR |= FMCRST;
+}
+
+void CLOCK_enable_GPIOC(RCC_t* pclock) 
+{
+    pclock->AHB1ENR |= GPIOCEN;
 }

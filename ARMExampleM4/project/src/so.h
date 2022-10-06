@@ -193,10 +193,7 @@ typedef struct
   __IOM uint32_t CPACR;                  /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
 } SCB_Type;
 
-#define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
-#define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
-#define RCC ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
-#define SDRAMC (SDRAM_C_t*)SDRAM_CONTROLLER
+
 
 typedef struct 
 {
@@ -253,14 +250,22 @@ typedef struct
     __IOM uint32_t GPIOx_PUPDR;
     __IOM uint32_t GPIOx_IDR;
     __IOM uint32_t GPIOx_ODR;
-    __IM uint32_t GPIOx_BSRR;
-    __IM uint32_t GPIOx_LCKR;
-    __IM uint32_t GPIOx_AFRL;
-    __IM uint32_t GPIOx_AFRH;
+    __IOM uint32_t GPIOx_BSRR;
+    __IOM uint32_t GPIOx_LCKR;
+    __IOM uint32_t GPIOx_AFRL;
+    __IOM uint32_t GPIOx_AFRH;
 }
 GPIO_t;
 
+#define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
+#define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
+#define RCC ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
+#define SDRAMC (SDRAM_C_t*)SDRAM_CONTROLLER
+#define GPIOC ((GPIO_t*)GPIOC_BASE);
+
 #define SELECT_BIT(x) (1 << x)
+
+#define GPIOCEN        SELECT_BIT(2)
 
 #define PLLSAIRDY      SELECT_BIT(29)
 #define PLLISAION      SELECT_BIT(28)
@@ -338,6 +343,9 @@ GPIO_t;
 #define PLLP(x)         ((x & 3) << 16)
 #define PLLN(x)         ((x & 0x1ff) << 6)
 #define PLLM(x)         ((x & 0x1f) << 0)
+#define MCO2(x)         (uint32_t)((x & 3) << 30)
+#define HPRE(x)         (uint32_t)((x & 0xf) << 4)
+#define MCO2PRE(x)      (uint32_t)((x & 0x7) << 27)
 // 
 #define MCO21           SELECT_BIT(31)
 #define MCO20           SELECT_BIT(30)
@@ -461,6 +469,23 @@ GPIO_t;
 #define MODES1(x)       ((x & 3) << 1)
 #define RE              SELECT_BIT(0)
 
+#define MODER15(x)      ((x & 3) << 2*15)
+#define MODER14(x)      ((x & 3) << 2*14)
+#define MODER13(x)      ((x & 3) << 2*13)
+#define MODER12(x)      ((x & 3) << 2*12)
+#define MODER11(x)      ((x & 3) << 2*11)
+#define MODER10(x)      ((x & 3) << 2*10)
+#define MODER9(x)       ((x & 3) << 2*9)
+#define MODER8(x)       ((x & 3) << 2*8)
+#define MODER7(x)       ((x & 3) << 2*7)
+#define MODER6(x)       ((x & 3) << 2*6)
+#define MODER5(x)       ((x & 3) << 2*5)
+#define MODER4(x)       ((x & 3) << 2*4)
+#define MODER3(x)       ((x & 3) << 2*3)
+#define MODER2(x)       ((x & 3) << 2*2)
+#define MODER1(x)       ((x & 3) << 2*1)
+#define MODER0(x)       ((x & 3) << 0)
+
 extern void ___syscall(int code);
 extern void add_subscriber(Subs_t subscriber);
 extern void remove_subscriber(Subs_t subscriber);
@@ -473,6 +498,7 @@ extern void CLOCK_start_default(RCC_t* pclock);
 extern void FMC_SDRAM_start_default(SDRAM_C_t* psdram);
 extern void CLOCK_enable_FMC(RCC_t* pclock);
 extern void CLOCK_reset_FMC(RCC_t* pclock);
+extern void CLOCK_enable_GPIOC(RCC_t* pclock);
 
 #define SYSTICK_ID 10
 #define SYSCALL_ID 1
