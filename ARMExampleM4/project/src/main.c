@@ -32,12 +32,12 @@ void systick_hadler()
 int main() {
     state = 0;
 
-    GPIO_t* gpio = GPIOC;
+    // GPIO_t* gpio = GPIOC;
 
-    CLOCK_enable_GPIOC(RCC);
-    gpio->GPIOx_MODER = MODER9(2);
+    // CLOCK_enable_GPIOC(RCC);
+    // gpio->GPIOx_MODER = MODER9(2);
     // gpio->GPIOx_AFRH = 0;
-    CLOCK_start_default(RCC);
+    // CLOCK_start_default(RCC);
 
     // FMC_SDRAM_start_default(SDRAMC);
 

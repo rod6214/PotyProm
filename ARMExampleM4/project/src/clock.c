@@ -43,7 +43,8 @@ void CLOCK_reset_FMC(RCC_t* pclock)
     pclock->AHB3RSTR |= FMCRST;
 }
 
-void CLOCK_enable_GPIOC(RCC_t* pclock) 
+void CLOCK_enable_AHB1(uint32_t values) 
 {
-    pclock->AHB1ENR |= GPIOCEN;
+    RCC_t* pclock = RCC;
+    pclock->AHB1ENR |= values;
 }

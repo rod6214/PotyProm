@@ -139,7 +139,17 @@ typedef struct _DeviceVectors
 #define FMC_BASE 0xA0000000UL
 #define SDRAM_CONTROLLER (FMC_BASE + 0x140)
 #define SDRAM_BASE 0x60000000
+#define GPIOA_BASE 0x40020000 
+#define GPIOB_BASE 0x40020400
 #define GPIOC_BASE 0x40020800
+#define GPIOD_BASE 0x40020C00
+#define GPIOE_BASE 0x40021000
+#define GPIOF_BASE 0x40021400
+#define GPIOG_BASE 0x40021800
+#define GPIOH_BASE 0x40021C00
+#define GPIOI_BASE 0x40022000
+#define GPIOJ_BASE 0x40022400
+#define GPIOK_BASE 0x40022800
 
 #ifndef NULL
 #define NULL (void*)0
@@ -261,11 +271,31 @@ GPIO_t;
 #define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
 #define RCC ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
 #define SDRAMC (SDRAM_C_t*)SDRAM_CONTROLLER
+#define GPIOA ((GPIO_t*)GPIOA_BASE);
+#define GPIOB ((GPIO_t*)GPIOB_BASE);
 #define GPIOC ((GPIO_t*)GPIOC_BASE);
+#define GPIOD ((GPIO_t*)GPIOD_BASE);
+#define GPIOE ((GPIO_t*)GPIOE_BASE);
+#define GPIOF ((GPIO_t*)GPIOF_BASE);
+#define GPIOG ((GPIO_t*)GPIOH_BASE);
+#define GPIOH ((GPIO_t*)GPIOI_BASE);
+#define GPIOI ((GPIO_t*)GPIOJ_BASE);
+#define GPIOJ ((GPIO_t*)GPIOK_BASE);
+#define GPIOK ((GPIO_t*)GPIOL_BASE);
 
 #define SELECT_BIT(x) (1 << x)
 
-#define GPIOCEN        SELECT_BIT(2)
+#define GPIOA_EN        SELECT_BIT(0)
+#define GPIOB_EN        SELECT_BIT(1)
+#define GPIOC_EN        SELECT_BIT(2)
+#define GPIOD_EN        SELECT_BIT(3)
+#define GPIOE_EN        SELECT_BIT(4)
+#define GPIOF_EN        SELECT_BIT(5)
+#define GPIOG_EN        SELECT_BIT(6)
+#define GPIOH_EN        SELECT_BIT(7)
+#define GPIOI_EN        SELECT_BIT(8)
+#define GPIOJ_EN        SELECT_BIT(9)
+#define GPIOK_EN        SELECT_BIT(10)
 
 #define PLLSAIRDY      SELECT_BIT(29)
 #define PLLISAION      SELECT_BIT(28)
@@ -422,37 +452,37 @@ GPIO_t;
 #define PBKEN           SELECT_BIT(2)
 #define PWAITEN         SELECT_BIT(1)
 // 
-#define MEMHIZ(x)       ((x & 0xff) << 24)
-#define MEMHOLD(x)      ((x & 0xff) << 16)
-#define MEMWAIT(x)      ((x & 0xff) << 8)
-#define MEMSET(x)       ((x & 0xff) << 0)
+#define MEMHIZ(x)       ((x & 0xffU) << 24)
+#define MEMHOLD(x)      ((x & 0xffU) << 16)
+#define MEMWAIT(x)      ((x & 0xffU) << 8)
+#define MEMSET(x)       ((x & 0xffU) << 0)
 //
-#define ATTHIZ(x)       ((x & 0xff) << 24)
-#define ATTHOLD(x)      ((x & 0xff) << 16)
-#define ATTWAIT(x)      ((x & 0xff) << 8)
-#define ATTSET(x)       ((x & 0xff) << 0)
+#define ATTHIZ(x)       ((x & 0xffU) << 24)
+#define ATTHOLD(x)      ((x & 0xffU) << 16)
+#define ATTWAIT(x)      ((x & 0xffU) << 8)
+#define ATTSET(x)       ((x & 0xffU) << 0)
 //
-#define IOHIZ(x)        ((x & 0xff) << 24)
-#define IOHOLD(x)       ((x & 0xff) << 16)
-#define IOWAIT(x)       ((x & 0xff) << 8)
-#define IOSET(x)        ((x & 0xff) << 0)
+#define IOHIZ(x)        ((x & 0xffU) << 24)
+#define IOHOLD(x)       ((x & 0xffU) << 16)
+#define IOWAIT(x)       ((x & 0xffU) << 8)
+#define IOSET(x)        ((x & 0xffU) << 0)
 //
-#define RPIPE(x)        ((x & 3) << 13)
+#define RPIPE(x)        ((x & 3U) << 13)
 #define RBURST          SELECT_BIT(12)
-#define CLK(x)          ((x & 3) << 10)
+#define CLK(x)          ((x & 3U) << 10)
 #define WP              SELECT_BIT(9)
-#define CAS(x)          ((x & 3) << 7) 
+#define CAS(x)          ((x & 3U) << 7) 
 #define NB              SELECT_BIT(6)
-#define NR(x)           ((x & 3) << 2)
-#define NC(x)           ((x & 3) << 0)
+#define NR(x)           ((x & 3U) << 2)
+#define NC(x)           ((x & 3U) << 0)
 //
-#define TRCD(x)         ((x & 0xf) << 24)
-#define TRP(x)          ((x & 0xf) << 20)
-#define TWR(x)          ((x & 0xf) << 16)
-#define TRC(x)          ((x & 0xf) << 12)
-#define TRAS(x)         ((x & 0xf) << 8)
-#define TXSR(x)         ((x & 0xf) << 4)
-#define TMRD(x)         ((x & 0xf) << 0)
+#define TRCD(x)         ((x & 0xfU) << 24)
+#define TRP(x)          ((x & 0xfU) << 20)
+#define TWR(x)          ((x & 0xfU) << 16)
+#define TRC(x)          ((x & 0xfU) << 12)
+#define TRAS(x)         ((x & 0xfU) << 8)
+#define TXSR(x)         ((x & 0xfU) << 4)
+#define TMRD(x)         ((x & 0xfU) << 0)
 //
 #define MRD(x)          ((x & 0x1fff) << 9)
 #define NRFS(x)         ((x & 0xf) << 8)
@@ -469,22 +499,48 @@ GPIO_t;
 #define MODES1(x)       ((x & 3) << 1)
 #define RE              SELECT_BIT(0)
 
-#define MODER15(x)      ((x & 3) << 2*15)
-#define MODER14(x)      ((x & 3) << 2*14)
-#define MODER13(x)      ((x & 3) << 2*13)
-#define MODER12(x)      ((x & 3) << 2*12)
-#define MODER11(x)      ((x & 3) << 2*11)
-#define MODER10(x)      ((x & 3) << 2*10)
-#define MODER9(x)       ((x & 3) << 2*9)
-#define MODER8(x)       ((x & 3) << 2*8)
-#define MODER7(x)       ((x & 3) << 2*7)
-#define MODER6(x)       ((x & 3) << 2*6)
-#define MODER5(x)       ((x & 3) << 2*5)
-#define MODER4(x)       ((x & 3) << 2*4)
-#define MODER3(x)       ((x & 3) << 2*3)
-#define MODER2(x)       ((x & 3) << 2*2)
-#define MODER1(x)       ((x & 3) << 2*1)
-#define MODER0(x)       ((x & 3) << 0)
+#define MODER15(x)      ((x & 3UL) << 2*15)
+#define MODER14(x)      ((x & 3UL) << 2*14)
+#define MODER13(x)      ((x & 3UL) << 2*13)
+#define MODER12(x)      ((x & 3UL) << 2*12)
+#define MODER11(x)      ((x & 3UL) << 2*11)
+#define MODER10(x)      ((x & 3UL) << 2*10)
+#define MODER9(x)       ((x & 3UL) << 2*9)
+#define MODER8(x)       ((x & 3UL) << 2*8)
+#define MODER7(x)       ((x & 3UL) << 2*7)
+#define MODER6(x)       ((x & 3UL) << 2*6)
+#define MODER5(x)       ((x & 3UL) << 2*5)
+#define MODER4(x)       ((x & 3UL) << 2*4)
+#define MODER3(x)       ((x & 3UL) << 2*3)
+#define MODER2(x)       ((x & 3UL) << 2*2)
+#define MODER1(x)       ((x & 3UL) << 2*1)
+#define MODER0(x)       ((x & 3UL) << 0)
+
+#define AFRx7(x)        ((x & 0xfUL) << 4*7)
+#define AFRx6(x)        ((x & 0xfUL) << 4*6)
+#define AFRx5(x)        ((x & 0xfUL) << 4*5)
+#define AFRx4(x)        ((x & 0xfUL) << 4*4)
+#define AFRx3(x)        ((x & 0xfUL) << 4*3)
+#define AFRx2(x)        ((x & 0xfUL) << 4*2)
+#define AFRx1(x)        ((x & 0xfUL) << 4*1)
+#define AFRx0(x)        ((x & 0xfUL) << 4*0)
+
+#define AF15            15
+#define AF14            14
+#define AF13            13
+#define AF12            12
+#define AF11            11
+#define AF10            10
+#define AF9             9
+#define AF8             8
+#define AF7             7
+#define AF6             6
+#define AF5             5
+#define AF4             4
+#define AF3             3
+#define AF2             2
+#define AF1             1
+#define AF0             0
 
 extern void ___syscall(int code);
 extern void add_subscriber(Subs_t subscriber);
@@ -498,7 +554,7 @@ extern void CLOCK_start_default(RCC_t* pclock);
 extern void FMC_SDRAM_start_default(SDRAM_C_t* psdram);
 extern void CLOCK_enable_FMC(RCC_t* pclock);
 extern void CLOCK_reset_FMC(RCC_t* pclock);
-extern void CLOCK_enable_GPIOC(RCC_t* pclock);
+extern void CLOCK_enable_AHB1(uint32_t values);
 
 #define SYSTICK_ID 10
 #define SYSCALL_ID 1
