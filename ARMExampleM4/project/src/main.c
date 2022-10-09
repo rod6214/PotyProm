@@ -37,23 +37,8 @@ void systick_hadler()
 int main() {
     CLOCK_start_default();
     FMC_SDRAM_prepare_ports();
-    FMC_SDRAM_start_default();
-
-    int* space = (int*)SDRAM_BASE;
-    int* pepe = (int*)0x20001000;
-    *space = 45;
-    
-    // Subs_t dd = {2, test};
-
-    // add_subscriber(dd);
-    // ___syscall(2);
-
-    volatile int i = *space;
-    
-    while(1) {
-        i = (*space)++;
-        (*pepe) = i;
-    }
+    FMC_SDRAM_start_default();    
+    while(1) {}
     return 0;
 }
 

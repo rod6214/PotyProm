@@ -3,14 +3,6 @@
 
 extern unsigned int _estack;
 
-// int main();
-
-// __attribute__ ((section(".entry")))
-// void entry_point() 
-// {
-//     main();
-// }
-
 __attribute__ ((section(".vectors")))
 const DeviceVectors exception_table = {
     .pvStack = (void*) (&_estack),

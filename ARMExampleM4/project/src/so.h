@@ -139,7 +139,7 @@ typedef struct _DeviceVectors
 #define FMC_BASE 0xA0000000UL
 #define SDRAM_CONTROLLER (FMC_BASE + 0x140)
 #define SDRAM_BASE 0xD0000000
-#define SDRAM_SIZE 0x00000200
+#define SDRAM_SIZE 0x00008000
 #define GPIOA_BASE 0x40020000 
 #define GPIOB_BASE 0x40020400
 #define GPIOC_BASE 0x40020800
@@ -151,6 +151,9 @@ typedef struct _DeviceVectors
 #define GPIOI_BASE 0x40022000
 #define GPIOJ_BASE 0x40022400
 #define GPIOK_BASE 0x40022800
+
+#define SDRAM_BANK_2 (SDRAM_BASE)
+#define SDRAM_BANK_1 (0xC0000000)
 
 #define LOW_SPEED       0
 #define MEDIUM_SPEED    1

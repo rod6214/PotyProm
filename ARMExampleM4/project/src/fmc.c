@@ -1,9 +1,9 @@
 #include "so.h"
 
-#define MODE_INPUT 	0
+#define MODE_INPUT 	    0
 #define MODE_GPIO		1
 #define MODE_AF			2
-#define MODE_ANALOG	3
+#define MODE_ANALOG	    3
 
 #define TYPE_PUSHPULL 	0
 #define TYPE_OPENDRAIN 	1
@@ -14,7 +14,7 @@
 #define SPEED_100MHz	3
 
 #define PULLUP_NONE		0
-#define PULLUP_UP			1
+#define PULLUP_UP		1
 #define PULLUP_DOWN		2
 
 #define MASK1BIT(pin) ((uint32_t)~(1 << (pin * 1)))
@@ -58,7 +58,6 @@ void gpio_conf(GPIO_t * GPIO, uint8_t pin, uint8_t mode, uint8_t type, uint8_t s
 
 void FMC_SDRAM_start_default() 
 {
-    volatile uint32_t ptr = 0;
 	volatile uint32_t i = 0;
     SDRAM_C_t* psdram = (SDRAM_C_t*)SDRAM_CONTROLLER;
     CLOCK_enable_FMC();
@@ -86,12 +85,6 @@ void FMC_SDRAM_start_default()
     while(psdram->SDSR & FMC_SDSR_BUSY);
     psdram->SDRTR = COUNT(683);
     while(psdram->SDSR & FMC_SDSR_BUSY){}
-    // Clear SDRAM
-	for(ptr = SDRAM_BASE; ptr < (SDRAM_BASE + SDRAM_SIZE); ptr += 4)
-    {
-        *((uint32_t *)ptr) = 0xFFFFFFFF;
-        while(psdram->SDSR & FMC_SDSR_BUSY);
-    }
 }
 
 void FMC_SDRAM_prepare_ports() 
