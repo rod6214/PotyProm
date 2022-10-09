@@ -3,6 +3,8 @@
 
 int state = 0;
 
+void operating_system();
+
 void systick_configuration() 
 {
     SYSTICK->CTRL = 7;
@@ -37,8 +39,8 @@ void systick_hadler()
 int main() {
     CLOCK_start_default();
     FMC_SDRAM_prepare_ports();
-    FMC_SDRAM_start_default();    
+    FMC_SDRAM_start_default();
+    BOOT_OperatingSystem(0xD0000101);
     while(1) {}
     return 0;
 }
-

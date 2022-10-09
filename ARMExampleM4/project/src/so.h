@@ -696,6 +696,7 @@ extern void CLOCK_reset_FMC();
 extern void CLOCK_enable_AHB1(uint32_t values);
 extern void FMC_SDRAM_start_default();
 extern void FMC_SDRAM_prepare_ports();
+extern void BOOT_OperatingSystem(uint32_t address);
 
 #define SYSTICK_ID 10
 #define SYSCALL_ID 1

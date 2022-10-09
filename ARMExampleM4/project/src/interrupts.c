@@ -27,6 +27,11 @@ void SVC_Handler(int code)
     invoke(code);
 }
 
+// void BOOT_OperatingSystem(uint32_t address) 
+// {
+//     asm volatile ("b %0"::"m"(address));
+// }
+
 static void invoke(int code) 
 {
     if (idx > MAX_SYSCALL)
