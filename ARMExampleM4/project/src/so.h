@@ -138,7 +138,8 @@ typedef struct _DeviceVectors
 #define RCC_BASE 0x40023800UL
 #define FMC_BASE 0xA0000000UL
 #define SDRAM_CONTROLLER (FMC_BASE + 0x140)
-#define SDRAM_BASE 0x60000000
+#define SDRAM_BASE 0xD0000000
+#define SDRAM_SIZE 0x00000200
 #define GPIOA_BASE 0x40020000 
 #define GPIOB_BASE 0x40020400
 #define GPIOC_BASE 0x40020800
@@ -150,6 +151,28 @@ typedef struct _DeviceVectors
 #define GPIOI_BASE 0x40022000
 #define GPIOJ_BASE 0x40022400
 #define GPIOK_BASE 0x40022800
+
+#define LOW_SPEED       0
+#define MEDIUM_SPEED    1
+#define FAST_SPEED      2
+#define HIGH_SPEED      3
+
+#define OSPEEDR0(x)     ((x & 3UL) << 0*2)
+#define OSPEEDR1(x)     ((x & 3UL) << 1*2)
+#define OSPEEDR2(x)     ((x & 3UL) << 2*2)
+#define OSPEEDR3(x)     ((x & 3UL) << 3*2)
+#define OSPEEDR4(x)     ((x & 3UL) << 4*2)
+#define OSPEEDR5(x)     ((x & 3UL) << 5*2)
+#define OSPEEDR6(x)     ((x & 3UL) << 6*2)
+#define OSPEEDR7(x)     ((x & 3UL) << 7*2)
+#define OSPEEDR8(x)     ((x & 3UL) << 8*2)
+#define OSPEEDR9(x)     ((x & 3UL) << 9*2)
+#define OSPEEDR10(x)    ((x & 3UL) << 10*2)
+#define OSPEEDR11(x)    ((x & 3UL) << 11*2)
+#define OSPEEDR12(x)    ((x & 3UL) << 12*2)
+#define OSPEEDR13(x)    ((x & 3UL) << 13*2)
+#define OSPEEDR14(x)    ((x & 3UL) << 14*2)
+#define OSPEEDR15(x)    ((x & 3UL) << 15*2)
 
 #ifndef NULL
 #define NULL (void*)0
@@ -214,21 +237,21 @@ typedef struct
     __IOM uint32_t AHB1RSTR;
     __IOM uint32_t AHB2RSTR;
     __IOM uint32_t AHB3RSTR;
-          uint32_t RESERVED0[1];
+          uint32_t RESERVED0;
     __IOM uint32_t APB1RSTR;
     __IOM uint32_t APB2RSTR;
           uint32_t RESERVED1[2];
     __IOM uint32_t AHB1ENR;
     __IOM uint32_t AHB2ENR;
     __IOM uint32_t AHB3ENR;
-          uint32_t RESERVED2[1];
+          uint32_t RESERVED2;
     __IOM uint32_t APB1ENR;
     __IOM uint32_t APB2ENR;
           uint32_t RESERVED3[2];
     __IOM uint32_t AHB1LPENR;
     __IOM uint32_t AHB2LPENR;
     __IOM uint32_t AHB3LPENR;
-          uint32_t RESERVED4[1];
+          uint32_t RESERVED4;
     __IOM uint32_t APB1LPENR;
     __IOM uint32_t APB2LPENR;
           uint32_t RESERVED5[2];
@@ -237,6 +260,8 @@ typedef struct
           uint32_t RESERVED6[2];
     __IOM uint32_t SSCGR;
     __IOM uint32_t PLLI2SCFGR;
+    __IOM uint32_t PLLSAICFGR;
+    __IOM uint32_t DCKCFGR;
 }
 RCC_t;
 
@@ -267,21 +292,133 @@ typedef struct
 }
 GPIO_t;
 
+#define FMC_SDCR1_SDCLK_Pos         (10U)                                      
+#define FMC_SDCR1_SDCLK_Msk         (0x3UL << FMC_SDCR1_SDCLK_Pos)              /*!< 0x00000C00 */
+#define FMC_SDCR1_SDCLK             FMC_SDCR1_SDCLK_Msk                        /*!<SDRAM clock configuration */
+#define FMC_SDCR1_SDCLK_0           (0x1UL << FMC_SDCR1_SDCLK_Pos)              /*!< 0x00000400 */
+#define FMC_SDCR1_SDCLK_1           (0x2UL << FMC_SDCR1_SDCLK_Pos)              /*!< 0x00000800 */
+
+#define FMC_SDCR1_RBURST_Pos        (12U)                                      
+#define FMC_SDCR1_RBURST_Msk        (0x1UL << FMC_SDCR1_RBURST_Pos)             /*!< 0x00001000 */
+#define FMC_SDCR1_RBURST            FMC_SDCR1_RBURST_Msk                       /*!<Read burst */
+
+#define FMC_SDCR1_RPIPE_Pos         (13U)                                      
+#define FMC_SDCR1_RPIPE_Msk         (0x3UL << FMC_SDCR1_RPIPE_Pos)              /*!< 0x00006000 */
+#define FMC_SDCR1_RPIPE             FMC_SDCR1_RPIPE_Msk                        /*!<Write protection */
+#define FMC_SDCR1_RPIPE_0           (0x1UL << FMC_SDCR1_RPIPE_Pos)              /*!< 0x00002000 */
+#define FMC_SDCR1_RPIPE_1           (0x2UL << FMC_SDCR1_RPIPE_Pos)              /*!< 0x00004000 */
+
+#define FMC_SDCR1_NR_Pos            (2U)                                       
+#define FMC_SDCR1_NR_Msk            (0x3UL << FMC_SDCR1_NR_Pos)                 /*!< 0x0000000C */
+#define FMC_SDCR1_NR                FMC_SDCR1_NR_Msk                           /*!<NR[1:0] bits (Number of row bits) */
+#define FMC_SDCR1_NR_0              (0x1UL << FMC_SDCR1_NR_Pos)                 /*!< 0x00000004 */
+#define FMC_SDCR1_NR_1              (0x2UL << FMC_SDCR1_NR_Pos)                 /*!< 0x00000008 */
+
+#define FMC_SDCR1_MWID_Pos          (4U)                                       
+#define FMC_SDCR1_MWID_Msk          (0x3UL << FMC_SDCR1_MWID_Pos)               /*!< 0x00000030 */
+#define FMC_SDCR1_MWID              FMC_SDCR1_MWID_Msk                         /*!<NR[1:0] bits (Number of row bits) */
+#define FMC_SDCR1_MWID_0            (0x1UL << FMC_SDCR1_MWID_Pos)               /*!< 0x00000010 */
+#define FMC_SDCR1_MWID_1            (0x2UL << FMC_SDCR1_MWID_Pos)               /*!< 0x00000020 */
+
+#define FMC_SDCR1_NB_Pos            (6U)                                       
+#define FMC_SDCR1_NB_Msk            (0x1UL << FMC_SDCR1_NB_Pos)                 /*!< 0x00000040 */
+#define FMC_SDCR1_NB                FMC_SDCR1_NB_Msk                           /*!<Number of internal bank */
+
+#define FMC_SDCR1_CAS_Pos           (7U)                                       
+#define FMC_SDCR1_CAS_Msk           (0x3UL << FMC_SDCR1_CAS_Pos)                /*!< 0x00000180 */
+#define FMC_SDCR1_CAS               FMC_SDCR1_CAS_Msk                          /*!<CAS[1:0] bits (CAS latency) */
+#define FMC_SDCR1_CAS_0             (0x1UL << FMC_SDCR1_CAS_Pos)                /*!< 0x00000080 */
+#define FMC_SDCR1_CAS_1             (0x2UL << FMC_SDCR1_CAS_Pos)                /*!< 0x00000100 */
+
+#define FMC_SDSR_BUSY_Pos           (5U)                                       
+#define FMC_SDSR_BUSY_Msk           (0x1UL << FMC_SDSR_BUSY_Pos)                /*!< 0x00000020 */
+#define FMC_SDSR_BUSY               FMC_SDSR_BUSY_Msk                          /*!<Busy status */
+
+#define RCC_AHB1ENR_GPIOAEN_Pos            (0U)                                
+#define RCC_AHB1ENR_GPIOAEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOAEN_Pos)   /*!< 0x00000001 */
+#define RCC_AHB1ENR_GPIOAEN                RCC_AHB1ENR_GPIOAEN_Msk             
+#define RCC_AHB1ENR_GPIOBEN_Pos            (1U)                                
+#define RCC_AHB1ENR_GPIOBEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOBEN_Pos)   /*!< 0x00000002 */
+#define RCC_AHB1ENR_GPIOBEN                RCC_AHB1ENR_GPIOBEN_Msk             
+#define RCC_AHB1ENR_GPIOCEN_Pos            (2U)                                
+#define RCC_AHB1ENR_GPIOCEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOCEN_Pos)   /*!< 0x00000004 */
+#define RCC_AHB1ENR_GPIOCEN                RCC_AHB1ENR_GPIOCEN_Msk             
+#define RCC_AHB1ENR_GPIODEN_Pos            (3U)                                
+#define RCC_AHB1ENR_GPIODEN_Msk            (0x1UL << RCC_AHB1ENR_GPIODEN_Pos)   /*!< 0x00000008 */
+#define RCC_AHB1ENR_GPIODEN                RCC_AHB1ENR_GPIODEN_Msk             
+#define RCC_AHB1ENR_GPIOEEN_Pos            (4U)                                
+#define RCC_AHB1ENR_GPIOEEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOEEN_Pos)   /*!< 0x00000010 */
+#define RCC_AHB1ENR_GPIOEEN                RCC_AHB1ENR_GPIOEEN_Msk             
+#define RCC_AHB1ENR_GPIOFEN_Pos            (5U)                                
+#define RCC_AHB1ENR_GPIOFEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOFEN_Pos)   /*!< 0x00000020 */
+#define RCC_AHB1ENR_GPIOFEN                RCC_AHB1ENR_GPIOFEN_Msk             
+#define RCC_AHB1ENR_GPIOGEN_Pos            (6U)                                
+#define RCC_AHB1ENR_GPIOGEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOGEN_Pos)   /*!< 0x00000040 */
+#define RCC_AHB1ENR_GPIOGEN                RCC_AHB1ENR_GPIOGEN_Msk             
+#define RCC_AHB1ENR_GPIOHEN_Pos            (7U)                                
+#define RCC_AHB1ENR_GPIOHEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOHEN_Pos)   /*!< 0x00000080 */
+#define RCC_AHB1ENR_GPIOHEN                RCC_AHB1ENR_GPIOHEN_Msk             
+#define RCC_AHB1ENR_GPIOIEN_Pos            (8U)                                
+#define RCC_AHB1ENR_GPIOIEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOIEN_Pos)   /*!< 0x00000100 */
+#define RCC_AHB1ENR_GPIOIEN                RCC_AHB1ENR_GPIOIEN_Msk             
+#define RCC_AHB1ENR_GPIOJEN_Pos            (9U)                                
+#define RCC_AHB1ENR_GPIOJEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOJEN_Pos)   /*!< 0x00000200 */
+#define RCC_AHB1ENR_GPIOJEN                RCC_AHB1ENR_GPIOJEN_Msk             
+#define RCC_AHB1ENR_GPIOKEN_Pos            (10U)                               
+#define RCC_AHB1ENR_GPIOKEN_Msk            (0x1UL << RCC_AHB1ENR_GPIOKEN_Pos)   /*!< 0x00000400 */
+#define RCC_AHB1ENR_GPIOKEN                RCC_AHB1ENR_GPIOKEN_Msk             
+#define RCC_AHB1ENR_CRCEN_Pos              (12U)                               
+#define RCC_AHB1ENR_CRCEN_Msk              (0x1UL << RCC_AHB1ENR_CRCEN_Pos)     /*!< 0x00001000 */
+#define RCC_AHB1ENR_CRCEN                  RCC_AHB1ENR_CRCEN_Msk               
+#define RCC_AHB1ENR_BKPSRAMEN_Pos          (18U)                               
+#define RCC_AHB1ENR_BKPSRAMEN_Msk          (0x1UL << RCC_AHB1ENR_BKPSRAMEN_Pos) /*!< 0x00040000 */
+#define RCC_AHB1ENR_BKPSRAMEN              RCC_AHB1ENR_BKPSRAMEN_Msk           
+#define RCC_AHB1ENR_CCMDATARAMEN_Pos       (20U)                               
+#define RCC_AHB1ENR_CCMDATARAMEN_Msk       (0x1UL << RCC_AHB1ENR_CCMDATARAMEN_Pos) /*!< 0x00100000 */
+#define RCC_AHB1ENR_CCMDATARAMEN           RCC_AHB1ENR_CCMDATARAMEN_Msk        
+#define RCC_AHB1ENR_DMA1EN_Pos             (21U)                               
+#define RCC_AHB1ENR_DMA1EN_Msk             (0x1UL << RCC_AHB1ENR_DMA1EN_Pos)    /*!< 0x00200000 */
+#define RCC_AHB1ENR_DMA1EN                 RCC_AHB1ENR_DMA1EN_Msk              
+#define RCC_AHB1ENR_DMA2EN_Pos             (22U)                               
+#define RCC_AHB1ENR_DMA2EN_Msk             (0x1UL << RCC_AHB1ENR_DMA2EN_Pos)    /*!< 0x00400000 */
+#define RCC_AHB1ENR_DMA2EN                 RCC_AHB1ENR_DMA2EN_Msk              
+#define RCC_AHB1ENR_DMA2DEN_Pos            (23U)                               
+#define RCC_AHB1ENR_DMA2DEN_Msk            (0x1UL << RCC_AHB1ENR_DMA2DEN_Pos)   /*!< 0x00800000 */
+#define RCC_AHB1ENR_DMA2DEN                RCC_AHB1ENR_DMA2DEN_Msk             
+#define RCC_AHB1ENR_ETHMACEN_Pos           (25U)                               
+#define RCC_AHB1ENR_ETHMACEN_Msk           (0x1UL << RCC_AHB1ENR_ETHMACEN_Pos)  /*!< 0x02000000 */
+#define RCC_AHB1ENR_ETHMACEN               RCC_AHB1ENR_ETHMACEN_Msk            
+#define RCC_AHB1ENR_ETHMACTXEN_Pos         (26U)                               
+#define RCC_AHB1ENR_ETHMACTXEN_Msk         (0x1UL << RCC_AHB1ENR_ETHMACTXEN_Pos) /*!< 0x04000000 */
+#define RCC_AHB1ENR_ETHMACTXEN             RCC_AHB1ENR_ETHMACTXEN_Msk          
+#define RCC_AHB1ENR_ETHMACRXEN_Pos         (27U)                               
+#define RCC_AHB1ENR_ETHMACRXEN_Msk         (0x1UL << RCC_AHB1ENR_ETHMACRXEN_Pos) /*!< 0x08000000 */
+#define RCC_AHB1ENR_ETHMACRXEN             RCC_AHB1ENR_ETHMACRXEN_Msk          
+#define RCC_AHB1ENR_ETHMACPTPEN_Pos        (28U)                               
+#define RCC_AHB1ENR_ETHMACPTPEN_Msk        (0x1UL << RCC_AHB1ENR_ETHMACPTPEN_Pos) /*!< 0x10000000 */
+#define RCC_AHB1ENR_ETHMACPTPEN            RCC_AHB1ENR_ETHMACPTPEN_Msk         
+#define RCC_AHB1ENR_OTGHSEN_Pos            (29U)                               
+#define RCC_AHB1ENR_OTGHSEN_Msk            (0x1UL << RCC_AHB1ENR_OTGHSEN_Pos)   /*!< 0x20000000 */
+#define RCC_AHB1ENR_OTGHSEN                RCC_AHB1ENR_OTGHSEN_Msk             
+#define RCC_AHB1ENR_OTGHSULPIEN_Pos        (30U)                               
+#define RCC_AHB1ENR_OTGHSULPIEN_Msk        (0x1UL << RCC_AHB1ENR_OTGHSULPIEN_Pos) /*!< 0x40000000 */
+#define RCC_AHB1ENR_OTGHSULPIEN            RCC_AHB1ENR_OTGHSULPIEN_Msk     
+
 #define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
 #define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
 #define RCC ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
 #define SDRAMC (SDRAM_C_t*)SDRAM_CONTROLLER
-#define GPIOA ((GPIO_t*)GPIOA_BASE);
-#define GPIOB ((GPIO_t*)GPIOB_BASE);
-#define GPIOC ((GPIO_t*)GPIOC_BASE);
-#define GPIOD ((GPIO_t*)GPIOD_BASE);
-#define GPIOE ((GPIO_t*)GPIOE_BASE);
-#define GPIOF ((GPIO_t*)GPIOF_BASE);
-#define GPIOG ((GPIO_t*)GPIOH_BASE);
-#define GPIOH ((GPIO_t*)GPIOI_BASE);
-#define GPIOI ((GPIO_t*)GPIOJ_BASE);
-#define GPIOJ ((GPIO_t*)GPIOK_BASE);
-#define GPIOK ((GPIO_t*)GPIOL_BASE);
+#define GPIOA ((GPIO_t*)GPIOA_BASE)
+#define GPIOB ((GPIO_t*)GPIOB_BASE)
+#define GPIOC ((GPIO_t*)GPIOC_BASE)
+#define GPIOD ((GPIO_t*)GPIOD_BASE)
+#define GPIOE ((GPIO_t*)GPIOE_BASE)
+#define GPIOF ((GPIO_t*)GPIOF_BASE)
+#define GPIOG ((GPIO_t*)GPIOG_BASE)
+#define GPIOH ((GPIO_t*)GPIOH_BASE)
+#define GPIOI ((GPIO_t*)GPIOI_BASE)
+#define GPIOJ ((GPIO_t*)GPIOJ_BASE)
+#define GPIOK ((GPIO_t*)GPIOK_BASE)
 
 #define SELECT_BIT(x) (1 << x)
 
@@ -485,7 +622,7 @@ GPIO_t;
 #define TMRD(x)         ((x & 0xfU) << 0)
 //
 #define MRD(x)          ((x & 0x1fff) << 9)
-#define NRFS(x)         ((x & 0xf) << 8)
+#define NRFS(x)         ((x & 0xf) << 5)
 #define CTB1            SELECT_BIT(4)
 #define CTB2            SELECT_BIT(3)
 #define MODE(x)         ((x & 0xf) << 0)
@@ -550,11 +687,12 @@ extern void SVC_Handler(int code);
 extern void SysTick_Handler();
 extern void reset_list();
 extern void HardFault_Handler();
-extern void CLOCK_start_default(RCC_t* pclock);
-extern void FMC_SDRAM_start_default(SDRAM_C_t* psdram);
-extern void CLOCK_enable_FMC(RCC_t* pclock);
-extern void CLOCK_reset_FMC(RCC_t* pclock);
+extern void CLOCK_start_default();
+extern void CLOCK_enable_FMC();
+extern void CLOCK_reset_FMC();
 extern void CLOCK_enable_AHB1(uint32_t values);
+extern void FMC_SDRAM_start_default();
+extern void FMC_SDRAM_prepare_ports();
 
 #define SYSTICK_ID 10
 #define SYSCALL_ID 1
