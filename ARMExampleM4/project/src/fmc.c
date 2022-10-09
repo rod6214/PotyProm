@@ -63,8 +63,8 @@ void FMC_SDRAM_start_default()
     SDRAM_C_t* psdram = (SDRAM_C_t*)SDRAM_CONTROLLER;
     CLOCK_enable_FMC();
     // Initialization step 1
-    psdram->SDCR_1 = FMC_SDCR1_SDCLK_1  | FMC_SDCR1_RBURST | FMC_SDCR1_RPIPE_1;
-    psdram->SDCR_2 = FMC_SDCR1_NR_0	  | FMC_SDCR1_MWID_0 | FMC_SDCR1_NB | FMC_SDCR1_CAS;
+    psdram->SDCR_1 = CLK(2) | RBURST | RPIPE(1);
+    psdram->SDCR_2 = NR(1) | MWID(1) | NB | CAS(3);
     // Initialization step 2
     psdram->SDTR1 = TRC(7)  | TRP(2);
     psdram->SDTR2 = TMRD(2) | TXSR(7) | TRAS(4) | TWR(2) | TRCD(2);
@@ -98,7 +98,7 @@ void FMC_SDRAM_prepare_ports()
 {
     volatile uint32_t i = 0;
 
-    CLOCK_enable_AHB1(RCC_AHB1ENR_GPIODEN | RCC_AHB1ENR_GPIOEEN | RCC_AHB1ENR_GPIOFEN | RCC_AHB1ENR_GPIOGEN | RCC_AHB1ENR_GPIOHEN);
+    CLOCK_enable_AHB1(GPIOD_EN | GPIOE_EN | GPIOF_EN | GPIOG_EN | GPIOH_EN);
 
     while(GPIOInitTable[i] != 0){
         if (i >= 38) 
