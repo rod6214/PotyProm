@@ -5,7 +5,7 @@ ARM_OBJCOPY=arm-none-eabi-objcopy
 TARGET = template
 SO_TARGET = so_template
 SO_LINKER_SCRIPT = so.ld
-# LINKER_SCRIPT = main.ld
+LINKER_SCRIPT = bios.ld
 LINKER_FOLDER = ./linker
 ASM_SRC = "./src/bios.s ./src/so.s"
 INCLUDES = -I./src/*.h
@@ -28,7 +28,7 @@ LDFLAGS += -march=armv7e-m # processor setup
 LDFLAGS += -nostartfiles # no start files are used
 LDFLAGS += --specs=nosys.specs
 LDFLAGS += -Wl,-Map=./build/$(TARGET).map #generate map file
-# LDFLAGS += -T$(LINKER_SCRIPT)
+LDFLAGS += -T$(LINKER_SCRIPT)
 LDFLAGS += -L$(LINKER_FOLDER)
 # LDFLAGS += --with-mode=thumb
 LDFLAGS += -Wl,--gc-sections
@@ -43,8 +43,9 @@ SO_LDFLAGS += -L$(LINKER_FOLDER)
 # SO_LDFLAGS += --with-mode=thumb
 SO_LDFLAGS += -Wl,--gc-sections
 
-build: clean build.dir main.bin
+build: clean build.dir main.bin ops.bin
 
+#####################################################################
 main.bin: main.elf main.lss
 	$(ARM_OBJCOPY) -O binary "./build/main.elf" "./build/"$@
 
@@ -52,7 +53,7 @@ main.lss:
 	$(ARM_OBJDUMP) -h -S "./build/main.elf" > "./build/"$@
 
 main.elf: clock.o gpio.o interrupts.o main.o startup.o fmc.o target.o
-	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o ./build/clock.o ./build/fmc.o ./build/target.o
+	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o ./build/clock.o ./build/fmc.o ./build/target.o
 
 main.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/main.c
@@ -74,6 +75,25 @@ gpio.o:
 
 target.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/target.s
+
+#########################################################################
+ops.bin: ops.elf ops.lss
+	$(ARM_OBJCOPY) -O binary "./build/ops.elf" "./build/"$@
+
+ops.lss:
+	$(ARM_OBJDUMP) -h -S "./build/ops.elf" > "./build/"$@
+
+ops.elf: ops.o
+	$(ARM_GCC) $(SO_LDFLAGS) -o "./build/"$@ ./build/ops.o ./build/startup.o ./build/interrupts.o
+
+ops.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/system/main.c
+
+# ointerrupts.o:
+# 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/system/ointerrupts.c
+
+# ostartup.o:
+# 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/system/ostartup.c
 
 build.dir:
 	mkdir build

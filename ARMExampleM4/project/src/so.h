@@ -704,6 +704,18 @@ extern void BOOT_OperatingSystem(uint32_t address);
 #define FALSE 0
 #define TRUE 1
 
+#define SO_ENTRY __attribute__ ((section(".entry")))
+
+typedef void (*SubscriberHandler)(Subs_t subscriber);
+typedef void (*SyscallHandler)(int code);
+
+typedef struct 
+{
+    SyscallHandler syscall;
+    SubscriberHandler add_subscriber;
+    SubscriberHandler remove_subscriber;
+} SO_Input_t;
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
