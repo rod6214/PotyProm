@@ -1,7 +1,6 @@
 MEMORY {
 	rom (rx)  : ORIGIN = 0xD0000000, LENGTH = 64K
-	ram (rwx) : ORIGIN = 0xD2000000, LENGTH =  512K
-    internal (rx) : ORIGIN = 0x08000000, LENGTH = 64K
+	ram (rwx) : ORIGIN = 0x20000000, LENGTH =  32K
 }
 
 VECTOR_SIZE = DEFINED(VECTOR_SIZE) ? VECTOR_SIZE : 180;
@@ -13,6 +12,7 @@ SECTIONS {
     .text :
     {
         _sfixed = .;
+        KEEP(*(.vectors .vectors.*))
         KEEP(*(.entry .entry.*))
         *(.text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)

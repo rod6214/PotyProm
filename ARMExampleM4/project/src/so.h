@@ -138,19 +138,20 @@ typedef struct _DeviceVectors
 #define RCC_BASE 0x40023800UL
 #define FMC_BASE 0xA0000000UL
 #define SDRAM_CONTROLLER (FMC_BASE + 0x140)
-#define SDRAM_BASE 0xD0000000
-#define SDRAM_SIZE 0x00008000
-#define GPIOA_BASE 0x40020000 
-#define GPIOB_BASE 0x40020400
-#define GPIOC_BASE 0x40020800
-#define GPIOD_BASE 0x40020C00
-#define GPIOE_BASE 0x40021000
-#define GPIOF_BASE 0x40021400
-#define GPIOG_BASE 0x40021800
-#define GPIOH_BASE 0x40021C00
-#define GPIOI_BASE 0x40022000
-#define GPIOJ_BASE 0x40022400
-#define GPIOK_BASE 0x40022800
+#define SDRAM_BASE      0xD0000000
+#define SDRAM_SIZE      0x00008000
+#define GPIOA_BASE      0x40020000 
+#define GPIOB_BASE      0x40020400
+#define GPIOC_BASE      0x40020800
+#define GPIOD_BASE      0x40020C00
+#define GPIOE_BASE      0x40021000
+#define GPIOF_BASE      0x40021400
+#define GPIOG_BASE      0x40021800
+#define GPIOH_BASE      0x40021C00
+#define GPIOI_BASE      0x40022000
+#define GPIOJ_BASE      0x40022400
+#define GPIOK_BASE      0x40022800
+#define SYSCFG_BASE     0x40013800
 
 #define SDRAM_BANK_2 (SDRAM_BASE)
 #define SDRAM_BANK_1 (0xC0000000)
@@ -295,6 +296,22 @@ typedef struct
 }
 GPIO_t;
 
+typedef struct 
+{
+    __IOM uint32_t SYSCFG_MEMRM;
+    __IOM uint32_t SYSCFG_PMC;
+    __IOM uint32_t SYSCFG_EXTICR1;
+    __IOM uint32_t SYSCFG_EXTICR2;
+    __IOM uint32_t SYSCFG_EXTICR3;
+    __IOM uint32_t SYSCFG_EXTICR4;
+    __IOM uint32_t SYSCFG_CMPCR;
+}
+SYSCFG_t;
+
+#define MEM_MODE(x)     ((x & 7U))
+#define FB_MODE         SELECT_BIT(8)
+#define SWP_FMC(x)      ((x & 3U) << 10)
+
 #define FMC_SDCR1_SDCLK_Pos         (10U)                                      
 #define FMC_SDCR1_SDCLK_Msk         (0x3UL << FMC_SDCR1_SDCLK_Pos)              /*!< 0x00000C00 */
 #define FMC_SDCR1_SDCLK             FMC_SDCR1_SDCLK_Msk                        /*!<SDRAM clock configuration */
@@ -407,21 +424,22 @@ GPIO_t;
 #define RCC_AHB1ENR_OTGHSULPIEN_Msk        (0x1UL << RCC_AHB1ENR_OTGHSULPIEN_Pos) /*!< 0x40000000 */
 #define RCC_AHB1ENR_OTGHSULPIEN            RCC_AHB1ENR_OTGHSULPIEN_Msk     
 
-#define SCB ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
-#define SYSTICK ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
-#define RCC ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
-#define SDRAMC (SDRAM_C_t*)SDRAM_CONTROLLER
-#define GPIOA ((GPIO_t*)GPIOA_BASE)
-#define GPIOB ((GPIO_t*)GPIOB_BASE)
-#define GPIOC ((GPIO_t*)GPIOC_BASE)
-#define GPIOD ((GPIO_t*)GPIOD_BASE)
-#define GPIOE ((GPIO_t*)GPIOE_BASE)
-#define GPIOF ((GPIO_t*)GPIOF_BASE)
-#define GPIOG ((GPIO_t*)GPIOG_BASE)
-#define GPIOH ((GPIO_t*)GPIOH_BASE)
-#define GPIOI ((GPIO_t*)GPIOI_BASE)
-#define GPIOJ ((GPIO_t*)GPIOJ_BASE)
-#define GPIOK ((GPIO_t*)GPIOK_BASE)
+#define SCB       ((SCB_Type*)0xE000ED00UL)   /*!< SCB configuration struct */
+#define SYSTICK   ((SysTick_t*)0xE000E010UL)   /*!< SYSTICK configuration struct */
+#define RCC       ((RCC_t*)0x40023800UL)   /*!< SYSTICK configuration struct */
+#define SDRAMC    (SDRAM_C_t*)SDRAM_CONTROLLER
+#define GPIOA     ((GPIO_t*)GPIOA_BASE)
+#define GPIOB     ((GPIO_t*)GPIOB_BASE)
+#define GPIOC     ((GPIO_t*)GPIOC_BASE)
+#define GPIOD     ((GPIO_t*)GPIOD_BASE)
+#define GPIOE     ((GPIO_t*)GPIOE_BASE)
+#define GPIOF     ((GPIO_t*)GPIOF_BASE)
+#define GPIOG     ((GPIO_t*)GPIOG_BASE)
+#define GPIOH     ((GPIO_t*)GPIOH_BASE)
+#define GPIOI     ((GPIO_t*)GPIOI_BASE)
+#define GPIOJ     ((GPIO_t*)GPIOJ_BASE)
+#define GPIOK     ((GPIO_t*)GPIOK_BASE)
+#define SYSCFG    ((SYSCFG_t*)SYSCFG_BASE)
 
 #define SELECT_BIT(x) (1 << x)
 
@@ -682,6 +700,8 @@ GPIO_t;
 #define AF1             1
 #define AF0             0
 
+#define PPRE2(x)        ((x & 7U) << 13)
+
 extern void ___syscall(int code);
 extern void add_subscriber(Subs_t subscriber);
 extern void remove_subscriber(Subs_t subscriber);
@@ -715,6 +735,13 @@ typedef struct
     SubscriberHandler add_subscriber;
     SubscriberHandler remove_subscriber;
 } SO_Input_t;
+
+#define CALL_OPERATING_SYSTEM(ptr) asm volatile ( \
+        "mov r0, %0\n\t" \
+        "ldr r1, =#0xD0000000\n\t" \
+        "blx r1" \
+        : \
+        : "r"(&input))
 
 #ifdef __cplusplus
 }

@@ -3,24 +3,25 @@
 
 SO_Input_t input;
 
-#define CALL_OPERATING_SYSTEM(ptr) asm volatile ( \
-        "mov r0, %0\n\t" \
-        "ldr r1, =#0xD0000001\n\t" \
-        "blx r1" \
-        : \
-        : "r"(&input))
-
 int main() {    
     CLOCK_start_default();
     FMC_SDRAM_prepare_ports();
     FMC_SDRAM_start_default();
 
-    input.syscall = ___syscall;
-    input.add_subscriber = add_subscriber;
-    input.remove_subscriber = remove_subscriber;
+    volatile uint32_t *space = (uint32_t*)SDRAM_BANK_2;
+    *space = 78;
 
-    CALL_OPERATING_SYSTEM(input);
+    // Change memory map to sdram
+    // SYSCFG->SYSCFG_MEMRM = MEM_MODE(4);
+    RCC->APB2ENR |= SELECT_BIT(14);
+
+    volatile SYSCFG_t * test = SYSCFG;
+    test->SYSCFG_MEMRM = MEM_MODE(4);
+
+    // entry_point();
+    CALL_OPERATING_SYSTEM();
     
     while(1) {}
     return 0;
 }
+

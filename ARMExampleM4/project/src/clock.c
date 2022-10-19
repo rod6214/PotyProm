@@ -16,6 +16,7 @@ void CLOCK_start_default()
     // pclock->CFGR = PPRE22 | PPRE12 | PPRE10;
     // HDCLK = SysClock / 2 at 84Mhz
     // pclock->CFGR |= HPRE3;
+    RCC->CFGR |= PPRE2(4);
     RCC->CFGR |= MCO2PRE(6);
     RCC->CFGR &= ~HPRE(15);
     // Activate main PLL
