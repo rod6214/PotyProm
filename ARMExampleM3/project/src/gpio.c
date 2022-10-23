@@ -1,5 +1,5 @@
-#include "so.h"
-#include "gpio.h"
+// #include "so.h"
+// #include "gpio.h"
 
 void portB_as_output(unsigned int port) 
 {

@@ -17,6 +17,7 @@
             "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "C:\\Develop\\bin\\arm-toolchain\\bin\\arm-none-eabi-gdb.exe",
+            // "miDebuggerServerAddress":"localhost:7184",
             "miDebuggerServerAddress":"localhost:3333",
             "setupCommands": [
                 {

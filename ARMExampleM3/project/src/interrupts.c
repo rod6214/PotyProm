@@ -4,6 +4,7 @@
 #define MAX_SYSCALL 32
 Subs_t __mem[MAX_SYSCALL];
 int idx = 0;
+extern unsigned int _estack;
 
 static void reorder();
 static void invoke(int code);

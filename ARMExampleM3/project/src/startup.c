@@ -3,7 +3,7 @@
 
 extern unsigned int _estack;
 
-__attribute__ ((section(".vectors")))
+__attribute__ ((section(".isr_vector")))
 const DeviceVectors exception_table = {
     .pvStack = (void*) (&_estack),
     .pfnReset_Handler = Reset_Handler,
