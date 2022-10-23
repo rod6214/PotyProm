@@ -1,7 +1,7 @@
 #include "so.h"
 
 int main() { 
-    asm("svc 0");   
+    CLOCK_start_default();  
     while(1) {}
     return 0;
 }

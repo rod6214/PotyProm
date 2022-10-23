@@ -25,6 +25,15 @@
 
 #include <stm32f1xx.h>
 
+#define CFGR_PLL_MULL(x) ((x & 0xfL) << RCC_CFGR_PLLMULL_Pos)
+#define CFGR_MCO(x) ((x & 0xfL) << RCC_CFGR_MCO_Pos)
+#define CFGR_PPRE2(x) ((x & 0xfL) << RCC_CFGR_PPRE2_Pos)
+#define CFGR_PPRE1(x) ((x & 0xfL) << RCC_CFGR_PPRE1_Pos)
+#define CFGR_HPRE(x) ((x & 0xfL) << RCC_CFGR_HPRE_Pos)
+#define CFGR_SWS(x) ((x & 0x3L) << RCC_CFGR_SWS_Pos)
+#define CFGR_SW(x) ((x & 0x3L) << RCC_CFGR_SW_Pos)
+#define CFGR_ADCPRE(x) ((x & 0x3L) << RCC_CFGR_ADCPRE_Pos)
+
 typedef void (*FUNC)(void);
 typedef void (*FUNC_SVC)(int);
 
@@ -51,51 +60,74 @@ typedef struct _DeviceVectors
   FUNC pfnSysTick_Handler;
 
   /* Peripheral handlers */
-  FUNC pfnSUPC_Handler;   /*  0 Supply Controller */
-  FUNC pfnRSTC_Handler;   /*  1 Reset Controller */
-  FUNC pfnRTC_Handler;    /*  2 Real Time Clock */
-  FUNC pfnRTT_Handler;    /*  3 Real Time Timer */
-  FUNC pfnWDT_Handler;    /*  4 Watchdog Timer */
-  FUNC pfnPMC_Handler;    /*  5 Power Management Controller */
-  FUNC pfnEFC0_Handler;   /*  6 Enhanced Flash Controller 0 */
-  FUNC pfnEFC1_Handler;   /*  7 Enhanced Flash Controller 1 */
-  FUNC pfnUART_Handler;   /*  8 Universal Asynchronous Receiver Transceiver */
-  FUNC pvReserved9;
-  FUNC pvReserved10;
-  FUNC pfnPIOA_Handler;   /* 11 Parallel I/O Controller A, */
-  FUNC pfnPIOB_Handler;   /* 12 Parallel I/O Controller B */
-  FUNC pvReserved13;
-  FUNC pvReserved14;
-  FUNC pvReserved15;
-  FUNC pvReserved16;
-  FUNC pfnUSART0_Handler; /* 17 USART 0 */
-  FUNC pfnUSART1_Handler; /* 18 USART 1 */
-  FUNC pfnUSART2_Handler; /* 19 USART 2 */
-  FUNC pvReserved20;
-  FUNC pfnHSMCI_Handler;  /* 21 Multimedia Card Interface */
-  FUNC pfnTWI0_Handler;   /* 22 Two-Wire Interface 0 */
-  FUNC pfnTWI1_Handler;   /* 23 Two-Wire Interface 1 */
-  FUNC pfnSPI0_Handler;   /* 24 Serial Peripheral Interface */
-  FUNC pvReserved25;
-  FUNC pfnSSC_Handler;    /* 26 Synchronous Serial Controller */
-  FUNC pfnTC0_Handler;    /* 27 Timer Counter 0 */
-  FUNC pfnTC1_Handler;    /* 28 Timer Counter 1 */
-  FUNC pfnTC2_Handler;    /* 29 Timer Counter 2 */
-  FUNC pfnTC3_Handler;    /* 30 Timer Counter 3 */
-  FUNC pfnTC4_Handler;    /* 31 Timer Counter 4 */
-  FUNC pfnTC5_Handler;    /* 32 Timer Counter 5 */
-  FUNC pvReserved33;
-  FUNC pvReserved34;
-  FUNC pvReserved35;
-  FUNC pfnPWM_Handler;    /* 36 Pulse Width Modulation Controller */
-  FUNC pfnADC_Handler;    /* 37 ADC Controller */
-  FUNC pfnDACC_Handler;   /* 38 DAC Controller */
-  FUNC pfnDMAC_Handler;   /* 39 DMA Controller */
-  FUNC pfnUOTGHS_Handler; /* 40 USB OTG High Speed */
-  FUNC pfnTRNG_Handler;   /* 41 True Random Number Generator */
-  FUNC pfnEMAC_Handler;   /* 42 Ethernet MAC */
-  FUNC pfnCAN0_Handler;   /* 43 CAN Controller 0 */
-  FUNC pfnCAN1_Handler;   /* 44 CAN Controller 1 */
+  FUNC pfnWWDG_Handler;
+  FUNC pfnPVD_Handler;
+  FUNC pfnTAMPER_Handler;
+  FUNC pfnRTC_Handler;
+  FUNC pfnFLASH_Handler;
+  FUNC pfnRCC_Handler;
+  FUNC pfnEXTI0_IRQHandler;
+  FUNC pfnEXTI1_IRQHandler;
+  FUNC pfnEXTI2_IRQHandler;
+  FUNC pfnEXTI3_IRQHandler;
+  FUNC pfnEXTI4_IRQHandler;
+  FUNC pfnDMA1_Channel1_IRQHandler;
+  FUNC pfnDMA1_Channel2_IRQHandler;
+  FUNC pfnDMA1_Channel3_IRQHandler;
+  FUNC pfnDMA1_Channel4_IRQHandler;
+  FUNC pfnDMA1_Channel5_IRQHandler;
+  FUNC pfnDMA1_Channel6_IRQHandler;
+  FUNC pfnDMA1_Channel7_IRQHandler;
+  FUNC pfnADC1_2_IRQHandler;
+  FUNC pfnCAN1_TX_IRQHandler;
+  FUNC pfnCAN1_RX0_IRQHandler;
+  FUNC pfnCAN1_RX1_IRQHandler;
+  FUNC pfnCAN1_SCE_IRQHandler;
+  FUNC pfnEXTI9_5_IRQHandler;
+  FUNC pfnTIM1_BRK_IRQHandler;
+  FUNC pfnTIM1_UP_IRQHandler;
+  FUNC pfnTIM1_TRG_COM_IRQHandler;
+  FUNC pfnTIM1_CC_IRQHandler;
+  FUNC pfnTIM2_IRQHandler;
+  FUNC pfnTIM3_IRQHandler;
+  FUNC pfnTIM4_IRQHandler;
+  FUNC pfnI2C1_EV_IRQHandler;
+  FUNC pfnI2C1_ER_IRQHandler;
+  FUNC pfnI2C2_EV_IRQHandler;
+  FUNC pfnI2C2_ER_IRQHandler;
+  FUNC pfnSPI1_IRQHandler;
+  FUNC pfnSPI2_IRQHandler;
+  FUNC pfnUSART1_IRQHandler;
+  FUNC pfnUSART2_IRQHandler;
+  FUNC pfnUSART3_IRQHandler;
+  FUNC pfnEXTI15_10_IRQHandler;
+  FUNC pfnRTC_Alarm_IRQHandler;
+  FUNC pfnOTG_FS_WKUP_IRQHandler;
+  FUNC pfnReserved6_Handler;
+  FUNC pfnReserved7_Handler;
+  FUNC pfnReserved8_Handler;
+  FUNC pfnReserved9_Handler;
+  FUNC pfnReserved10_Handler;
+  FUNC pfnReserved11_Handler;
+  FUNC pfnReserved12_Handler;
+  FUNC pfnTIM5_IRQHandler;
+  FUNC pfnSPI3_IRQHandler;
+  FUNC pfnUART4_IRQHandler;
+  FUNC pfnUART5_IRQHandler;
+  FUNC pfnTIM6_IRQHandler;
+  FUNC pfnTIM7_IRQHandler;
+  FUNC pfnDMA2_Channel1_IRQHandler;
+  FUNC pfnDMA2_Channel2_IRQHandler;
+  FUNC pfnDMA2_Channel3_IRQHandler;
+  FUNC pfnDMA2_Channel4_IRQHandler;
+  FUNC pfnDMA2_Channel5_IRQHandler;
+  FUNC pfnETH_IRQHandler;
+  FUNC pfnETH_WKUP_IRQHandler;
+  FUNC pfnCAN2_TX_IRQHandler;
+  FUNC pfnCAN2_RX0_IRQHandler;
+  FUNC pfnCAN2_RX1_IRQHandler;
+  FUNC pfnCAN2_SCE_IRQHandler;
+  FUNC pfnOTG_FS_IRQHandler;
 } DeviceVectors;
 
 #ifndef NULL

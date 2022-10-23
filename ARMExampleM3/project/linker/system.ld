@@ -8,20 +8,22 @@ TOP = DEFINED(TOP) ? TOP : 16;
 STACK_SIZE = DEFINED(STACK_SIZE) ? STACK_SIZE : 0x400;
 HEAP_SIZE = DEFINED(HEAP_SIZE) ? HEAP_SIZE : 0x200;
 
-ENTRY(Reset_Handler)
+/* ENTRY(Reset_Handler) */
 
 SECTIONS {
-    .isr_vector : 
+    /* .isr_vector : 
     {
         . = ALIGN(4);
         KEEP(*(.isr_vector))
-    } >rom
+    } >rom */
 
     .text :
     {
         _sfixed = .;
-        KEEP(*(.vectors .vectors.*))
-        KEEP(*(.entry .entry.*))
+        . = ALIGN(4);
+        KEEP(*(.isr_vector))
+        /* KEEP(*(.vectors .vectors.*))
+        KEEP(*(.entry .entry.*)) */
         *(.text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)
         *(.rodata .rodata* .gnu.linkonce.r.*)
