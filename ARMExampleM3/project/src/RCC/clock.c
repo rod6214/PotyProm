@@ -3,7 +3,7 @@
 extern void incrementTick();
 int RTC_config();
 
-int _tick = 0;
+uint32_t _tick = 0;
 
 const Subs_t rtc_sub = { 
     .code = RTC_ID, 
@@ -71,7 +71,7 @@ int RTC_config()
 
     int attempts = 0;
     RTC->CRL |= RTC_CRL_CNF;
-    RTC->CRH |= RTC_CRH_SECIE | RTC_CRH_OWIE;
+    // RTC->CRH |= RTC_CRH_SECIE | RTC_CRH_OWIE;
     RTC->CNTH = 0;
     RTC->CNTL = 0;
     RTC->PRLH = 0;
@@ -82,18 +82,23 @@ int RTC_config()
     
     if (attempts == 10)
         return ERROR;
-    
+    #if defined(_TICK_WITH_IRQn)
     add_subscriber(rtc_sub);
     enable_IRQn(RTC_IRQn);
+    #endif
 
     return SUCCESS;
 }
 
-int CLOCK_GetTick() 
+uint32_t CLOCK_GetTick() 
 {
+    #if !defined(_TICK_WITH_IRQn)
+    _tick = (RTC->CNTH << 16UL) | RTC->CNTL;
+    #endif
     return _tick;
 }
 
+#if defined(_TICK_WITH_IRQn)
 void incrementTick() 
 {
     int attempts = 0;
@@ -104,6 +109,7 @@ void incrementTick()
     while(!RTC_Has_terminated() && attempts <= 10) 
         attempts++;
 }
+#endif
 
 void CLOCK_enable_FMC() 
 {

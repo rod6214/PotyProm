@@ -163,7 +163,7 @@ extern void FMC_SDRAM_start_default();
 extern void FMC_SDRAM_prepare_ports();
 extern void BOOT_OperatingSystem(uint32_t address);
 extern void enable_IRQn(IRQn_Type irq);
-extern int CLOCK_GetTick();
+extern uint32_t CLOCK_GetTick();
 
 #define SYSTICK_ID      1
 #define SYSCALL_ID      2
