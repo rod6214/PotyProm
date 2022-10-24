@@ -40,8 +40,8 @@ main.bin: main.elf main.lss
 main.lss:
 	$(ARM_OBJDUMP) -h -S "./build/main.elf" > "./build/"$@
 
-main.elf: clock.o gpio.o interrupts.o main.o startup.o target.o syscalls.o
-	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o ./build/clock.o ./build/target.o ./build/syscalls.o
+main.elf: clock.o gpio.o interrupts.o main.o startup.o target.o syscalls.o usb.o
+	$(ARM_GCC) $(LDFLAGS) -o "./build/"$@ ./build/main.o ./build/interrupts.o ./build/gpio.o ./build/startup.o ./build/clock.o ./build/target.o ./build/syscalls.o ./build/usb.o
 
 main.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/main.c
@@ -60,6 +60,9 @@ gpio.o:
 
 syscalls.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/syscalls.c
+
+usb.o:
+	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/USB/core.c
 
 target.o:
 	$(ARM_GCC) $(CFLAGS) $(INCLUDES) -c -o "./build/"$@ ./src/target.s

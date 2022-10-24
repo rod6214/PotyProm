@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "so.h": "c"
+        "so.h": "c",
+        "usbtypes.h": "c"
     }
 }

@@ -77,7 +77,7 @@ SECTIONS {
         . = ALIGN(4);
     } > rom
 
-    . = ALIGN(4);
+    /* . = ALIGN(4);
     _etext = .;
 
     .relocate : AT (_etext)
@@ -88,7 +88,24 @@ SECTIONS {
         *(.data .data.*);
         . = ALIGN(4);
         _erelocate = .;
-    } > ram
+    } > ram */
+
+    _sidata = LOADADDR(.data);
+
+    /* Initialized data sections into "RAM" Ram type memory */
+    .data :
+    {
+        . = ALIGN(4);
+        _sdata = .;        /* create a global symbol at data start */
+        *(.data)           /* .data sections */
+        *(.data*)          /* .data* sections */
+        *(.RamFunc)        /* .RamFunc sections */
+        *(.RamFunc*)       /* .RamFunc* sections */
+
+        . = ALIGN(4);
+        _edata = .;        /* define a global symbol at data end */
+
+    } > ram AT > rom
 
     /* .bss section which is used for uninitialized data */
     .bss :

@@ -3,18 +3,27 @@
 
 #define MAX_SYSCALL 32
 Subs_t __mem[MAX_SYSCALL];
-int idx = 0;
+int idx;
 extern unsigned int _estack;
+extern uint32_t _sidata;
+extern uint32_t _sdata;
+extern uint32_t _edata;
+extern uint32_t _sbss;
+extern uint32_t _ebss;
 
 static void reorder();
 static void invoke(int code);
 extern int main();
+static void __initialize_data();
 
 void HardFault_Handler() 
 {}
 
 void Reset_Handler() 
 {
+    reset_list();
+    __initialize_data();
+    CLOCK_start_default();  
     main();
 }
 
@@ -100,6 +109,32 @@ static void reorder()
                     break;
                 }
             }
+        }
+    }
+}
+
+static void __initialize_data() 
+{
+    uint32_t *src_ptr = &_sidata;
+    uint32_t *dest_ptr = &_sdata;
+    uint32_t *last = &_edata;
+
+    for (int i = 0; i < 2; i++) 
+    {
+        if (i > 0) 
+        {
+            dest_ptr = &_sbss;
+            last = &_ebss;
+        }
+
+        while (dest_ptr != last) 
+        {
+            if (i > 0) 
+            {
+                *(dest_ptr++) = 0;
+            }
+            else
+                *(dest_ptr++) = *(src_ptr++);
         }
     }
 }

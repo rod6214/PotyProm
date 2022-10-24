@@ -3,9 +3,9 @@
 extern void incrementTick();
 int RTC_config();
 
-uint32_t _tick = 0;
+uint32_t _tick;
 
-const Subs_t rtc_sub = { 
+Subs_t rtc_sub = { 
     .code = RTC_ID, 
     .callback = incrementTick 
 };
@@ -53,8 +53,6 @@ void CLOCK_start_default()
     }
 
     RCC->CR |= RCC_CR_CSSON;
-
-    _tick = 0;
 
     RTC_config();
 }
