@@ -68,6 +68,15 @@ SECTIONS {
         _efixed = .;            /* End of text section */
     } > rom
 
+    /* Constant data into "FLASH" Rom type memory */
+    .rodata :
+    {
+        . = ALIGN(4);
+        *(.rodata)         /* .rodata sections (constants, strings, etc.) */
+        *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
+        . = ALIGN(4);
+    } > rom
+
     . = ALIGN(4);
     _etext = .;
 
@@ -82,7 +91,7 @@ SECTIONS {
     } > ram
 
     /* .bss section which is used for uninitialized data */
-    .bss (NOLOAD) :
+    .bss :
     {
         . = ALIGN(4);
         _sbss = . ;

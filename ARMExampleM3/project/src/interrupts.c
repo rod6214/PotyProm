@@ -23,9 +23,14 @@ void SysTick_Handler()
     invoke(SYSTICK_ID);
 }
 
-void SVC_Handler(int code) 
+void SVC_Handler() 
 {
-    invoke(code);
+    invoke(SYSCALL_ID);
+}
+
+void RTC_Handler() 
+{
+    invoke(RTC_ID);
 }
 
 static void invoke(int code) 

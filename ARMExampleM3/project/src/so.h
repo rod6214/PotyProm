@@ -53,7 +53,7 @@ typedef struct _DeviceVectors
   FUNC pfnReserved2_Handler;
   FUNC pfnReserved3_Handler;
   FUNC pfnReserved4_Handler;
-  FUNC_SVC pfnSVC_Handler;
+  FUNC pfnSVC_Handler;
   FUNC pfnDebugMon_Handler;
   FUNC pfnReserved5_Handler;
   FUNC pfnPendSV_Handler;
@@ -150,8 +150,9 @@ extern void ___syscall(int code);
 extern void add_subscriber(Subs_t subscriber);
 extern void remove_subscriber(Subs_t subscriber);
 extern void Reset_Handler(void);
-extern void SVC_Handler(int code);
+extern void SVC_Handler();
 extern void SysTick_Handler();
+extern void RTC_Handler();
 extern void reset_list();
 extern void HardFault_Handler();
 extern void CLOCK_start_default();
@@ -161,9 +162,13 @@ extern void CLOCK_enable_AHB1(uint32_t values);
 extern void FMC_SDRAM_start_default();
 extern void FMC_SDRAM_prepare_ports();
 extern void BOOT_OperatingSystem(uint32_t address);
+extern void enable_IRQn(IRQn_Type irq);
+extern int CLOCK_GetTick();
 
-#define SYSTICK_ID 10
-#define SYSCALL_ID 1
+#define SYSTICK_ID      1
+#define SYSCALL_ID      2
+#define RTC_ID          3
+#define RTC_SECOND_ID   4
 
 #define FALSE 0
 #define TRUE 1

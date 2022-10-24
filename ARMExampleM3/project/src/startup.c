@@ -23,7 +23,7 @@ const DeviceVectors exception_table = {
     .pfnWWDG_Handler = Default_Handler,
     .pfnPVD_Handler = Default_Handler,
     .pfnTAMPER_Handler = Default_Handler,
-    .pfnRTC_Handler = Default_Handler,
+    .pfnRTC_Handler = RTC_Handler,
     .pfnFLASH_Handler = Default_Handler,
     .pfnRCC_Handler = Default_Handler,
     .pfnEXTI0_IRQHandler = Default_Handler,
@@ -61,7 +61,7 @@ const DeviceVectors exception_table = {
     .pfnUSART2_IRQHandler = Default_Handler,
     .pfnUSART3_IRQHandler = Default_Handler,
     .pfnEXTI15_10_IRQHandler = Default_Handler,
-    .pfnRTC_Alarm_IRQHandler = Default_Handler,
+    .pfnRTC_Alarm_IRQHandler = RTC_Handler,
     .pfnOTG_FS_WKUP_IRQHandler = Default_Handler,
     .pfnReserved6_Handler = Default_Handler,
     .pfnReserved7_Handler = Default_Handler,
@@ -92,7 +92,6 @@ const DeviceVectors exception_table = {
 
 void RCC_Handler() 
 {
-
 }
 
 void Default_Handler() 
