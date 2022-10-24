@@ -21,9 +21,8 @@ void HardFault_Handler()
 
 void Reset_Handler() 
 {
-    reset_list();
-    __initialize_data();
     CLOCK_start_default();  
+    __initialize_data();
     main();
 }
 
