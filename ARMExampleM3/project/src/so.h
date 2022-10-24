@@ -164,11 +164,18 @@ extern void FMC_SDRAM_prepare_ports();
 extern void BOOT_OperatingSystem(uint32_t address);
 extern void enable_IRQn(IRQn_Type irq);
 extern uint32_t CLOCK_GetTick();
+extern void IRQ19_USB_HP_CAN_TX();
+extern void IRQ20_USB_LP_CAN_RX0(); 
+extern void IRQ42_USBWakeUp();
 
-#define SYSTICK_ID      1
-#define SYSCALL_ID      2
-#define RTC_ID          3
-#define RTC_SECOND_ID   4
+
+#define SYSTICK_ID          1
+#define SYSCALL_ID          2
+#define RTC_ID              3
+#define RTC_SECOND_ID       4
+#define USB_HP_CAN_TX_ID    5
+#define USB_LP_CAN_RX0_ID   6
+#define USBWakeUp_ID        7
 
 #define FALSE 0
 #define TRUE 1

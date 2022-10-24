@@ -26,6 +26,21 @@ void Reset_Handler()
     main();
 }
 
+void IRQ19_USB_HP_CAN_TX() 
+{
+    invoke(USB_HP_CAN_TX_ID);
+}
+
+void IRQ20_USB_LP_CAN_RX0() 
+{
+    invoke(USB_LP_CAN_RX0_ID);
+}
+
+void IRQ42_USBWakeUp() 
+{
+    invoke(USBWakeUp_ID);
+}
+
 void SysTick_Handler() 
 {
     invoke(SYSTICK_ID);
