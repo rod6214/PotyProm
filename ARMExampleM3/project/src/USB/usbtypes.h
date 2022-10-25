@@ -11,6 +11,10 @@ typedef uint16_t UINT;
 
 extern BYTE ep0_rx[];
 extern BYTE ep0_tx[];
+extern BYTE ep1_rx[];
+extern BYTE ep1_tx[];
+extern BYTE ep2_rx[];
+extern BYTE ep2_tx[];
 
 // Every device request starts with an 8 unsigned char setup packet (USB 2.0, chap 9.3)
 // with a standard layout.  The meaning of wValue and wIndex will

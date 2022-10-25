@@ -73,7 +73,7 @@ int RTC_config()
     RTC->CNTH = 0;
     RTC->CNTL = 0;
     RTC->PRLH = 0;
-    RTC->PRLL = 65200;
+    RTC->PRLL = 65;
     RTC->CRL &= ~RTC_CRL_CNF;
     while(!RTC_Has_terminated() && attempts <= 10) 
         attempts++;
@@ -94,6 +94,21 @@ uint32_t CLOCK_GetTick()
     _tick = (RTC->CNTH << 16UL) | RTC->CNTL;
     #endif
     return _tick;
+}
+
+void CLOCK_Delay(uint32_t value) 
+{
+    int exit = FALSE;
+    uint32_t last = CLOCK_GetTick();
+    while(!exit) 
+    {
+        uint32_t now = CLOCK_GetTick();
+        if ((now - last) >= value) 
+        {
+            last = CLOCK_GetTick();
+            exit = TRUE;
+        }
+    }
 }
 
 #if defined(_TICK_WITH_IRQn)

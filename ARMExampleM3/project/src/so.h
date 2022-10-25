@@ -167,6 +167,7 @@ extern uint32_t CLOCK_GetTick();
 extern void IRQ19_USB_HP_CAN_TX();
 extern void IRQ20_USB_LP_CAN_RX0(); 
 extern void IRQ42_USBWakeUp();
+extern void CLOCK_Delay(uint32_t value);
 
 
 #define SYSTICK_ID          1
