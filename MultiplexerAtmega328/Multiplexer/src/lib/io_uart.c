@@ -44,4 +44,5 @@ char usart_receive()
 	#ifdef __AVR_AT90S8535__
 	return UDR;
 	#endif
+	return '\0';
 }

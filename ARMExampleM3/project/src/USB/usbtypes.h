@@ -27,3 +27,8 @@ typedef struct {
     UINT wLength;
 } USBControlPacket;
 #endif /*__USB_H__*/
+
+extern void USB_init();
+extern void USB_LP_IRQ_process();
+extern void USB_clearAllInterrupts();
+extern void USB_enableAllInterrupts();

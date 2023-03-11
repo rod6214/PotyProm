@@ -3,7 +3,7 @@
 
 int main() { 
     
-    CLOCK_Delay(5000);
+    USB_init();
 
     while(1) 
     {}

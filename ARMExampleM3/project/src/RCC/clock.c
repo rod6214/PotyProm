@@ -37,7 +37,6 @@ void CLOCK_start_default()
     RCC->CFGR |= RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL9;
     // Setup APB2 and APB1 clocks at 36Mhz
     RCC->CFGR |= RCC_CFGR_PPRE1_DIV2;
-    RCC->CFGR &= ~RCC_CFGR_USBPRE;
     
     // Activate main PLL
     RCC->CR |= RCC_CR_PLLON;
