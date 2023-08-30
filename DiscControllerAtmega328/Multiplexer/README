@@ -12,3 +12,5 @@ avrdude -c USBasp -p m328p -u -U lfuse:w:0xE2:m
 avrdude -c USBasp -p m328p -u -U lfuse:r:IOpenLFuse.bin:i
 avrdude -c USBasp -p m328p -u -U lock:r:IOpenLock.hex:i
 https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
+
+cmake -G 'Unix Makefiles' -B C:\Develop\RomProgrammer\DiscControllerAtmega328\Multiplexer\build -S C:\Develop\RomProgrammer\DiscControllerAtmega328\Multiplexer -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\DiscControllerAtmega328\Multiplexer\avr-toolchain.cmake

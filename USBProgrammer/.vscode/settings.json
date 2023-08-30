@@ -11,6 +11,15 @@
         "io8535.h": "c",
         "io_mem.h": "c",
         "ext_eeprom_mem.h": "c",
-        "ports.h": "c"
+        "ports.h": "c",
+        "pepe.h": "c",
+        "config.h": "c",
+        "conf_usb.h": "c",
+        "usb_standard_request.h": "c",
+        "iom32u4.h": "c",
+        "start_boot.h": "c",
+        "flash_drv.h": "c",
+        "usb_drv.h": "c",
+        "pll_drv.h": "c"
     }
 }

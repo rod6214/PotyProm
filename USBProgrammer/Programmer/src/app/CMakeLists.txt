@@ -1,0 +1,4 @@
+
+
+add_avr_executable(OpenProgrammer main.c)
+avr_target_link_libraries(OpenProgrammer scheduler hid_task usb_task usb_device_task usb_standard_request power_drv usb_drv start_boot  usb_descriptors usb_specific_request)
