@@ -42,8 +42,8 @@
 #define EVK_527_H
 
 //_____ I N C L U D E S ____________________________________________________
-#include "conf/config.h"
-#include "lib_mcu/flash/flash_drv.h"   // Because pin JTAG multiplexage
+#include "usb/conf/config.h"
+#include "usb/lib_mcu/flash/flash_drv.h"   // Because pin JTAG multiplexage
 
 //_____ M A C R O S ________________________________________________________
 

@@ -11,7 +11,7 @@
                 "UNICODE",
                 "_UNICODE",
                 "__AVR_ATmega32U4__",
-                "__GNUC__",
+                "__I2C_LOG_ERROR__",
                 "SERIAL_CONSOLE"
             ],
             "compilerPath": "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/bin/avr-gcc",

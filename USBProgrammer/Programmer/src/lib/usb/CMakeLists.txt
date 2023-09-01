@@ -1,0 +1,41 @@
+add_avr_library(
+    scheduler
+    modules/scheduler/scheduler.c
+)
+add_avr_library(
+    hid_task
+    hid_task.c
+    lib_mcu/flash/flash_drv.s
+)
+add_avr_library(
+    usb_descriptors
+    usb_descriptors.c
+)
+add_avr_library(
+    usb_specific_request
+    usb_specific_request.c
+)
+add_avr_library(
+    usb_task
+   modules/usb/usb_task.c
+)
+add_avr_library(
+    usb_device_task
+    modules/usb/device_chap9/usb_device_task.c
+)
+add_avr_library(
+    usb_standard_request
+    modules/usb/device_chap9/usb_standard_request.c
+)
+add_avr_library(
+    power_drv
+    lib_mcu/power/power_drv.c
+)
+add_avr_library(
+    usb_drv
+    lib_mcu/usb/usb_drv.c
+)
+add_avr_library(
+    start_boot
+    lib_mcu/util/start_boot.c
+)

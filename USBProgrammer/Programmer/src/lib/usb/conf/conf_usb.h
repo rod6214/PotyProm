@@ -40,8 +40,8 @@
 #ifndef _CONF_USB_H_
 #define _CONF_USB_H_
 
-#include "modules/usb/usb_commun.h"
-#include "modules/usb/usb_commun_hid.h"
+#include "usb/modules/usb/usb_commun.h"
+#include "usb/modules/usb/usb_commun_hid.h"
 
 
 //! @defgroup usb_general_conf USB application configuration

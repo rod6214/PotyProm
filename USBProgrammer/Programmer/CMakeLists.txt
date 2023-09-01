@@ -22,7 +22,7 @@ add_definitions("-MD")
 add_definitions("-MP") 
 add_definitions("-MF")
 add_definitions("-std=gnu99")
-add_definitions("-D__GNUC__=1")
+add_definitions("-D__I2C_LOG_ERROR__")
 
 set(AVR-C_SOURCE_DIR "C:/Develop/RomProgrammer/USBProgrammer/Programmer/src")
 

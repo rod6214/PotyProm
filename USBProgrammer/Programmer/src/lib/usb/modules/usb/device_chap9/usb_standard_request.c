@@ -48,13 +48,13 @@
 
 //_____ I N C L U D E S ____________________________________________________
 
-#include "conf/config.h"
-#include "conf/conf_usb.h"
-#include "lib_mcu/usb/usb_drv.h"
-#include "usb_descriptors.h"
-#include "modules/usb/device_chap9/usb_standard_request.h"
-#include "lib_mcu/pll/pll_drv.h"
-#include "usb_specific_request.h"
+#include "usb/conf/config.h"
+#include "usb/conf/conf_usb.h"
+#include "usb/lib_mcu/usb/usb_drv.h"
+#include "usb/usb_descriptors.h"
+#include "usb/modules/usb/device_chap9/usb_standard_request.h"
+#include "usb/lib_mcu/pll/pll_drv.h"
+#include "usb/usb_specific_request.h"
 
 
 //_____ M A C R O S ________________________________________________________

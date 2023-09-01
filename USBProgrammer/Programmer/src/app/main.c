@@ -75,23 +75,32 @@
  */
  
 //_____  I N C L U D E S ___________________________________________________
+#define F_CPU 16000000
 
-#include "conf/config.h"
-#include "modules/scheduler/scheduler.h"
-#include "lib_mcu/wdt/wdt_drv.h"
-#include "lib_mcu/power/power_drv.h"
-#include "lib_mcu/usb/usb_drv.h"
-#include "lib_mcu/util/start_boot.h"
-#include "lib_mcu/flash/flash_drv.h"
-#include "lib_mcu/pll/pll_drv.h"
+#include "configs.h"
+#include "usb/conf/config.h"
+#include "usb/modules/scheduler/scheduler.h"
+#include "usb/lib_mcu/wdt/wdt_drv.h"
+#include "usb/lib_mcu/power/power_drv.h"
+#include "usb/lib_mcu/usb/usb_drv.h"
+#include "usb/lib_mcu/util/start_boot.h"
+#include "usb/lib_mcu/flash/flash_drv.h"
+#include "usb/lib_mcu/pll/pll_drv.h"
 
+
+#include "eeprom/eeprom.h"
+#include <util/delay.h>
+
+
+void CERROR() {
+   // DDRD |= (1 << PIN5);
+}
 //_____ M A C R O S ________________________________________________________
 
 //_____ D E F I N I T I O N S ______________________________________________
-
 int main(void)
 {
-   Set_XTAL_pll_clock();
+   // Set_XTAL_pll_clock();
   Usb_enable_regulator();
   start_boot_if_required();
 #ifndef  __GNUC__
@@ -103,7 +112,19 @@ int main(void)
    Wdt_stop();
 #endif
    Clear_prescaler();
-   scheduler();
+   // DDRD &= ~(1 << 0) & ~(1 << 1);
+   // PORTD = 3;
+	// LED_PORT |= (1 << LED0_BIT);
+   // Leds_init();
+   EEPROM_init();
+   // EEPROM_Write(0, 02, 0);
+   // _delay_ms(50);
+   uint8_t da = EEPROM_Read(0, 0);
+   if (da == 2) {
+      DDRD |= (1 << PIN5);
+      
+   }
+   // scheduler();
    return 0;
 }
 
@@ -128,3 +149,4 @@ char __low_level_init()
 }
 #endif
 //! @}
+

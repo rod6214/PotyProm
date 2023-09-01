@@ -1,10 +1,10 @@
 /*This file has been prepared for Doxygen automatic documentation generation.*/
 //! \file *********************************************************************
 //!
-//! \brief This file contains the system configuration definition.
+//! \brief 
 //!
 //! - Compiler:           IAR EWAVR and GNU GCC for AVR
-//! - Supported devices:  ATmega32U4
+//! - Supported devices:  AT90USB1287, AT90USB1286, AT90USB647, AT90USB646
 //!
 //! \author               Atmel Corporation: http://www.atmel.com \n
 //!                       Support and FAQ: http://support.atmel.no/
@@ -38,54 +38,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#include "usb/conf/config.h"
+#include "start_boot.h"
+#include "usb/lib_mcu/wdt/wdt_drv.h"
 
-// Compiler switch (do not change these settings)
-#include "lib_mcu/compiler.h"             // Compiler definitions
+void (*start_bootloader) (void)=(void (*)(void))0x3800;
+
 #ifdef __GNUC__
-   #include <avr/io.h>                    // Use AVR-GCC library
-#elif __ICCAVR__
-   #define ENABLE_BIT_DEFINITIONS
-   #include <ioavr.h>                     // Use IAR-AVR library
+   U32 boot_key __attribute__ ((section (".noinit")));
 #else
-   #error Current COMPILER not supported
+   __no_init U32 boot_key; 
 #endif
+   
 
+void start_boot_if_required(void)
+{
+  if(boot_key==GOTOBOOTKEY)
+  {
+      boot_key = 0;
+      (*start_bootloader)();           //! Jumping to bootloader
+  }
+}
 
-//! @defgroup global_config Application configuration
-//! @{
-
-#include "conf/conf_scheduler.h" //!< Scheduler tasks declaration
-
-// Board defines (do not change these settings)
-#define  EVK527   1
-
-// Select board
-#define  TARGET_BOARD EVK527
-#include "lib_board/evk_527/evk_527.h"
-
-#define BYPASS_USB_AUTOBAUD
-
-//! CPU core frequency in kHz
-// #define FOSC 8000
-#define FOSC 16000
-// #define PLL_OUT_FRQ  PLL_OUT_48MHZ
-#define PLL_OUT_FRQ  PLL_OUT_96MHZ
-
-// -------- END Generic Configuration -------------------------------------
-
-// UART Sample configuration, if we have one ... __________________________
-#define BAUDRATE        57600
-#define USE_UART2
-
-#define uart_putchar putchar
-#define r_uart_ptchar int
-#define p_uart_ptchar int
-
-
-
-//! @}
-
-#endif // _CONFIG_H_
+void start_boot(void)
+{
+   boot_key=0x55AAAA55;
+   
+   // Enable the WDT for reset mode
+   #ifndef  __GNUC__
+      Wdt_change_16ms();
+   #else
+      wdt_reset();
+      Wdt_change_enable();
+      Wdt_enable_16ms();
+   #endif
+   while(1);
+}
 

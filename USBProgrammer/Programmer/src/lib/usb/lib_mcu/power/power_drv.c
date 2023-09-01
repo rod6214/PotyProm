@@ -42,7 +42,7 @@
 
 //_____ I N C L U D E S ____________________________________________________
 
-#include "conf/config.h"
+#include "usb/conf/config.h"
 #include "power_drv.h"
 
 //_____ M A C R O S ________________________________________________________

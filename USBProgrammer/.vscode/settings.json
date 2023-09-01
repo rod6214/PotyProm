@@ -20,6 +20,17 @@
         "start_boot.h": "c",
         "flash_drv.h": "c",
         "usb_drv.h": "c",
-        "pll_drv.h": "c"
+        "pll_drv.h": "c",
+        "usb_commun_hid.h": "c",
+        "usb_task.h": "c",
+        "usb_device_task.h": "c",
+        "usb_descriptors.h": "c",
+        "wdt_drv.h": "c",
+        "power_drv.h": "c",
+        "usb_specific_request.h": "c",
+        "scheduler.h": "c",
+        "i2c.h": "c",
+        "eeprom.h": "c",
+        "evk_527.h": "c"
     }
 }
