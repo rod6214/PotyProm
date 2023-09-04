@@ -31,5 +31,6 @@ void I2C_ACK();
 void I2C_NACK();
 unsigned char I2C_Master_Write(unsigned char);
 unsigned char I2C_Read_Byte(void);
+unsigned char I2C_Read_Byte_With_ACK();
 
 

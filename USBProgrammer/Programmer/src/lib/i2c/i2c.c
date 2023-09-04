@@ -1,7 +1,6 @@
 #include "i2c.h"
-// #include "../usb/conf/config.h"
-#define BITRATE(TWSR)	((16000000/100000)-16)/(2*pow(4,(TWSR&((1<<TWPS0)|(1<<TWPS1)))))
-void ERROR() {}
+
+__attribute__ ((weak)) void ERROR() {}
 
 void I2C_Master_Init()
 {
@@ -34,6 +33,13 @@ unsigned char I2C_Master_Write(unsigned char data)
 unsigned char I2C_Read_Byte(void)
 {
 	TWCR=(1<<TWEN)|(1<<TWINT);
+	I2C_Master_Wait();
+  	return TWDR; // Return The Received Byte
+}
+
+unsigned char I2C_Read_Byte_With_ACK() 
+{
+	TWCR=(1<<TWEN)|(1<<TWINT)|(1<<TWEA);
 	I2C_Master_Wait();
   	return TWDR; // Return The Received Byte
 }

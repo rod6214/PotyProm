@@ -5,5 +5,5 @@
 void EEPROM_init();
 void EEPROM_Write(unsigned int addr, unsigned char data, unsigned char device);
 unsigned char EEPROM_Read(unsigned int addr, unsigned char device);
-void EEPROM_Write_Page(unsigned int add, unsigned char* data, unsigned char len);
-void EEPROM_Read_Page(unsigned int add, unsigned char* data, unsigned int len);
+void EEPROM_Write_Page(unsigned int add, unsigned char* data, unsigned char len, unsigned char device);
+void EEPROM_Read_Page(unsigned int add, unsigned char* data, unsigned int len, unsigned char device);
