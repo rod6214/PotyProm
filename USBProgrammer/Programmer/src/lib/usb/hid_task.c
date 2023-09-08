@@ -66,6 +66,7 @@ extern            U8    jump_bootloader;
 
 void hid_report_out  (void);
 void hid_report_in   (void);
+void hid_read_data   (void);
 
 //! @brief This function initializes the target board ressources.
 //!
@@ -83,11 +84,29 @@ void hid_task(void)
 {
    if(!Is_device_enumerated())          // Check USB HID is enumerated
       return;
-
-   hid_report_out();
-   hid_report_in();
+   hid_read_data();
+   // hid_report_out();
+   // hid_report_in();
 }
 
+unsigned char buffer_w[64];
+
+void hid_read_data() 
+{
+   // while(!Is_usb_receive_out());
+   // Usb_select_endpoint(EP_HID_OUT);
+   // Usb_configure_endpoint_size(16);
+   // Usb_configure_endpoint_bank(2);
+   if (Is_usb_receive_out()) 
+   {
+      usb_read_packet(EP_HID_OUT, buffer_w, 64);
+      if (buffer_w[63] == 'l') 
+      {
+         Leds_init();
+      } 
+      Usb_ack_receive_out();
+   }
+}
 
 //! @brief Get data report from Host
 //!

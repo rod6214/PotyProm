@@ -190,7 +190,8 @@ typedef enum endpoint_parameter{ep_num, ep_type, ep_direction, ep_size, ep_bank,
    //! Disable  USB interface
 #define Usb_disable()                   (USBCON &= ~((1<<USBE)))
    //! Use device full speed mode (default mode)
-#define Usb_full_speed_mode()           (UDCON &= ~(1<<MSM))
+#define Usb_full_speed_mode()           (UDCON &= ~(1<<LSM))
+// #define Usb_full_speed_mode()           (UDCON &= ~(1<<MSM))
    //! For device mode, force low speed mode
 #define Usb_low_speed_mode()            (UDCON |= (1<<LSM))
 

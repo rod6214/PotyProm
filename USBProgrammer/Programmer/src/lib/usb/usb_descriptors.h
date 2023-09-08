@@ -64,6 +64,7 @@
 #define DEVICE_CLASS          0      // each configuration has its own class
 #define DEVICE_SUB_CLASS      0      // each configuration has its own sub-class
 #define DEVICE_PROTOCOL       0      // each configuration has its own protocol
+// #define EP_CONTROL_LENGTH     32
 #define EP_CONTROL_LENGTH     32
 #define VENDOR_ID             VID_ATMEL
 #define PRODUCT_ID            PID_MegaHIDGeneric
@@ -92,20 +93,20 @@
              // USB Endpoint 1 descriptor FS
 #define ENDPOINT_NB_1       (EP_HID_IN | USB_ENDPOINT_IN)
 #define EP_ATTRIBUTES_1     0x03          // BULK = 0x02, INTERUPT = 0x03
-#define EP_IN_LENGTH        8
+#define EP_IN_LENGTH        64
 #define EP_SIZE_1           EP_IN_LENGTH
 #define EP_INTERVAL_1       20 //interrupt pooling from host
 
              // USB Endpoint 1 descriptor FS
 #define ENDPOINT_NB_2       (EP_HID_OUT)
 #define EP_ATTRIBUTES_2     0x03          // BULK = 0x02, INTERUPT = 0x03
-#define EP_OUT_LENGTH       8
+#define EP_OUT_LENGTH       64
 #define EP_SIZE_2           EP_OUT_LENGTH
 #define EP_INTERVAL_2       20 //interrupt pooling from host
 
 #define SIZE_OF_REPORT        0x35
-#define LENGTH_OF_REPORT_IN      0x08
-#define LENGTH_OF_REPORT_OUT     0x08
+#define LENGTH_OF_REPORT_IN      EP_IN_LENGTH
+#define LENGTH_OF_REPORT_OUT     EP_OUT_LENGTH
 
 #define DEVICE_STATUS         DEVICE_STATUS_BUS_POWERED
 #define INTERFACE_STATUS      0x00 // TBD

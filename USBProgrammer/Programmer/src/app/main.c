@@ -91,8 +91,8 @@
 #include "eeprom/eeprom.h"
 #include <util/delay.h>
 
-unsigned char buffer[8];
-unsigned char buffer_w[8];
+// unsigned char buffer[8];
+// unsigned char buffer_w[8];
 // void ERROR() {
 //    DDRD |= (1 << PIN5);
 // }
@@ -117,17 +117,17 @@ int main(void)
    // PORTD = 3;
 	// LED_PORT |= (1 << LED0_BIT);
    // Leds_init();
-   buffer_w[0] = 'w';
-   buffer_w[1] = 'x';
-   buffer_w[2] = 'y';
-   buffer_w[3] = 't';
-   EEPROM_init();
+   // buffer_w[0] = 'w';
+   // buffer_w[1] = 'x';
+   // buffer_w[2] = 'y';
+   // buffer_w[3] = 't';
+   // EEPROM_init();
    // EEPROM_Write_Page(0, buffer_w, 8, 0);
    // _delay_ms(50);
-   EEPROM_Read_Page(0, buffer, 8, 0);
-   if (buffer[1] == 'x') {
-      DDRD |= (1 << PIN5);
-   }
+   // EEPROM_Read_Page(0, buffer, 8, 0);
+   // if (buffer[1] == 'x') {
+   //    DDRD |= (1 << PIN5);
+   // }
    // EEPROM_Read_Page(0, buffer, 8, 0);
    // if (buffer[0] == 2) {
    //    DDRD |= (1 << PIN5);
@@ -139,7 +139,11 @@ int main(void)
    //    DDRD |= (1 << PIN5);
       
    // }
-   // scheduler();
+   // Usb_select_endpoint(2);
+   // Usb_configure_endpoint_size(16);
+   // Usb_configure_endpoint_bank(16);
+   Usb_full_speed_mode();
+   scheduler();
    return 0;
 }
 
