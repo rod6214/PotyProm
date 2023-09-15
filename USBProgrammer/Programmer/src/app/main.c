@@ -75,7 +75,7 @@
  */
  
 //_____  I N C L U D E S ___________________________________________________
-#define F_CPU 16000000
+// #define F_CPU 16000000
 
 #include "configs.h"
 #include "usb/conf/config.h"
@@ -93,9 +93,10 @@
 
 // unsigned char buffer[8];
 // unsigned char buffer_w[8];
-// void ERROR() {
-//    DDRD |= (1 << PIN5);
-// }
+void ERROR() {
+   Leds_init();
+   // DDRD |= (1 << PIN5);
+}
 //_____ M A C R O S ________________________________________________________
 
 //_____ D E F I N I T I O N S ______________________________________________
@@ -113,6 +114,8 @@ int main(void)
    Wdt_stop();
 #endif
    Clear_prescaler();
+   // Leds_init();
+   // Leds_off();
    // DDRD &= ~(1 << 0) & ~(1 << 1);
    // PORTD = 3;
 	// LED_PORT |= (1 << LED0_BIT);
@@ -121,7 +124,7 @@ int main(void)
    // buffer_w[1] = 'x';
    // buffer_w[2] = 'y';
    // buffer_w[3] = 't';
-   // EEPROM_init();
+   EEPROM_init();
    // EEPROM_Write_Page(0, buffer_w, 8, 0);
    // _delay_ms(50);
    // EEPROM_Read_Page(0, buffer, 8, 0);

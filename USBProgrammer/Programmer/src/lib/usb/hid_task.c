@@ -39,7 +39,8 @@
  */
 
 //_____  I N C L U D E S ___________________________________________________
-
+#include <string.h>
+#include <util/delay.h>
 #include "conf/config.h"
 #include "conf/conf_usb.h"
 #include "hid_task.h"
@@ -48,6 +49,7 @@
 #include "modules/usb/device_chap9/usb_standard_request.h"
 #include "usb_specific_request.h"
 #include "lib_mcu/util/start_boot.h"
+#include "eeprom/eeprom.h"
 
 
 
@@ -66,7 +68,16 @@ extern            U8    jump_bootloader;
 
 void hid_report_out  (void);
 void hid_report_in   (void);
-void hid_read_data   (void);
+// void hid_read_data   (void);
+uint8_t* read_command(void);
+static void read_eeprom(ProPackage* package);
+static void write_eeprom(ProPackage* package);
+static void read_seq_eeprom(ProPackage* package);
+static void write_page_eeprom(ProPackage* package);
+
+// unsigned char buffer_w[64];
+// unsigned char buffer_r[64];
+unsigned char temp[64];
 
 //! @brief This function initializes the target board ressources.
 //!
@@ -84,29 +95,109 @@ void hid_task(void)
 {
    if(!Is_device_enumerated())          // Check USB HID is enumerated
       return;
-   hid_read_data();
-   // hid_report_out();
-   // hid_report_in();
-}
+   // hid_read_data();
+   uint8_t buffer[64];
+   ProPackage* package = (ProPackage*)&buffer[0];
+   uint8_t* rs = read_command();
+   memcpy(buffer, rs, 64);
 
-unsigned char buffer_w[64];
-
-void hid_read_data() 
-{
-   // while(!Is_usb_receive_out());
-   // Usb_select_endpoint(EP_HID_OUT);
-   // Usb_configure_endpoint_size(16);
-   // Usb_configure_endpoint_bank(2);
-   if (Is_usb_receive_out()) 
+   switch (package->command)
    {
-      usb_read_packet(EP_HID_OUT, buffer_w, 64);
-      if (buffer_w[63] == 'l') 
-      {
-         Leds_init();
-      } 
-      Usb_ack_receive_out();
+      case READ_COMMAND:
+         /* code */
+         break;
+      case WRITE_COMMAND:
+         /* code */
+         break;
+      case READ_SEQ_COMMAND:
+         read_seq_eeprom(package);
+         break;
+      case WRITE_PAGE_COMMAND:
+         write_page_eeprom(package);
+         break;
+      
+      default:
+         break;
    }
 }
+
+static void read_eeprom(ProPackage* package) 
+{
+   // EEPROM_Read_Page(0, 0, 8, 0);
+}
+
+static void write_eeprom(ProPackage* package) {}
+
+static void read_seq_eeprom(ProPackage* package) 
+{
+   uint16_t mask = (package->address)&0b0000111111111111;
+   int addr = (package->address)&mask;
+   int device = (package->address)&(~mask);
+   int len = (package->length);
+   
+   if (len > 58) 
+   {
+      // TODO: Send error to the host
+   }
+   else 
+   {
+      EEPROM_Read_Page(addr, temp, len, device >> 12);
+      uint8_t *ptr = (uint8_t*)&(package->ptrData);
+      memcpy(ptr, temp, len);
+      usb_send_packet(EP_HID_IN, (uint8_t*)package, 64);
+      Usb_ack_in_ready();
+   }
+   package->command = 0;
+}
+
+static void write_page_eeprom(ProPackage* package) 
+{
+   uint16_t mask = (package->address)&0b0000111111111111;
+   int addr = (package->address)&mask;
+   int device = (package->address)&(~mask);
+   int len = (int)(package->length);
+
+   Usb_select_endpoint(EP_HID_IN);
+   if(!Is_usb_write_enabled())
+      return; 
+
+   if (len > 32) 
+   {
+      // TODO: Send error to the host
+   }
+   else 
+   {
+      uint8_t buffer[64];
+      uint8_t *p = (uint8_t*)(&(package->ptrData));
+      memcpy(buffer, p, len);
+      EEPROM_Write_Page(addr, buffer, len, device);
+      usb_send_packet(EP_HID_IN, (uint8_t*)package, 64);
+      Usb_ack_in_ready();
+      _delay_ms(5);
+   }
+   package->command = 0;
+}
+
+uint8_t* read_command() {
+   if (Is_usb_receive_out()) {
+      usb_read_packet(EP_HID_OUT, temp, 64);
+      Usb_ack_receive_out();
+      return temp;
+   }
+   return NULL;
+}
+// void hid_read_data() 
+// {
+//    if (Is_usb_receive_out()) 
+//    {
+//       usb_read_packet(EP_HID_OUT, buffer_w, 64);
+//       if (buffer_w[63] == 'l') 
+//       {
+//          Leds_init();
+//       } 
+//       Usb_ack_receive_out();
+//    }
+// }
 
 //! @brief Get data report from Host
 //!

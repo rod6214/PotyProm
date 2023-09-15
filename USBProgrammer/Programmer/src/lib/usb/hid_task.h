@@ -48,11 +48,19 @@
 
 //_____ M A C R O S ________________________________________________________
 
-
-
+#define READ_COMMAND 0x21
+#define WRITE_COMMAND 0x22
+#define READ_SEQ_COMMAND 0x24
+#define WRITE_PAGE_COMMAND 0x25
 //_____ D E C L A R A T I O N S ____________________________________________
 
-
+typedef struct _ProPackage 
+{
+    uint16_t command;
+    uint16_t length;
+    uint16_t address;
+    uint8_t ptrData;
+} ProPackage;
 
 
 #endif /* _HID_TASK_H_ */
