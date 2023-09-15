@@ -186,18 +186,6 @@ uint8_t* read_command() {
    }
    return NULL;
 }
-// void hid_read_data() 
-// {
-//    if (Is_usb_receive_out()) 
-//    {
-//       usb_read_packet(EP_HID_OUT, buffer_w, 64);
-//       if (buffer_w[63] == 'l') 
-//       {
-//          Leds_init();
-//       } 
-//       Usb_ack_receive_out();
-//    }
-// }
 
 //! @brief Get data report from Host
 //!
