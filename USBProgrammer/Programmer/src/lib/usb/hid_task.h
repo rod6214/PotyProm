@@ -52,6 +52,8 @@
 #define WRITE_COMMAND 0x22
 #define READ_SEQ_COMMAND 0x24
 #define WRITE_PAGE_COMMAND 0x25
+#define RESPONSE_COMMAND 0x26
+#define READ_RESPONSE_COMMAND 0x27
 //_____ D E C L A R A T I O N S ____________________________________________
 
 typedef struct _ProPackage 

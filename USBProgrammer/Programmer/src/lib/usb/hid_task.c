@@ -78,6 +78,7 @@ static void write_page_eeprom(ProPackage* package);
 // unsigned char buffer_w[64];
 // unsigned char buffer_r[64];
 unsigned char temp[64];
+// ProPackage packageResult;
 
 //! @brief This function initializes the target board ressources.
 //!
@@ -100,6 +101,8 @@ void hid_task(void)
    ProPackage* package = (ProPackage*)&buffer[0];
    uint8_t* rs = read_command();
    memcpy(buffer, rs, 64);
+
+   // if (package->command == 258) Leds_init();
 
    switch (package->command)
    {
@@ -135,14 +138,15 @@ static void read_seq_eeprom(ProPackage* package)
    int device = (package->address)&(~mask);
    int len = (package->length);
    
-   if (len > 58) 
+   if (len > 58 || package->command == 0) 
    {
-      // TODO: Send error to the host
+      ERROR();
    }
    else 
    {
       EEPROM_Read_Page(addr, temp, len, device >> 12);
       uint8_t *ptr = (uint8_t*)&(package->ptrData);
+      package->command = READ_RESPONSE_COMMAND;
       memcpy(ptr, temp, len);
       usb_send_packet(EP_HID_IN, (uint8_t*)package, 64);
       Usb_ack_in_ready();
@@ -156,14 +160,16 @@ static void write_page_eeprom(ProPackage* package)
    int addr = (package->address)&mask;
    int device = (package->address)&(~mask);
    int len = (int)(package->length);
-
+   const char* messageOK = "{\"message\":\"Successfully inserted\", \"code\":\"200\"}";
    Usb_select_endpoint(EP_HID_IN);
    if(!Is_usb_write_enabled())
       return; 
 
-   if (len > 32) 
+   size_t successl = strlen(messageOK);
+
+   if (len > 58 || successl > 58) 
    {
-      // TODO: Send error to the host
+      ERROR();
    }
    else 
    {
@@ -171,6 +177,10 @@ static void write_page_eeprom(ProPackage* package)
       uint8_t *p = (uint8_t*)(&(package->ptrData));
       memcpy(buffer, p, len);
       EEPROM_Write_Page(addr, buffer, len, device);
+      package->length = (uint16_t)successl;
+      package->command = RESPONSE_COMMAND;
+      memset(p, 0, 58);
+      memcpy(p, messageOK, successl);
       usb_send_packet(EP_HID_IN, (uint8_t*)package, 64);
       Usb_ack_in_ready();
       _delay_ms(5);
