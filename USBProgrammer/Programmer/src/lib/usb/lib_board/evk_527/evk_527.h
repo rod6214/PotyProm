@@ -63,7 +63,8 @@
 #define  LED0_BIT       PIND5
 #define  LED1_BIT       PIND6
 #define  LED2_BIT       PIND7
-        
+
+#define  Leds_Det()     (LED_DDR  &=  ~((1<<LED0_BIT) | (1<<LED1_BIT) | (1<<LED2_BIT)))       
 #define  Leds_init()    (LED_DDR  |=  (1<<LED0_BIT) | (1<<LED1_BIT) | (1<<LED2_BIT))
 #define  Leds_on()      (LED_PORT |=  (1<<LED0_BIT) | (1<<LED1_BIT) | (1<<LED2_BIT))
 #define  Leds_off()     (LED_PORT &= ~((1<<LED0_BIT) | (1<<LED1_BIT) | (1<<LED2_BIT)))

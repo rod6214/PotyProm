@@ -41,6 +41,7 @@
 //_____  I N C L U D E S ___________________________________________________
 #include <string.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 #include "conf/config.h"
 #include "conf/conf_usb.h"
 #include "hid_task.h"
@@ -96,13 +97,11 @@ void hid_task(void)
 {
    if(!Is_device_enumerated())          // Check USB HID is enumerated
       return;
-   // hid_read_data();
+
    uint8_t buffer[64];
    ProPackage* package = (ProPackage*)&buffer[0];
    uint8_t* rs = read_command();
    memcpy(buffer, rs, 64);
-
-   // if (package->command == 258) Leds_init();
 
    switch (package->command)
    {
@@ -113,13 +112,23 @@ void hid_task(void)
          /* code */
          break;
       case READ_SEQ_COMMAND:
-         read_seq_eeprom(package);
+         {
+            read_seq_eeprom(package);
+            Leds_Det();
+         }
          break;
       case WRITE_PAGE_COMMAND:
-         write_page_eeprom(package);
+         {
+            write_page_eeprom(package);
+            Leds_Det();
+         }
          break;
-      
+      case NOT_OPERATION:
+         break;
       default:
+         {
+            ERROR();
+         }
          break;
    }
 }
@@ -133,6 +142,7 @@ static void write_eeprom(ProPackage* package) {}
 
 static void read_seq_eeprom(ProPackage* package) 
 {
+   
    uint16_t mask = (package->address)&0b0000111111111111;
    int addr = (package->address)&mask;
    int device = (package->address)&(~mask);
@@ -150,12 +160,13 @@ static void read_seq_eeprom(ProPackage* package)
       memcpy(ptr, temp, len);
       usb_send_packet(EP_HID_IN, (uint8_t*)package, 64);
       Usb_ack_in_ready();
+      package->command = 0;
    }
-   package->command = 0;
 }
 
 static void write_page_eeprom(ProPackage* package) 
 {
+   
    uint16_t mask = (package->address)&0b0000111111111111;
    int addr = (package->address)&mask;
    int device = (package->address)&(~mask);
@@ -164,7 +175,7 @@ static void write_page_eeprom(ProPackage* package)
    Usb_select_endpoint(EP_HID_IN);
    if(!Is_usb_write_enabled())
       return; 
-
+   package->command = 0;
    size_t successl = strlen(messageOK);
 
    if (len > 58 || successl > 58) 
@@ -176,25 +187,28 @@ static void write_page_eeprom(ProPackage* package)
       uint8_t buffer[64];
       uint8_t *p = (uint8_t*)(&(package->ptrData));
       memcpy(buffer, p, len);
-      EEPROM_Write_Page(addr, buffer, len, device);
+      // EEPROM_Write_Page(addr, buffer, len, device);
       package->length = (uint16_t)successl;
       package->command = RESPONSE_COMMAND;
       memset(p, 0, 58);
       memcpy(p, messageOK, successl);
       usb_send_packet(EP_HID_IN, (uint8_t*)package, 64);
       Usb_ack_in_ready();
-      _delay_ms(5);
    }
-   package->command = 0;
+   
 }
 
 uint8_t* read_command() {
+   memset(&temp[0], 0, 64);
+   Usb_select_endpoint(EP_HID_OUT);
    if (Is_usb_receive_out()) {
       usb_read_packet(EP_HID_OUT, temp, 64);
       Usb_ack_receive_out();
-      return temp;
    }
-   return NULL;
+   ProPackage* package = (ProPackage*)&temp[0];
+   if (package->command == 0)
+         package->command = NOT_OPERATION;
+   return temp;
 }
 
 //! @brief Get data report from Host

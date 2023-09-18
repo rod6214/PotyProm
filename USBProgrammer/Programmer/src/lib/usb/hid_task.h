@@ -47,7 +47,7 @@
 #include "conf/config.h"
 
 //_____ M A C R O S ________________________________________________________
-
+#define NOT_OPERATION 0x20
 #define READ_COMMAND 0x21
 #define WRITE_COMMAND 0x22
 #define READ_SEQ_COMMAND 0x24
