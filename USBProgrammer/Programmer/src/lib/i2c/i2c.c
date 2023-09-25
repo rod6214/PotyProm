@@ -25,7 +25,7 @@ void I2C_Master_Start()
 unsigned char I2C_Master_Write(unsigned char data)
 {
 	TWDR = data;
-	TWCR = (1 << TWINT) | (1 << TWEN);
+	TWCR = (1 << TWINT) | (1 << TWEN)|(1<<TWEA);
 	I2C_Master_Wait();
 	return 0;
 }

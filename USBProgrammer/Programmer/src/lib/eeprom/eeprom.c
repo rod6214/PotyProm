@@ -182,7 +182,7 @@ void EEPROM_Read_Page(unsigned int add, unsigned char* data, unsigned int len, u
 	}
   for(unsigned int i=0; i<len; i++)
   {
-    if (i < len - 2) {
+    if (i < len - 1) {
       data[i] = I2C_Read_Byte_With_ACK();
       if ((TWSR & 0xf8) != RT_DATA_ACK_RECEIVED) {
         #ifdef __I2C_LOG_ERROR__

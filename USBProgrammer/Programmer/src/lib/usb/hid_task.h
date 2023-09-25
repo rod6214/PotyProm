@@ -61,6 +61,7 @@ typedef struct _ProPackage
     uint16_t command;
     uint16_t length;
     uint16_t address;
+    uint16_t device;
     uint8_t ptrData;
 } ProPackage;
 

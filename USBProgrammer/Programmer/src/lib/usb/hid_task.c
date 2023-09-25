@@ -143,9 +143,9 @@ static void write_eeprom(ProPackage* package) {}
 static void read_seq_eeprom(ProPackage* package) 
 {
    
-   uint16_t mask = (package->address)&0b0000111111111111;
-   int addr = (package->address)&mask;
-   int device = (package->address)&(~mask);
+   // uint16_t mask = (package->address)&0b0000111111111111;
+   int addr = (package->address);
+   int device = (package->device);
    int len = (package->length);
    
    if (len > 58 || package->command == 0) 
@@ -154,7 +154,7 @@ static void read_seq_eeprom(ProPackage* package)
    }
    else 
    {
-      EEPROM_Read_Page(addr, temp, len, device >> 12);
+      EEPROM_Read_Page(addr, temp, len, device);
       uint8_t *ptr = (uint8_t*)&(package->ptrData);
       package->command = READ_RESPONSE_COMMAND;
       memcpy(ptr, temp, len);
@@ -167,9 +167,9 @@ static void read_seq_eeprom(ProPackage* package)
 static void write_page_eeprom(ProPackage* package) 
 {
    
-   uint16_t mask = (package->address)&0b0000111111111111;
-   int addr = (package->address)&mask;
-   int device = (package->address)&(~mask);
+   // uint16_t mask = (package->address)&0b0000111111111111;
+   int addr = (package->address);
+   int device = (package->device);
    int len = (int)(package->length);
    const char* messageOK = "{\"message\":\"Successfully inserted\", \"code\":\"200\"}";
    Usb_select_endpoint(EP_HID_IN);
@@ -187,7 +187,8 @@ static void write_page_eeprom(ProPackage* package)
       uint8_t buffer[64];
       uint8_t *p = (uint8_t*)(&(package->ptrData));
       memcpy(buffer, p, len);
-      // EEPROM_Write_Page(addr, buffer, len, device);
+      // if (buffer[31]==153) Leds_init();
+      EEPROM_Write_Page(addr, buffer, len, device);
       package->length = (uint16_t)successl;
       package->command = RESPONSE_COMMAND;
       memset(p, 0, 58);
