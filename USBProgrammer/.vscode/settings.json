@@ -31,6 +31,7 @@
         "scheduler.h": "c",
         "i2c.h": "c",
         "eeprom.h": "c",
-        "evk_527.h": "c"
+        "evk_527.h": "c",
+        "configs.h": "c"
     }
 }

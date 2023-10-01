@@ -11,6 +11,8 @@
         "io8535.h": "c",
         "io_mem.h": "c",
         "ext_eeprom_mem.h": "c",
-        "ports.h": "c"
+        "ports.h": "c",
+        "eeprom.h": "c",
+        "595_driver.h": "c"
     }
 }
