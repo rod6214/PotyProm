@@ -1,16 +1,26 @@
 #include <avr/io.h>
-#include <avr/delay.h>
+#include <util/delay.h>
 #include "595_driver.h"
 
 void PORT_Init() {
     PORTB &= ~(1 << SH_PIN) | ~(1 << ST_PIN) | ~(1 << DS_PIN) | ~(1 << MR_PIN) | ~(1 << OE_PIN); 
-    DDRB |= (1 << SH_PIN) | (1 << ST_PIN) | (1 << DS_PIN) | (1 << MR_PIN) | (1 << OE_PIN);
+    DDRB |= (1 << SH_PIN) | (1 << ST_PIN) | (1 << DS_PIN) | (1 << MR_PIN);
+    PORTC |= (1 << ALE_PIN) | (1 << R_PIN) | (1 << DEN_PIN);
+    PORTD &= ~(1 << READY_PIN);
+    DDRC |= (1 << ALE_PIN) | (1 << R_PIN) | (1 << DEN_PIN) | (1 << READY_PIN);
+    PORTD |= (1 << OE_PIN) | (1 << WR_PIN) | (1 << RD_PIN);
+    PORTD &= ~(1 << OE_PIN);
+    DDRD |= (1 << OE_PIN) | (1 << WR_PIN) | (1 << RD_PIN) | (1 << HOLD_PIN);
+    DDRD &= ~(1 << HOLDA_PIN);
 }
 
-uint8_t read_port(uint32_t address) {
+void PORT_Deactivate() {
+    OE_on();
+    DDRD &= ~(1 << WR_PIN) | ~(1 << RD_PIN);
+    DDRC &= ~(1 << ALE_PIN) | ~(1 << R_PIN) | ~(1 << DEN_PIN);
 }
 
-void write_port(uint32_t address, uint8_t data) {
+void write_port(uint32_t address) {
     uint32_t queue = address;
     for (int i = 0; i < 24; i++) {
         queue = queue << 1;
@@ -23,6 +33,7 @@ void write_port(uint32_t address, uint8_t data) {
         SH_on();
         SH_off();
     }
+    // Set_Data(data);
     ST_on();
     ST_off();
 }
