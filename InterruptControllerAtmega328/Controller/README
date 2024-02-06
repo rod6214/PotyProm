@@ -1,6 +1,6 @@
 https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
 https://github.com/mkleemann/cmake-avr
-cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\InterruptControllerAtmega328\Controller\avr-toolchain.cmake -B C:\Develop\RomProgrammer\InterruptControllerAtmega328\Controller\build -S C:\Develop\RomProgrammer\InterruptControllerAtmega328\Controller
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\PotyProm\InterruptControllerAtmega328\Controller\avr-toolchain.cmake -B C:\Develop\RomProgrammer\PotyProm\InterruptControllerAtmega328\Controller\build -S C:\Develop\RomProgrammer\PotyProm\InterruptControllerAtmega328\Controller
 avrdude -c USBasp -p m328p -u -U flash:w:OpenProgrammer.hex:i
 avrdude -c USBasp -p m328p -u -U flash:r:OpenRProgrammer.hex:i
 avrdude -c USBasp -p m328p -u -U lfuse:r:IOpenLFuse.hex:i
@@ -13,4 +13,4 @@ avrdude -c USBasp -p m328p -u -U lfuse:r:IOpenLFuse.bin:i
 avrdude -c USBasp -p m328p -u -U lock:r:IOpenLock.hex:i
 https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
 
-C:\Develop\RomProgrammer\InterruptControllerAtmega328\Controller\avr-toolchain.cmake
+D:\Develop\RomProgrammer\PotyProm\InterruptControllerAtmega328\Controller\avr-toolchain.cmake

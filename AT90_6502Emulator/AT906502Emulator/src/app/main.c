@@ -10,6 +10,8 @@
 char ACUM;
 char IR;
 
+extern void asm_main();
+
 void config()
 {
   PORTB = 0;
@@ -18,6 +20,7 @@ void config()
   DDRA = 255;
   DDRC = 255;
   DDRB = 0;
+  asm_main();
 }
 
 void loop() 

@@ -47,3 +47,5 @@ uint8_t read_port(uint32_t address);
 void write_port(uint32_t address);
 void reset_port();
 void PORT_Deactivate();
+void CONTROL_Deactivate();
+void CONTROL_Activate();

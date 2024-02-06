@@ -25,6 +25,6 @@ add_definitions("-std=gnu99")
 add_definitions("-D__I2C_LOG_ERROR__")
 add_definitions("-DF_CPU=16000000")
 
-set(AVR-C_SOURCE_DIR "C:/Develop/RomProgrammer/USBProgrammer/Programmer/src")
+set(AVR-C_SOURCE_DIR "C:/Develop/RomProgrammer/PotyProm/USBProgrammer/Programmer/src")
 
 add_subdirectory(src)

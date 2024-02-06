@@ -16,7 +16,12 @@ void populateROM();
 
 ISR(INT0_vect) {
 	cli();
-	populateROM16bit();
+	OE_off();
+	R_on();
+	CONTROL_Activate();
+	populateROM();
+	PORT_Deactivate();
+	CONTROL_Deactivate();
 	HOLD_off();
 	sei();
 }
@@ -27,18 +32,26 @@ void config()
 	EICRA |= (1 << ISC01) | (1 << ISC00);
 	// Enabling INT0 interrupt
 	EIMSK |= (1 << INT0);
+	READY_on();
+	_delay_us(50);
 	PORT_Init();
 	EEPROM_init();
 	reset_port();
-	OE_off();
-	MR_on();
-	write_port(0xffffff);
-	READY_on();
-	_delay_loop_1(5);
 	HOLD_on();
-	sei();
+	OE_on();
+	MR_on();
+	// write_port(0xffffff);
+	_delay_loop_1(5);
+	
+	
+	// sei();
+
+	// OE_off();
 	// populateROM16bit();
 	// PORT_Deactivate();
+	// HOLD_off();
+	// PORT_Deactivate();
+	// READY_on();
 	// populateROM();
 
 }
@@ -52,7 +65,8 @@ void loop()
 int main(void)
 {
 	config();
-
+	OE_off();
+	write_port(0x999999);
     // /* Replace with your application code */
     while (1) 
     {
@@ -74,7 +88,8 @@ void populateROM16bit() {
 			uint32_t addr = ((k & 1) == 1)? (k & 0xfffff) : (k | 0x100000);
 			int value = (k & 1)? (buffer[j] << 8) : buffer[j];
 			// Map from top of memory "0xFE000" due to length of 8192 bytes
-			addr+=0xFE000;
+			if (k >= 0x400)
+				addr+=0xFE000;
 			// Set address memory
 			write_port(addr);
 			ALE_on();
@@ -83,6 +98,7 @@ void populateROM16bit() {
 			// Set data memory
 			write_port(value);
 			WR_off();
+			_delay_loop_1(20);
 			WR_on();
 			DEN_on();
 		}
@@ -100,7 +116,10 @@ void populateROM() {
 		EEPROM_Read_Page(k, buffer, MAX_PROC_SIZE, 0);
 		for (int j = 0; j < MAX_PROC_SIZE; j++, k++) {
 			// Set address memory
-			write_port(k + 0xFE000);
+			uint32_t addr = k;
+			if (k >= 0x400)
+				addr+=0xFE000;
+			write_port(addr);
 			ALE_on();
 			ALE_off();
 			DEN_off();
