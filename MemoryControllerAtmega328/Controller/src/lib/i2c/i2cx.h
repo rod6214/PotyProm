@@ -15,6 +15,8 @@
 #define RT_SLA_R_NACK_RECEIVED 0x48
 #define RT_DATA_ACK_RECEIVED 0x50
 #define RT_DATA_NACK_RECEIVED 0x58
+#define SLA_W 0x80 
+#define SLA_R 0xA8
 
 #if (FOSC==16000)
     #define I2C_CL_100KHz 18

@@ -4,15 +4,23 @@
  * Created: 5/1/2022 12:31:53 PM
  * Author : Nelson
  */ 
+
+#include "configs.h"
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
-#include "eeprom/eeprom.h"
+#include <eeprom.h>
 #include "shifter/595_driver.h"
+#include <i2c.h>
+#include <i2cext.h>
+#include <util/twi.h>
 
 void populateROM16bit(void);
 void populateROM();
+static uint8_t data[512];
+int i = 0;
 
 ISR(INT0_vect) {
 	cli();
@@ -24,43 +32,49 @@ ISR(INT0_vect) {
 	PORT_Deactivate();
 	CONTROL_Deactivate();
 	HOLD_off();
+	// test();
 	sei();
+}
+
+void TWI_Receiv_irq(uint8_t value, size_t bytes, int id) 
+{
+	data[id] = value;
+	// PORTD++;
+}
+
+void TWI_Transmit_irq(volatile uint8_t * pdata, uint8_t command, size_t bytes) 
+{
+	*pdata = 0x12;
+	// PORTD = bytes;
 }
 
 void config()
 {
-	// Configuring INT0 as rising edge detection
-	EICRA |= (1 << ISC01) | (1 << ISC00);
-	// Enabling INT0 interrupt
-	EIMSK |= (1 << INT0);
-	READY_on();
-	_delay_ms(100);
-	PORT_Init();
-	EEPROM_init();
-	reset_port();
-	HOLD_on();
-	OE_on();
-	MR_on();
-	// write_port(0xffffff);
-	_delay_loop_1(5);
-	
-	
+	DDRD = 255;
+	PORTD = 0;
+	// data[0] = 0x33;
+	// data[0] = 2;
+	// data[1] = 2;
+	// data[2] = 2;
+	// data[3] = 2;
+	// data[4] = 2;
+	// EEPROM_init();
+	I2C_Register_Receiving_Callback(TWI_Receiv_irq);
+	I2C_Register_Transmition_Callback(TWI_Transmit_irq);
 	sei();
+	// SREG |= (1 << SREG_I);
+	I2C_Slave_Init(I2C_CL_100KHz, 1);
+	//I2C_InterruptEnable();
+	// TWCR |= (1 << TWIE);
+	// I2C_Slave_Read_Byte();
+	// _delay_ms(10);
 
-	// OE_off();
-	// populateROM16bit();
-	// PORT_Deactivate();
-	// HOLD_off();
-	// PORT_Deactivate();
-	// READY_on();
-	// populateROM();
-
+	// I2C_Read(I2C_ACK);
 }
-
 
 void loop() 
 {
-	// DDRD = 0xff;
+	// test();
 }
 
 int main(void)

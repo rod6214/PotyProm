@@ -13,6 +13,9 @@
         "ext_eeprom_mem.h": "c",
         "ports.h": "c",
         "eeprom.h": "c",
-        "595_driver.h": "c"
+        "595_driver.h": "c",
+        "i2c.h": "c",
+        "configs.h": "c",
+        "i2cext.h": "c"
     }
 }

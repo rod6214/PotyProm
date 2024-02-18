@@ -3,16 +3,16 @@
 #include "595_driver.h"
 
 void PORT_Init() {
-    PORTB &= ~(1 << SH_PIN) & ~(1 << ST_PIN) & ~(1 << DS_PIN) & ~(1 << MR_PIN) & ~(1 << OE_PIN); 
+    PORTB &= ~(1 << SH_PIN) & ~(1 << ST_PIN) & ~(1 << DS_PIN) & ~(1 << MR_PIN); 
     DDRB |= (1 << SH_PIN) | (1 << ST_PIN) | (1 << DS_PIN) | (1 << MR_PIN);
     PORTC &= ~(1 << ALE_PIN) & ~(1 << R_PIN) & ~(1 << DEN_PIN);
     PORTD &= ~(1 << READY_PIN);
     DDRC |=  (1 << READY_PIN);
     PORTD |= (1 << OE_PIN) | (1 << WR_PIN) | (1 << RD_PIN);
-    PORTD &= ~(1 << OE_PIN);
+    // PORTD &= ~(1 << OE_PIN);
     DDRD |= (1 << OE_PIN) | (1 << HOLD_PIN);
     DDRD &= ~(1 << HOLDA_PIN);
-
+// PORTD = 255;
     //(1 << ALE_PIN) | (1 << R_PIN) | (1 << DEN_PIN)
 }
 

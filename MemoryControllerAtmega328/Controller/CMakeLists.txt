@@ -24,5 +24,7 @@ add_definitions("-std=gnu99")
 add_definitions("-DF_CPU=8000000")
 
 set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/PotyProm/MemoryControllerAtmega328/Controller/src")
+set(I2C_DIR "C:/Develop/custom_libs/i2c/debug")
+set(EEPROM_DIR "C:/Develop/custom_libs/eeprom/debug")
 
 add_subdirectory(src)

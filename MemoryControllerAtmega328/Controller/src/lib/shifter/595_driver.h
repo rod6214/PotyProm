@@ -5,7 +5,7 @@
 #define ST_PIN      PINB1
 #define DS_PIN      PINB2
 #define MR_PIN      PINB3
-#define OE_PIN      PIND3
+#define OE_PIN      PIND0
 #define WR_PIN      PIND1
 #define RD_PIN      PIND6
 #define ALE_PIN     PINC0

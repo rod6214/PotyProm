@@ -4,7 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/avr/include"
+                "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/avr/include",
+                "C:/Develop/custom_libs/i2c/debug/include",
+                "C:/Develop/custom_libs/eeprom/debug/include"
             ],
             "defines": [
                 "_DEBUG",
