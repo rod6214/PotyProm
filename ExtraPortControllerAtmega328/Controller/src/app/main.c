@@ -44,14 +44,20 @@ void TWI_Receiv_irq(uint8_t value, size_t bytes, int id)
 
 void TWI_Transmit_irq(volatile uint8_t * pdata, uint8_t command, size_t bytes) 
 {
-	*pdata = 0x12;
-	// PORTD = bytes;
+	// *pdata = 0x12;
+	if (command == READ_EXT_MEMORY) 
+	{
+		DDRD = 0;
+		*pdata = PIND;
+	}
+	// PORTD = command;
 }
 
 void config()
 {
 	DDRD = 255;
 	PORTD = 0;
+	MCUCR |= (1 << PUD);
 	// data[0] = 0x33;
 	// data[0] = 2;
 	// data[1] = 2;

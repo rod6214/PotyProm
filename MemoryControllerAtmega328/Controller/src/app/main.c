@@ -8,7 +8,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
-#include "eeprom.h"
+#include <eeprom.h>
 #include "shifter/595_driver.h"
 #include "configs.h"
 #include <i2c.h>
@@ -17,6 +17,12 @@
 
 void populateROM16bit(void);
 void populateROM();
+
+
+void ERROR() 
+{
+	PORTB = 1;
+}
 
 ISR(INT0_vect) {
 	cli();
@@ -31,7 +37,7 @@ ISR(INT0_vect) {
 	sei();
 }
 
-static uint8_t data[] = {0x22, 0x23};
+static uint8_t data[] = {0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23};
 
 void config()
 {
@@ -40,14 +46,13 @@ void config()
 	DDRB = (1 << PORT0);
 	DDRD = 255;
 	_delay_ms(50);
+	MCUCR |= (1 << PUD);
 	
 	Command_t cmd = {
-		2, data, 1, 0xff88
+		3, data, 1, 0xff88, 100
 	};
 
 	I2C_Master_Init(I2C_CL_100KHz);
-
-	cmd.data_distance = 50;
 
 	if (I2C_Send_Command(cmd)) 
 	{
@@ -58,6 +63,17 @@ void config()
 	{
 		PORTB |= (1 << PORT0);
 	}
+
+	cmd.command = READ_EXT_MEMORY;
+
+	if (I2C_Read_Command(cmd)) 
+	{
+		PORTB |= (1 << PORT0);
+	}
+
+	// EEPROM_Write(0, 0x36, 0);
+
+	// EEPROM_Write_Page(0, data, 16, 0);
 	
 	// Configuring INT0 as rising edge detection
 	// EICRA |= (1 << ISC01) | (1 << ISC00);

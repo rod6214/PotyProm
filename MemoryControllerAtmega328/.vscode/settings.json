@@ -16,6 +16,7 @@
         "595_driver.h": "c",
         "i2c.h": "c",
         "configs.h": "c",
-        "i2cext.h": "c"
+        "i2cext.h": "c",
+        "stdlib.h": "c"
     }
 }
