@@ -9,7 +9,7 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <eeprom.h>
-#include "shifter/595_driver.h"
+#include <595_driver.h>
 #include "configs.h"
 #include <i2c.h>
 #include <i2cext.h>
@@ -38,6 +38,7 @@ ISR(INT0_vect) {
 }
 
 static uint8_t data[] = {0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23, 0x22, 0x23};
+static uint8_t rom_data[16];
 
 void config()
 {
@@ -70,6 +71,9 @@ void config()
 	{
 		PORTB |= (1 << PORT0);
 	}
+
+
+	EEPROM_Read_Page(0,rom_data,16,0);
 
 	// EEPROM_Write(0, 0x36, 0);
 
@@ -145,62 +149,4 @@ int main(void)
     {
 		loop();
     }
-}
-
-void populateROM16bit() {
-	const size_t MAX_PROC_SIZE = 1024;
-	unsigned char buffer[MAX_PROC_SIZE];
-	R_on();
-	DEN_on();
-	RD_on();
-	WR_off();
-
-	for (int i = 0, k = 0; i < 8; i++) {
-		EEPROM_Read_Page(k, buffer, MAX_PROC_SIZE, 0);
-		for (int j = 0; j < MAX_PROC_SIZE; j++, k++) {
-			uint32_t addr = ((k & 1) == 1)? (k & 0xfffff) : (k | 0x100000);
-			int value = (k & 1)? (buffer[j] << 8) : buffer[j];
-			// Map from top of memory "0xFE000" due to length of 8192 bytes
-			if (k >= 0x400)
-				addr+=0xFE000;
-			// Set address memory
-			write_port(addr);
-			ALE_on();
-			ALE_off();
-			DEN_off();
-			// Set data memory
-			write_port(value);
-			WR_off();
-			_delay_loop_1(20);
-			WR_on();
-			DEN_on();
-		}
-	}
-}
-
-void populateROM() {
-	const size_t MAX_PROC_SIZE = 1024;
-	unsigned char buffer[MAX_PROC_SIZE];
-	R_on();
-	DEN_on();
-	RD_on();
-	WR_off();
-	for (int i = 0, k = 0; i < 8; i++) {
-		EEPROM_Read_Page(k, buffer, MAX_PROC_SIZE, 0);
-		for (int j = 0; j < MAX_PROC_SIZE; j++, k++) {
-			// Set address memory
-			uint32_t addr = k;
-			if (k >= 0x400)
-				addr+=0xFE000;
-			write_port(addr);
-			ALE_on();
-			ALE_off();
-			DEN_off();
-			// Set data memory
-			write_port(buffer[j]);
-			WR_off();
-			WR_on();
-			DEN_on();
-		}
-	}
 }

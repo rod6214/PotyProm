@@ -23,9 +23,11 @@ add_definitions("-MF")
 add_definitions("-std=gnu99")
 add_definitions("-DF_CPU=8000000")
 add_definitions("-D__I2C_LOG_ERROR__")
+add_definitions("-D__EEPROM_ADDON__")
 
 set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/PotyProm/MemoryControllerAtmega328/Controller/src")
 set(I2C_DIR "C:/Develop/custom_libs/i2c/debug")
 set(EEPROM_DIR "C:/Develop/custom_libs/eeprom/debug")
+set(L595_DIR "C:/Develop/custom_libs/shifter/debug")
 
 add_subdirectory(src)
