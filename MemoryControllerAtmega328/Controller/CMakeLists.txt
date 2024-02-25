@@ -23,6 +23,6 @@ add_definitions("-MF")
 add_definitions("-std=gnu99")
 add_definitions("-DF_CPU=16000000")
 
-set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/MemoryControllerAtmega328/Controller/src")
+set(AVR-EXAMPLE_SOURCE_DIR "D:/Develop/RomProgrammer/PotyProm/MemoryControllerAtmega328/Controller/src")
 
 add_subdirectory(src)

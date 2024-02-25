@@ -13,6 +13,8 @@
         "ext_eeprom_mem.h": "c",
         "ports.h": "c",
         "eeprom.h": "c",
-        "595_driver.h": "c"
+        "595_driver.h": "c",
+        "configs.h": "c",
+        "intports.h": "c"
     }
 }

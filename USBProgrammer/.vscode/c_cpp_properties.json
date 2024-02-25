@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/avr/include"
+                "D:/Develop/bin/avr-gcc-11.1.0-x64-windows/avr/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -14,7 +14,7 @@
                 "__I2C_LOG_ERROR__",
                 "SERIAL_CONSOLE"
             ],
-            "compilerPath": "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/bin/avr-gcc",
+            "compilerPath": "D:/Develop/bin/avr-gcc-11.1.0-x64-windows/bin/avr-gcc",
             "cStandard": "c99",
             "cppStandard": "gnu++98",
             "intelliSenseMode": "linux-gcc-x64"

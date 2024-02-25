@@ -9,16 +9,22 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include "configs.h"
+#include "intports.h"
+#include "compiler.h"
 
+unsigned char intel_isr[3];
 
-
+// This is INTA_2
 ISR(INT0_vect) {
 	cli();
 	sei();
 }
 
+// This is EX_INT
 ISR(INT1_vect) {
 	cli();
+	uint8_t value = 0x0f & PINB;
+	set_vector(value);
 	sei();
 }
 
@@ -27,12 +33,10 @@ void config() {
 	EICRA |= (1 << ISC01) | (1 << ISC00) | (1 << ISC10) | (1 << ISC11);
 	// Enabling INT0 interrupt
 	EIMSK |= (1 << INT0) | (1 << INT1);
-	// Configuring default states
-	Set_PortD_Ouputs();
-	Set_PortD_Inputs();
-	Set_PortB_Inputs();
-	Set_DData_AsIn();
-	Set_CData_AsIn();
+	vector_controller_init();
+
+	memcpy_P(intel_isr, intel_vectors, 3);
+
 	// Activate all interrupts
 	sei();
 }
@@ -44,5 +48,6 @@ int main(void)
     // /* Replace with your application code */
     while (1) 
     {
+		set_vector(0);
     }
 }

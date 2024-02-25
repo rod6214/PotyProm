@@ -281,5 +281,5 @@ endfunction()
 #
 # https://stackoverflow.com/q/53633705
 ##########################################################################
-
+set(CURRENT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")

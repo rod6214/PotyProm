@@ -1,4 +1,8 @@
+
+#ifndef __CONFIGS_H__
+#define __CONFIGS_H__
 #include <avr/io.h>
+#include "compiler.h"
 #define FOSC 12000
 
 #define READY_2_PIN	PIND0
@@ -17,6 +21,8 @@
 #define IR1_PIN		PB1
 #define IR2_PIN		PB2
 #define IR3_PIN		PB3
+#define LATCH_PIN   PC4
+#define VOE_PIN     PC5
 
 #define Q0_on()   ((PORTC |= (1 << Q0_PIN)))
 #define Q0_off()  ((PORTC &= ~(1 << Q0_PIN)))
@@ -34,16 +40,26 @@
 #define Q6_off()  ((PORTD &= ~(1 << Q6_PIN)))
 #define Q7_on()   ((PORTD |= (1 << Q7_PIN)))
 #define Q7_off()  ((PORTD &= ~(1 << Q7_PIN)))
+// #define set_vectorH(x) (PORTD &= ~(0xf0); (PORTD |= ((x)&0xf0)))
+// #define set_vectorL(x) (PORTC &= ~(0x0f); (PORTC |= ((x)&0x0f)))
 
 #define READY_on()   ((PORTD |= (1 << READY_2_PIN)))
 #define READY_off()  ((PORTD &= ~(1 << READY_2_PIN)))
 #define INT_on()   ((PORTD |= (1 << INT_2_PIN)))
 #define INT_off()  ((PORTD &= ~(1 << INT_2_PIN)))
+#define LATCH_on()   ((PORTC |= (1 << LATCH_PIN)))
+#define LATCH_off()  ((PORTC &= ~(1 << LATCH_PIN)))
+#define VOE_on()   ((PORTC |= (1 << VOE_PIN)))
+#define VOE_off()  ((PORTC &= ~(1 << VOE_PIN)))
 
 #define Set_PortD_Ouputs()     (DDRD |= (1 << READY_2_PIN) | (1 << INT_2_PIN))
+#define Set_PortC_Ouputs()     (DDRC |= (1 << LATCH_PIN) | (1 << VOE_PIN))
 #define Set_PortD_Inputs()      (DDRD &= ~(1 << INTA_2_PIN) | ~(1 << EX_INT_PIN))
 #define Set_PortB_Inputs()  (DDRD &= ~(1 << IR0_PIN) | ~(1 << IR1_PIN) | ~(1 << IR2_PIN) | ~(1 << IR3_PIN))
 #define Set_DData_AsOut()  (DDRD |= (1 << Q4_PIN) | (1 << Q5_PIN) | (1 << Q6_PIN) | (1 << Q7_PIN))
 #define Set_CData_AsOut()  (DDRC |= (1 << Q0_PIN) | (1 << Q1_PIN) | (1 << Q2_PIN) | (1 << Q3_PIN))
 #define Set_DData_AsIn()  (DDRD &= ~(1 << Q4_PIN) | ~(1 << Q5_PIN) | ~(1 << Q6_PIN) | ~(1 << Q7_PIN))
 #define Set_CData_AsIn()  (DDRC &= ~(1 << Q0_PIN) | ~(1 << Q1_PIN) | ~(1 << Q2_PIN) | ~(1 << Q3_PIN))
+
+extern code const uint8_t intel_vectors[];
+#endif

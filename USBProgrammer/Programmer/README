@@ -1,6 +1,6 @@
 https://github.com/mkleemann/cmake-avr/blob/master/generic-gcc-avr.cmake
 https://github.com/mkleemann/cmake-avr
-cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\USBProgrammer\Programmer\avr-toolchain.cmake -B C:\Develop\RomProgrammer\USBProgrammer\Programmer\build -S C:\Develop\RomProgrammer\USBProgrammer\Programmer
+cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=D:\Develop\RomProgrammer\PotyProm\USBProgrammer\Programmer\avr-toolchain.cmake -B D:\Develop\RomProgrammer\PotyProm\USBProgrammer\Programmer\build -S D:\Develop\RomProgrammer\PotyProm\USBProgrammer\Programmer
 avrdude -c USBasp -p m328p -u -U flash:w:OpenProgrammer.hex:i
 avrdude -c USBasp -p m328p -u -U flash:r:OpenRProgrammer.hex:i
 avrdude -c USBasp -p m328p -u -U lfuse:r:IOpenLFuse.hex:i
