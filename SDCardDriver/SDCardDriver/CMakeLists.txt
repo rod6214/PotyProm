@@ -22,6 +22,6 @@ add_definitions("-MP")
 add_definitions("-MF")
 add_definitions("-std=gnu99")
 
-set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/SDCardDriver/SDCardDriver/src")
+set(AVR-EXAMPLE_SOURCE_DIR ${CURRENT_DIR}/src)
 
 add_subdirectory(src)
