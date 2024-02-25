@@ -1,0 +1,22 @@
+{
+    "files.associations": {
+        "io.h": "c",
+        "test.h": "c",
+        "delay.h": "c",
+        "interrupt.h": "c",
+        "startup.h": "c",
+        "io_uart.h": "c",
+        "serial.h": "c",
+        "external_int.h": "c",
+        "io8535.h": "c",
+        "io_mem.h": "c",
+        "ext_eeprom_mem.h": "c",
+        "ports.h": "c",
+        "eeprom.h": "c",
+        "595_driver.h": "c",
+        "i2c.h": "c",
+        "configs.h": "c",
+        "i2cext.h": "c",
+        "stdlib.h": "c"
+    }
+}

@@ -26,8 +26,8 @@ ISR(INT0_vect) {
 	OE_off();
 	R_on();
 	CONTROL_Activate();
-	populateROM(L595_BUS_LENGTH_NORMAL);
-	// populateROM16bit(L595_BUS_LENGTH_NORMAL);
+	// populateROM(L595_BUS_LENGTH_NORMAL);
+	populateROM16bit(L595_BUS_LENGTH_NORMAL);
 	PORT_Deactivate();
 	CONTROL_Deactivate();
 	HOLD_off();
