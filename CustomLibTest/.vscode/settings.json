@@ -17,6 +17,9 @@
         "i2c.h": "c",
         "configs.h": "c",
         "i2cext.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "sd.h": "c",
+        "spi_routines.h": "c",
+        "spi.h": "c"
     }
 }

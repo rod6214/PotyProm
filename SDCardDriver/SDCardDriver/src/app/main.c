@@ -4,7 +4,7 @@
  * Created: 5/1/2022 12:31:53 PM
  * Author : Nelson
  */ 
-#define F_CPU 16000000UL
+// #define F_CPU 16000000UL
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -14,79 +14,87 @@
 
 void config()
 {
-    DDRD = 255;
-    _delay_loop_1(20);
     PORTD = 0;
-    _delay_loop_1(20);
-    // array to hold responses
-    uint8_t res[5], buf[512], token;
-    uint32_t addr = 0x00000000;
+    DDRD = 255;
 
-    // initialize UART
-    // UART_init();
-
-    // initialize SPI
-    SPI_init(SPI_MASTER | SPI_FOSC_128 | SPI_MODE_0);
-
-    // initialize sd card
-    if(SD_init() != SD_SUCCESS)
+    if (SDCARD_init(SPI_HALF_SPEED, (1<<SS))) 
     {
         PORTD = 0x80;
-        // UART_pputs("Error initializaing SD CARD\r\n");
     }
-    else
-    {
-        // UART_pputs("SD Card initialized\r\n");
+    // SPI_begin();
+    // DDRD = 255;
+    // _delay_loop_1(20);
+    // PORTD = 0;
+    // _delay_loop_1(20);
+    // // array to hold responses
+    // uint8_t res[5], buf[512], token;
+    // uint32_t addr = 0x00000000;
 
-        // read sector 0
-        // UART_pputs("\r\nReading sector: 0x");
-        // UART_puthex8((uint8_t)(addr >> 24));
-        // UART_puthex8((uint8_t)(addr >> 16));
-        // UART_puthex8((uint8_t)(addr >> 8));
-        // UART_puthex8((uint8_t)addr);
-        res[0] = SD_readSingleBlock(addr, buf, &token);
-        // UART_pputs("\r\nResponse:\r\n");
-        // SD_printR1(res[0]);
+    // // initialize UART
+    // // UART_init();
 
-        // if no error, print buffer
-        if ((res[0] == 0x00) && (token == SD_START_TOKEN))
-            PORTD = 1;
-        // if((res[0] == 0x00) && (token == SD_START_TOKEN))
-        //     SD_printBuf(buf);
-        // else if error token received, print
-        else if(!(token & 0xF0))
-        {
-            PORTD = 81;
-            // UART_pputs("Error token:\r\n");
-            // SD_printDataErrToken(token);
-        }
+    // // initialize SPI
+    // SPI_init(SPI_MASTER | SPI_FOSC_128 | SPI_MODE_0);
 
-        // update address to 0x00000100
-        addr = 0x00000100;
+    // // initialize sd card
+    // if(SD_init() != SD_SUCCESS)
+    // {
+    //     PORTD = 0x80;
+    //     // UART_pputs("Error initializaing SD CARD\r\n");
+    // }
+    // else
+    // {
+    //     // UART_pputs("SD Card initialized\r\n");
 
-        // fill buffer with 0x55
-        for(uint16_t i = 0; i < 512; i++) buf[i] = 0x55;
+    //     // read sector 0
+    //     // UART_pputs("\r\nReading sector: 0x");
+    //     // UART_puthex8((uint8_t)(addr >> 24));
+    //     // UART_puthex8((uint8_t)(addr >> 16));
+    //     // UART_puthex8((uint8_t)(addr >> 8));
+    //     // UART_puthex8((uint8_t)addr);
+    //     res[0] = SD_readSingleBlock(addr, buf, &token);
+    //     // UART_pputs("\r\nResponse:\r\n");
+    //     // SD_printR1(res[0]);
 
-        // UART_pputs("Writing 0x55 to sector: 0x");
-        // UART_puthex8((uint8_t)(addr >> 24));
-        // UART_puthex8((uint8_t)(addr >> 16));
-        // UART_puthex8((uint8_t)(addr >> 8));
-        // UART_puthex8((uint8_t)addr);
+    //     // if no error, print buffer
+    //     if ((res[0] == 0x00) && (token == SD_START_TOKEN))
+    //         PORTD = 1;
+    //     // if((res[0] == 0x00) && (token == SD_START_TOKEN))
+    //     //     SD_printBuf(buf);
+    //     // else if error token received, print
+    //     else if(!(token & 0xF0))
+    //     {
+    //         PORTD = 81;
+    //         // UART_pputs("Error token:\r\n");
+    //         // SD_printDataErrToken(token);
+    //     }
 
-        // write data to sector
-        res[0] = SD_writeSingleBlock(addr, buf, &token);
+    //     // update address to 0x00000100
+    //     addr = 0x00000100;
 
-        // UART_pputs("\r\nResponse:\r\n");
-        // SD_printR1(res[0]);
+    //     // fill buffer with 0x55
+    //     for(uint16_t i = 0; i < 512; i++) buf[i] = 0x55;
 
-        // if no errors writing
-        if(res[0] == 0x00)
-        {
-            if(token == SD_DATA_ACCEPTED)
-                PORTD = 2;
-                // UART_pputs("Write successful\r\n");
-        }
-    }
+    //     // UART_pputs("Writing 0x55 to sector: 0x");
+    //     // UART_puthex8((uint8_t)(addr >> 24));
+    //     // UART_puthex8((uint8_t)(addr >> 16));
+    //     // UART_puthex8((uint8_t)(addr >> 8));
+    //     // UART_puthex8((uint8_t)addr);
+
+    //     // write data to sector
+    //     res[0] = SD_writeSingleBlock(addr, buf, &token);
+
+    //     // UART_pputs("\r\nResponse:\r\n");
+    //     // SD_printR1(res[0]);
+
+    //     // if no errors writing
+    //     if(res[0] == 0x00)
+    //     {
+    //         if(token == SD_DATA_ACCEPTED)
+    //             PORTD = 2;
+    //             // UART_pputs("Write successful\r\n");
+    //     }
+    // }
 }
 
 void loop() 

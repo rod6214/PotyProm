@@ -1,19 +1,26 @@
 enable_language(C ASM)
 
 add_avr_library(
-   CRC
+   lCRC
    CRC.s
-   CRC.h
 )
 
 add_avr_library(
-   sdcard
+   lsdcard
    sdcard.c
-   sdcard.h
 )
 
 add_avr_library(
-   spi
+   lspi
    spi.c
-   spi.h
+)
+
+add_avr_library(
+   lports
+   ports.c
+)
+
+add_avr_library(
+   lwiring
+   wiring.c
 )

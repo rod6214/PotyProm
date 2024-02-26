@@ -11,7 +11,9 @@
                 "UNICODE",
                 "_UNICODE",
                 "__AVR_AT90S8535__",
-                "SERIAL_CONSOLE"
+                "SERIAL_CONSOLE",
+                "F_CPU=8000000",
+                "USE_SPI_LIB"
             ],
             "compilerPath": "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/bin/avr-gcc",
             "cStandard": "c99",

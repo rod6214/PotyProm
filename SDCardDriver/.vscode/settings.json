@@ -10,6 +10,12 @@
         "external_int.h": "c",
         "io8535.h": "c",
         "io_mem.h": "c",
-        "ext_eeprom_mem.h": "c"
+        "ext_eeprom_mem.h": "c",
+        "spi.h": "c",
+        "stdlib.h": "c",
+        "arduino_generics.h": "c",
+        "stdbool.h": "c",
+        "sdcard.h": "c",
+        "wiring.h": "c"
     }
 }

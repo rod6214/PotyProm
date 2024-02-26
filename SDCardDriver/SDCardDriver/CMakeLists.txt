@@ -21,6 +21,7 @@ add_definitions("-MD")
 add_definitions("-MP") 
 add_definitions("-MF")
 add_definitions("-std=gnu99")
+add_definitions("-DF_CPU=8000000")
 
 set(AVR-EXAMPLE_SOURCE_DIR ${CURRENT_DIR}/src)
 

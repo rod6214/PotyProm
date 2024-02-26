@@ -1,15 +1,17 @@
 /*
- * AT90Programmer.c
+ * CustomLibTest.c
  *
- * Created: 5/1/2022 12:31:53 PM
+ * Created: 2/25/2024 12:31:53 PM
  * Author : Nelson
  */ 
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <util/twi.h>
-
+#include <spi.h>
+#include <SD.h>
 
 void ERROR() 
 {
@@ -20,6 +22,14 @@ ISR(INT0_vect) {}
 
 void config()
 {
+	PORTD = 0;
+	DDRD = 255;
+	spi_init();
+	SD_init();
+	// SPI_init(SPI_MASTER | SPI_FOSC_128 | SPI_MODE_0);
+	// SPI_init(SPI_MASTER | SPI_FOSC_128 | SPI_MODE_0);
+	// SPI_transfer(0x33);
+	// PORTD = SPI_receive();
 }
 
 

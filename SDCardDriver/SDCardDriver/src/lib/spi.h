@@ -12,9 +12,19 @@
 #define DDR_SPI             DDRB
 #define PORT_SPI            PORTB
 #define CS                  PINB2
+#define SS                  CS
 #define MOSI                PINB3
 #define MISO                PINB4
 #define SCK                 PINB5
+
+#define SD_CHIP_SELECT_PIN  SS
+/** SPI Master Out Slave In pin */
+#define SPI_MOSI_PIN  MOSI
+/** SPI Master In Slave Out pin */
+#define SPI_MISO_PIN  MISO
+/** SPI Clock pin */
+#define SPI_SCK_PIN  SCK
+#define SS_PIN SD_CHIP_SELECT_PIN
 
 // macros
 #define CS_ENABLE()         PORT_SPI &= ~(1 << CS)
@@ -38,8 +48,27 @@
 #define SPI_MODE_3          0b0000110000000000
 #define SPI_DEFAULT         SPI_MASTER | SPI_FOSC_128 | SPI_MODE_0
 
-// SPI functions
-void SPI_init(uint16_t initParams);
-uint8_t SPI_transfer(uint8_t data);
 
+#define SPI_MODE_MASK 0x0c
+#define SPI_2XCLOCK_MASK 0x01
+#define SPI_CLOCK_MASK 0x03
+#define LSBFIRST 0
+#define _BV(bit) (1 << (bit))
+
+
+
+
+
+typedef struct  _SETTINGS__SPI
+{
+    uint8_t spcr;
+    uint8_t spsr;
+} SPISettings_t;
+
+// SPI functions
+// void SPI_init(uint16_t initParams);
+uint8_t SPI_transfer(uint8_t data);
+SPISettings_t SPI_settings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode);
+void SPI_BeginTransaction(SPISettings_t settings);
+void SPI_begin();
 #endif
