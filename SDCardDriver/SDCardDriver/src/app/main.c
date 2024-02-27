@@ -12,6 +12,8 @@
 #include "spi.h"
 #include "sdcard.h"
 
+static uint8_t buf[512];
+
 void config()
 {
     PORTD = 0;
@@ -20,6 +22,13 @@ void config()
     if (SDCARD_init(SPI_HALF_SPEED, (1<<SS))) 
     {
         PORTD = 0x80;
+        return;
+    }
+
+    if (SDCARD_readBlock(0, buf)) 
+    {
+        // PORTD = 0x81;
+        return;
     }
     // SPI_begin();
     // DDRD = 255;
