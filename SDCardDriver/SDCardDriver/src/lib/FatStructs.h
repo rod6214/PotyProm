@@ -19,6 +19,7 @@
 */
 #ifndef FatStructs_h
 #define FatStructs_h
+#include <stdint.h>
 /**
    \file
    FAT file structures

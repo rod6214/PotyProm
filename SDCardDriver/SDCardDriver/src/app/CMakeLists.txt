@@ -1,3 +1,3 @@
-add_avr_executable(SDCardDriver main.c)
+add_avr_executable(SDCardDriver main.cpp)
 
-avr_target_link_libraries(SDCardDriver lCRC lsdcard lspi lports lwiring)
+avr_target_link_libraries(SDCardDriver lCRC lSD lsdcard lspi lports lwiring)

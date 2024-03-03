@@ -29,5 +29,6 @@ set(AVR-EXAMPLE_SOURCE_DIR "C:/Develop/RomProgrammer/PotyProm/MemoryControllerAt
 set(I2C_DIR "C:/Develop/custom_libs/i2c/debug")
 set(EEPROM_DIR "C:/Develop/custom_libs/eeprom/debug")
 set(L595_DIR "C:/Develop/custom_libs/shifter/debug")
+set(SD_DIR "C:/Users/rod62/Documents/Arduino/libraries/SD/src")
 
 add_subdirectory(src)

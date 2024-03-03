@@ -7,14 +7,16 @@
                 "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/avr/include",
                 "C:/Develop/custom_libs/i2c/debug/include",
                 "C:/Develop/custom_libs/eeprom/debug/include",
-                "C:/Develop/custom_libs/shifter/debug/include"
+                "C:/Develop/custom_libs/shifter/debug/include",
+                "C:/Users/rod62/Documents/Arduino/libraries/SD/src"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
                 "__AVR_ATmega328P__",
-                "SERIAL_CONSOLE"
+                "SERIAL_CONSOLE",
+                "__EEPROM_ADDON__"
             ],
             "compilerPath": "C:/Develop/bin/avr-gcc-11.1.0-x64-windows/bin/avr-gcc",
             "cStandard": "c99",

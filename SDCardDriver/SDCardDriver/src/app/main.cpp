@@ -8,28 +8,40 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include "CRC.h"
-#include "spi.h"
-#include "sdcard.h"
+#include "SD.h"
+// #include "CRC.h"
+// #include "spi.h"
+// #include "sdcard.h"
+// #include "FatStructs.h"
 
-static uint8_t buf[512];
+// static uint8_t buf[512];
 
 void config()
 {
     PORTD = 0;
     DDRD = 255;
-
-    if (SDCARD_init(SPI_HALF_SPEED, (1<<SS))) 
+    
+    if (SD.begin((1<<SS))) 
     {
-        PORTD = 0x80;
-        return;
+      PORTD = 0x80;
     }
 
-    if (SDCARD_readBlock(0, buf)) 
+    if (SD.open("hello.txt")) 
     {
-        // PORTD = 0x81;
-        return;
+      PORTD = 0x81;
     }
+
+    // if (SDCARD_init(SPI_HALF_SPEED, (1<<SS))) 
+    // {
+    //     PORTD = 0x80;
+    //     return;
+    // }
+
+    // if (SDCARD_readBlock(0, buf)) 
+    // {
+    //     // PORTD = 0x81;
+    //     return;
+    // }
     // SPI_begin();
     // DDRD = 255;
     // _delay_loop_1(20);

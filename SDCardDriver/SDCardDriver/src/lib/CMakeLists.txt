@@ -24,3 +24,15 @@ add_avr_library(
    lwiring
    wiring.c
 )
+
+add_avr_library(
+   lSD
+   File.cpp
+   SD.cpp
+   SdVolume.cpp
+   SdFile.cpp
+   Sd2Card.cpp
+   Stream.cpp
+   Print.cpp
+   
+)

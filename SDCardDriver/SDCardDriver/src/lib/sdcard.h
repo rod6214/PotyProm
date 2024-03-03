@@ -64,6 +64,10 @@
 #define SD_CARD_ERROR_CMD25 5
 #define SD_CARD_ERROR_STOP_TRAN 16
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 // SD functions
 uint8_t SDCARD_init(uint8_t sckRateID, uint8_t chipSelectPin);
 uint8_t SDCARD_CardCommand(uint8_t cmd, uint32_t arg);
@@ -76,6 +80,15 @@ uint8_t SDCARD_writeBlock(uint32_t blockNumber, const uint8_t* src, uint8_t bloc
 uint8_t SDCARD_readBlock(uint32_t block, uint8_t* dst);
 void SDCARD_partialBlockRead(uint8_t value);
 uint8_t SDCARD_eraseSingleBlockEnable(void);
+uint8_t SDCARD_readRegister(uint8_t cmd, void* buf);
+uint8_t SDCARD_setSckRate(uint8_t sckRateID);
+uint8_t SDCARD_SetSpiClock(uint32_t clock);
+uint8_t SDCARD_waitNotBusy(unsigned int timeoutMillis);
+uint8_t SDCARD_waitStartBlock(void);
+uint8_t SDCARD_writeStart(uint32_t blockNumber, uint32_t eraseCount);
+uint8_t SDCARD_writeStop(void);
+uint8_t SDCARD_isBusy(void);
+void SDCARD_readEnd(void);
 void chipSelectLow(void);
 void chipSelectHigh(void);
 // void SD_powerUpSeq(void);
@@ -93,5 +106,7 @@ void chipSelectHigh(void);
 // uint8_t SD_sendOpCond(void);
 // uint8_t SD_readSingleBlock(uint32_t addr, uint8_t *buf, uint8_t *error);
 // uint8_t SD_writeSingleBlock(uint32_t addr, uint8_t *buf, uint8_t *res);
-
+#ifdef __cplusplus
+}
+#endif
 #endif

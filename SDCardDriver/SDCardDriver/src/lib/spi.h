@@ -17,6 +17,7 @@
 #define MISO                PINB4
 #define SCK                 PINB5
 
+#ifndef __cplusplus
 #define SD_CHIP_SELECT_PIN  SS
 /** SPI Master Out Slave In pin */
 #define SPI_MOSI_PIN  MOSI
@@ -25,6 +26,7 @@
 /** SPI Clock pin */
 #define SPI_SCK_PIN  SCK
 #define SS_PIN SD_CHIP_SELECT_PIN
+#endif
 
 // macros
 #define CS_ENABLE()         PORT_SPI &= ~(1 << CS)

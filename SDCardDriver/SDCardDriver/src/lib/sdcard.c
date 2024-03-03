@@ -32,6 +32,26 @@ SPISettings_t settings;
 /*******************************************************************************
  Initialize SD card
 *******************************************************************************/
+uint8_t SDCARD_waitNotBusy(unsigned int timeoutMillis) 
+{
+  return waitNotBusy(timeoutMillis);
+}
+
+uint8_t SDCARD_setSckRate(uint8_t sckRateID) 
+{
+  return setSckRate(sckRateID);
+}
+
+void SDCARD_readEnd(void) 
+{
+  readEnd();
+}
+
+uint8_t SDCARD_readRegister(uint8_t cmd, void* buf) 
+{
+  return readRegister(cmd, buf);
+}
+
 uint8_t SDCARD_init(uint8_t sckRateID, uint8_t chipSelectPin)
 {
     errorCode_ = inBlock_ = partialBlockRead_ = type_ = 0;

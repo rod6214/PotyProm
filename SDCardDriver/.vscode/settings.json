@@ -16,6 +16,7 @@
         "arduino_generics.h": "c",
         "stdbool.h": "c",
         "sdcard.h": "c",
-        "wiring.h": "c"
+        "wiring.h": "c",
+        "pgmspace.h": "c"
     }
 }
