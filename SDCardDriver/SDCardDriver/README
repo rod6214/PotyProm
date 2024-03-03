@@ -3,3 +3,9 @@ https://github.com/mkleemann/cmake-avr
 cmake -G 'Unix Makefiles' -DCMAKE_TOOLCHAIN_FILE=C:\Develop\RomProgrammer\SDCardDriver\SDCardDriver\avr-toolchain.cmake -B C:\Develop\RomProgrammer\SDCardDriver\SDCardDriver\build -S C:\Develop\RomProgrammer\SDCardDriver\SDCardDriver
 avrdude -c USBasp -p m328p -u -U flash:w:SDCardDriver.hex:i
 https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference
+
+FAT documentation
+
+http://elm-chan.org/docs/fat_e.html
+https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system
+https://recoverit.wondershare.com/file-system/fat32-file-system.html?gad_source=1&gclid=CjwKCAiArfauBhApEiwAeoB7qA6BivpEvf3yyzy9yjI4TWLtUafThn9MkVTjcjxmHBfjgwCHHT3C9RoCYMEQAvD_BwE
