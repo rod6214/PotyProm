@@ -261,7 +261,7 @@ static void readEnd(void)
    the value zero, false, is returned for failure.
 */
 uint8_t SDCARD_erase(uint32_t firstBlock, uint32_t lastBlock) {
-  if (!SDCARD_eraseSingleBlockEnable()) {
+  if (SDCARD_eraseSingleBlockEnable()) {
     error(SD_CARD_ERROR_ERASE_SINGLE_BLOCK);
     goto fail;
   }
@@ -275,7 +275,7 @@ uint8_t SDCARD_erase(uint32_t firstBlock, uint32_t lastBlock) {
     error(SD_CARD_ERROR_ERASE);
     goto fail;
   }
-  if (!waitNotBusy(SD_ERASE_TIMEOUT)) {
+  if (waitNotBusy(SD_ERASE_TIMEOUT)) {
     error(SD_CARD_ERROR_ERASE_TIMEOUT);
     goto fail;
   }
@@ -427,7 +427,6 @@ uint8_t SDCARD_readData(uint32_t block,
   return SD_SUCCESS;
 
 fail:
-PORTD = 3;
   chipSelectHigh();
   return SD_ERROR;
 }
@@ -458,12 +457,12 @@ uint8_t SDCARD_writeBlock(uint32_t blockNumber, const uint8_t* src, uint8_t bloc
     error(SD_CARD_ERROR_CMD24);
     goto fail;
   }
-  if (!SDCARD_writeData2(DATA_START_BLOCK, src)) {
+  if (SDCARD_writeData2(DATA_START_BLOCK, src)) {
     goto fail;
   }
   if (blocking) {
     // wait for flash programming to complete
-    if (!waitNotBusy(SD_WRITE_TIMEOUT)) {
+    if (waitNotBusy(SD_WRITE_TIMEOUT)) {
       error(SD_CARD_ERROR_WRITE_TIMEOUT);
       goto fail;
     }
@@ -484,7 +483,7 @@ fail:
 /** Write one data block in a multiple block write sequence */
 uint8_t SDCARD_writeData(const uint8_t* src) {
   // wait for previous write to finish
-  if (!waitNotBusy(SD_WRITE_TIMEOUT)) {
+  if (waitNotBusy(SD_WRITE_TIMEOUT)) {
     error(SD_CARD_ERROR_WRITE_MULTIPLE);
     chipSelectHigh();
     return SD_ERROR;
@@ -577,11 +576,11 @@ fail:
    the value zero, false, is returned for failure.
 */
 uint8_t SDCARD_writeStop(void) {
-  if (!waitNotBusy(SD_WRITE_TIMEOUT)) {
+  if (waitNotBusy(SD_WRITE_TIMEOUT)) {
     goto fail;
   }
   spiSend(STOP_TRAN_TOKEN);
-  if (!waitNotBusy(SD_WRITE_TIMEOUT)) {
+  if (waitNotBusy(SD_WRITE_TIMEOUT)) {
     goto fail;
   }
   chipSelectHigh();
@@ -703,7 +702,7 @@ static uint8_t readRegister(uint8_t cmd, void* buf) {
     error(SD_CARD_ERROR_READ_REG);
     goto fail;
   }
-  if (!SDCARD_waitStartBlock()) {
+  if (SDCARD_waitStartBlock()) {
     goto fail;
   }
   // transfer data

@@ -11,10 +11,11 @@
 #include "SD.h"
 // #include "CRC.h"
 // #include "spi.h"
-// #include "sdcard.h"
+#include "sdcard.h"
 // #include "FatStructs.h"
 
-// static uint8_t buf[512];
+static uint8_t buf[512];
+// static char buf2[5] = {'1', '2', '3', '4', '\0'};
 
 void config()
 {
@@ -23,12 +24,13 @@ void config()
     
     if (SD.begin((1<<SS))) 
     {
-      PORTD = 0x80;
-    }
+      File myfile = SD.open("hello.txt", FILE_READ);
+      myfile.read(buf, 512);
+      myfile.close();
 
-    if (SD.open("hello.txt")) 
-    {
-      PORTD = 0x81;
+      myfile = SD.open("another.txt", FILE_WRITE);
+      myfile.println("Probando nuevo archivo con caracteres!!!");
+      myfile.close();
     }
 
     // if (SDCARD_init(SPI_HALF_SPEED, (1<<SS))) 
@@ -37,6 +39,17 @@ void config()
     //     return;
     // }
 
+    // if (SDCARD_waitStartBlock()) 
+    // {
+    //   PORTD = 0x82;
+    //   return;
+    // }
+
+  // if (SDCARD_writeBlock(2, buf, 1)) 
+  //   {
+  //       // PORTD = 0x81;
+  //       return;
+  //   }
     // if (SDCARD_readBlock(0, buf)) 
     // {
     //     // PORTD = 0x81;
