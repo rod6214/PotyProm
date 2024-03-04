@@ -14,7 +14,11 @@
 #include <i2c.h>
 #include <i2cext.h>
 #include <util/twi.h>
+#include <SD.h>
 
+#ifdef __SD_READ_FILE_TEST_ON__
+static void test_sd_read();
+#endif
 
 void ERROR() 
 {
@@ -36,7 +40,9 @@ ISR(INT0_vect) {
 
 // static uint8_t data[] = {0x22};
 // static uint8_t rom_data[16];
-
+#ifdef __SD_READ_FILE_TEST_ON__
+static char buffer[512];
+#endif
 void config()
 {
 	// Configuring INT0 as rising edge detection
@@ -65,10 +71,31 @@ void loop()
 int main(void)
 {
 	config();
-	// write_port(0x999999);
+	#ifdef __SD_READ_FILE_TEST_ON__
+	test_sd_read();
+	#endif
     // /* Replace with your application code */
     while (1) 
     {
 		loop();
     }
 }
+
+
+#ifdef __SD_READ_FILE_TEST_ON__
+static void test_sd_read() 
+{
+	if (SD.begin(_BV(SS))) 
+	{
+		File myfile = SD.open("hello.txt", FILE_READ);
+		if (myfile) 
+		{
+			myfile.read(buffer, 64);
+			myfile.close();
+
+			DDRD = 255;
+			PORTD = buffer[0];
+		}
+	}
+}
+#endif
